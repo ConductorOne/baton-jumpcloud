@@ -20,6 +20,7 @@ add-dep:
 	go mod tidy -v
 	go mod vendor
 
+.PHONY: build-jcapi
 build-jcapi:
 	rm -rf build/jcapi
 	mkdir -p build/jcapi
@@ -35,8 +36,6 @@ build-jcapi:
 	mv build/jcapi pkg/jcapi
 	find pkg/jcapi \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/ConductorOne\/baton\-jumpcloud\/pkg/g'
 	cd pkg/jcapi && go mod init github.com/ConductorOne/baton-jumpcloud/pkg/jcapi && go mod tidy -v
-
-	
 
 .PHONY: lint
 lint:
