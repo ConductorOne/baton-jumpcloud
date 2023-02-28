@@ -41,9 +41,14 @@ build-jcapi:
 		-i https://docs.jumpcloud.com/api/2.0/index.yaml \
 		-g go \
 	    -o /output \
-		--additional-properties=enumClassPrefix=true,hideGenerationTimestamp=true,structPrefix=true,disallowAdditionalPropertiesIfNotPresent=false,packageName=github.com/ConductorOne/baton-jumpcloud/pkg/jcapi,isGoSubmodule=true
+		--additional-properties=enumClassPrefix=true,hideGenerationTimestamp=true,structPrefix=true,disallowAdditionalPropertiesIfNotPresent=false,packageName=jcapi,isGoSubmodule=true
+	rm -rf build/jcapi/go.mod build/jcapi/go.sum
 	rm -rf pkg/jcapi
 	mv build/jcapi pkg/jcapi
+	find pkg/jcapi \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/ConductorOne\/baton\-jumpcloud\/pkg/g'
+	cd pkg/jcapi && go mod init github.com/ConductorOne/baton-jumpcloud/pkg/jcapi && go mod tidy -v
+
+	
 
 .PHONY: lint
 lint:
