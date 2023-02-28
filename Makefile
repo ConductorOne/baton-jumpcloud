@@ -23,18 +23,6 @@ add-dep:
 build-jcapi:
 	rm -rf build/jcapi
 	mkdir -p build/jcapi
-	# podman run --rm -v \
-	# 	"${PWD}/build/jcapi:/app/output" \
-	# 	mcr.microsoft.com/openapi/kiota generate \
-	# 	--openapi https://docs.jumpcloud.com/api/2.0/index.yaml \
-	# 	--language Go -n jcapi
-	# 	-o /app/output
-	# podman run --rm -v \
-	# 	"${PWD}/build/jcapi:/app/output" \
-	# 	docker.io/swaggerapi/swagger-codegen-cli generate \
-	# 	-i https://docs.jumpcloud.com/api/2.0/index.yaml \
-	# 	-l go \
-	# 	-o /app/output
 	podman run --rm -v \
 		"${PWD}/build/jcapi:/output" \
 		docker.io/openapitools/openapi-generator-cli generate \
