@@ -20,6 +20,19 @@ add-dep:
 	go mod tidy -v
 	go mod vendor
 
+build-jcapi:
+	rm -rf build/jcapi
+	mkdir -p build/jcapi
+	podman run --rm -v \
+		"${PWD}/build/jcapi:/output" \
+		docker.io/openapitools/openapi-generator-cli generate \
+		-i https://docs.jumpcloud.com/api/2.0/index.yaml \
+		-g go \
+	    -o /output
+	rm -rf pkg/jcapi
+	mkdir -p pkg/jcapi
+	mv build/jcapi pkg/jcapi
+
 .PHONY: lint
 lint:
 	golangci-lint run
