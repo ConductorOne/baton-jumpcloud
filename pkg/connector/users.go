@@ -29,6 +29,7 @@ func newUserBuilder(jc1 jc1Func, jc2 jc2Func) *userResourceType {
 		client2:      jc2,
 	}
 }
+
 func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ *pagination.Token) ([]*v2.Entitlement, string, annotations.Annotations, error) {
 	return nil, "", nil, nil
 }
@@ -84,7 +85,6 @@ func userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrai
 	profile, err := structpb.NewStruct(map[string]interface{}{
 		"id": user.GetId(),
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("baton-jumpcloud: failed to construct user profile for user trait: %w", err)
 	}

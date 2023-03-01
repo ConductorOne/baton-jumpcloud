@@ -118,5 +118,6 @@ func (c *Jumpcloud) Validate(ctx context.Context) (annotations.Annotations, erro
 func (s *Jumpcloud) ResourceSyncers(ctx context.Context) []connectorbuilder.ResourceSyncer {
 	return []connectorbuilder.ResourceSyncer{
 		newUserBuilder(s.client1, s.client2),
+		newGroupBuilder(s.client1, s.client2),
 	}
 }
