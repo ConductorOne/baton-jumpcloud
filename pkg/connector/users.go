@@ -106,7 +106,7 @@ func userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrai
 	}
 
 	if user.HasManager() {
-		profile.Fields["manager"] = structpb.NewStringValue(user.GetManager())
+		profile.Fields["manager_id"] = structpb.NewStringValue(user.GetManager())
 	}
 
 	if user.HasEmployeeIdentifier() {
