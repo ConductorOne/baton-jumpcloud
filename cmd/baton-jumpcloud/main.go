@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ConductorOne/baton-jumpcloud/pkg/connector"
 	"github.com/conductorone/baton-sdk/pkg/cli"
+	"github.com/conductorone/baton-sdk/pkg/connectorbuilder"
 	"github.com/conductorone/baton-sdk/pkg/sdk"
 	"github.com/conductorone/baton-sdk/pkg/types"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
@@ -26,6 +28,8 @@ func main() {
 
 	cmd.Version = version
 
+	cmdFlags(cmd)
+
 	err = cmd.Execute()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
@@ -36,7 +40,13 @@ func main() {
 func getConnector(ctx context.Context, cfg *config) (types.ConnectorServer, error) {
 	l := ctxzap.Extract(ctx)
 
-	c, err := sdk.NewEmptyConnector()
+	cb, err := connector.New(ctx, cfg.ApiKey, cfg.OrgId)
+	if err != nil {
+		l.Error("error creating connector", zap.Error(err))
+		return nil, err
+	}
+
+	c, err := connectorbuilder.NewConnector(ctx, cb)
 	if err != nil {
 		l.Error("error creating connector", zap.Error(err))
 		return nil, err
