@@ -1,38 +1,46 @@
 package connector
 
 import (
-	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
+	"strconv"
+
 	"github.com/conductorone/baton-sdk/pkg/pagination"
 )
 
-const defaultLimit = 100
-
-func parsePageToken(token string, resourceID *v2.ResourceId) (*pagination.Bag, string, error) {
+func unmarshalSkipToken(token *pagination.Token) (int32, *pagination.Bag, error) {
 	b := &pagination.Bag{}
-	err := b.Unmarshal(token)
+	err := b.Unmarshal(token.Token)
 	if err != nil {
-		return nil, "", err
+		return 0, nil, err
 	}
-
-	if b.Current() == nil {
-		b.Push(pagination.PageState{
-			ResourceTypeID: resourceID.ResourceType,
-			ResourceID:     resourceID.Resource,
-		})
+	current := b.Current()
+	skip := int32(0)
+	if current != nil && current.Token != "" {
+		skip64, err := strconv.ParseInt(current.Token, 10, 32)
+		if err != nil {
+			return 0, nil, err
+		}
+		skip = int32(skip64)
 	}
-
-	page := b.PageToken()
-
-	return b, page, nil
+	return skip, b, nil
 }
 
-func newPaginationToken(limit int, nextPageToken string) *pagination.Token {
-	if limit == 0 || limit > defaultLimit {
-		limit = defaultLimit
+func marshalSkipToken(newObjects int, lastSkip int32, b *pagination.Bag) (string, error) {
+	if newObjects == 0 {
+		return "", nil
 	}
+	nextSkip := int64(newObjects) + int64(lastSkip)
+	pageToken, err := nextToken(b, strconv.FormatInt(nextSkip, 10))
+	if err != nil {
+		return "", err
+	}
+	return pageToken, nil
+}
 
-	return &pagination.Token{
-		Size:  limit,
-		Token: nextPageToken,
+func nextToken(b *pagination.Bag, v string) (string, error) {
+	if b.Current() == nil {
+		b.Push(pagination.PageState{Token: v})
+		return b.Marshal()
+	} else {
+		return b.NextToken(v)
 	}
 }

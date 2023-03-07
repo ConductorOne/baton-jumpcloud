@@ -16,7 +16,7 @@ import (
 )
 
 func New(ctx context.Context, apiKey string, orgId string) (*Jumpcloud, error) {
-	httpClient, err := uhttp.NewClient(ctx, uhttp.WithLogger(true, nil))
+	httpClient, err := uhttp.NewClient(ctx, uhttp.WithLogger(true, nil), uhttp.WithUserAgent("baton-jumpcloud/0.1.0"))
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,12 @@ func New(ctx context.Context, apiKey string, orgId string) (*Jumpcloud, error) {
 	return &Jumpcloud{
 		_client1: jcapi1.NewAPIClient(cc1),
 		_client2: jcapi2.NewAPIClient(cc2),
-		apiKey:   apiKey,
+		ext: &ExtensionClient{
+			client: httpClient,
+			apiKey: apiKey,
+			orgId:  orgId,
+		},
+		apiKey: apiKey,
 	}, nil
 }
 
@@ -64,19 +69,22 @@ type jc2Func func(ctx context.Context) (context.Context, *jcapi2.APIClient)
 type Jumpcloud struct {
 	_client1 *jcapi1.APIClient
 	_client2 *jcapi2.APIClient
+	ext      *ExtensionClient
 	apiKey   string
 }
 
 var (
-	// resourceTypeRole = &v2.ResourceType{
-	// 	Id:          "role",
-	// 	DisplayName: "Role",
-	// 	Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_ROLE},
-	// }
 	resourceTypeUser = &v2.ResourceType{
 		Id:          "user",
 		DisplayName: "User",
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_USER},
+		Description: "JumpCloud User: The User account is the core identity for your employees, and is the account type that is used to authenticate resources agains",
+	}
+	resourceTypeAdminUser = &v2.ResourceType{
+		Id:          "admin_user",
+		DisplayName: "Admin User",
+		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_USER},
+		Description: "JumpCloud Administrator: The JumpCloud administrator account is responsible for the management of your JumpCloud organizational tenan",
 	}
 	resourceTypeGroup = &v2.ResourceType{
 		Id:          "group",
@@ -87,6 +95,11 @@ var (
 		Id:          "app",
 		DisplayName: "App",
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_APP},
+	}
+	resourceTypeRole = &v2.ResourceType{
+		Id:          "role",
+		DisplayName: "Role",
+		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_ROLE},
 	}
 )
 
@@ -105,6 +118,7 @@ func (c *Jumpcloud) Validate(ctx context.Context) (annotations.Annotations, erro
 		l.Error("DirectoriesList for Validate Failed", zap.Error(err))
 		return nil, fmt.Errorf("jumpcloud-connector: failed to verify api key: %w", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		err := fmt.Errorf("jumpcloud-connector verify returned non-200: '%d'", resp.StatusCode)
@@ -117,7 +131,13 @@ func (c *Jumpcloud) Validate(ctx context.Context) (annotations.Annotations, erro
 
 func (s *Jumpcloud) ResourceSyncers(ctx context.Context) []connectorbuilder.ResourceSyncer {
 	return []connectorbuilder.ResourceSyncer{
+		// NOTE: Jumpcloud has 'two' types of Users, "admin users" and... uh, "normal users".
+		// So, we put each in their own resource type.
+		// https://support.jumpcloud.com/support/s/article/getting-started-jumpcloud-admin-accounts-vs-user-accounts-2019-08-21-10-36-47
 		newUserBuilder(s.client1, s.client2),
 		newGroupBuilder(s.client1, s.client2),
+		newAdminUserBuilder(s.ext),
+		newRoleBuilder(s.ext),
+		newAppBuilder(s.client1, s.client2),
 	}
 }
