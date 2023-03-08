@@ -13,10 +13,21 @@ func fmtResourceId(resourceTypeID string, id string) *v2.ResourceId {
 	}
 }
 
-func fmtResourceGroup(resourceID *v2.ResourceId, role string) string {
+func fmtResource(resourceID *v2.ResourceId, role string) string {
 	return fmt.Sprintf(
 		"%s:%s",
 		resourceID.ResourceType,
 		resourceID.Resource,
+	)
+}
+
+func fmtResourceGrant(resourceID *v2.ResourceId, principalId *v2.ResourceId, permission string) string {
+	return fmt.Sprintf(
+		"%s-grant:%s:%s:%s:%s",
+		resourceID.ResourceType,
+		resourceID.Resource,
+		principalId.ResourceType,
+		principalId.Resource,
+		permission,
 	)
 }

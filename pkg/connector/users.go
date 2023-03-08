@@ -41,22 +41,32 @@ func (o *userResourceType) Grants(_ context.Context, _ *v2.Resource, _ *paginati
 func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, pt *pagination.Token) ([]*v2.Resource, string, annotations.Annotations, error) {
 	ctx, client := o.client1(ctx)
 
-	// todo manage skip
-	list, _, err := client.SystemusersApi.SystemusersList(ctx).Execute()
+	skip, b, err := unmarshalSkipToken(pt)
 	if err != nil {
 		return nil, "", nil, err
 	}
 
+	list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
+	if err != nil {
+		return nil, "", nil, err
+	}
+	defer resp.Body.Close()
+
 	var rv []*v2.Resource
-	for _, user := range list.Results {
-		ur, err := userResource(ctx, &user)
+	for i := range list.Results {
+		ur, err := userResource(ctx, &list.Results[i])
 		if err != nil {
 			return nil, "", nil, err
 		}
 		rv = append(rv, ur)
 	}
 
-	return rv, "", nil, nil
+	pageToken, err := marshalSkipToken(len(list.Results), skip, b)
+	if err != nil {
+		return nil, "", nil, err
+	}
+
+	return rv, pageToken, nil, nil
 }
 
 func userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {

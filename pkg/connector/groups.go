@@ -28,21 +28,31 @@ func (o *groupResourceType) List(
 ) ([]*v2.Resource, string, annotations.Annotations, error) {
 	ctx, client := o.client2(ctx)
 
-	groups, _, err := client.UserGroupsApi.GroupsUserList(ctx).Execute()
+	skip, b, err := unmarshalSkipToken(token)
 	if err != nil {
 		return nil, "", nil, err
 	}
 
+	groups, resp, err := client.UserGroupsApi.GroupsUserList(ctx).Skip(skip).Execute()
+	if err != nil {
+		return nil, "", nil, err
+	}
+	defer resp.Body.Close()
+
 	var rv []*v2.Resource
-	for _, group := range groups {
-		ur, err := groupResource(ctx, &group)
+	for i := range groups {
+		ur, err := groupResource(ctx, &groups[i])
 		if err != nil {
 			return nil, "", nil, err
 		}
 		rv = append(rv, ur)
 	}
 
-	return rv, "", nil, nil
+	pageToken, err := marshalSkipToken(len(groups), skip, b)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	return rv, pageToken, nil, nil
 }
 
 func groupResource(ctx context.Context, group *jcapi2.UserGroup) (*v2.Resource, error) {
@@ -58,15 +68,14 @@ func groupResource(ctx context.Context, group *jcapi2.UserGroup) (*v2.Resource, 
 		Id:          fmtResourceId(resourceTypeGroup.Id, group.GetId()),
 		DisplayName: group.GetName(),
 		Annotations: annos,
+		Description: group.GetDescription(),
 	}, nil
 }
 
 func groupTrait(ctx context.Context, group *jcapi2.UserGroup) (*v2.GroupTrait, error) {
 	profile, err := structpb.NewStruct(map[string]interface{}{
-		"description": group.GetDescription(),
-		"name":        group.GetName(),
-		"type":        group.GetType(),
-		"email":       group.GetEmail(),
+		"type":  group.GetType(),
+		"email": group.GetEmail(),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("baton-jumpcloud: failed to construct role profile for role trait: %w", err)
@@ -93,7 +102,7 @@ func (o *groupResourceType) Entitlements(
 
 func groupEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement {
 	return &v2.Entitlement{
-		Id:          fmtResourceGroup(resource.Id, resource.Id.GetResource()),
+		Id:          fmtResource(resource.Id, resource.Id.GetResource()),
 		Resource:    resource,
 		DisplayName: fmt.Sprintf("%s Group Member", resource.DisplayName),
 		Description: fmt.Sprintf("Member of %s group", resource.DisplayName),
@@ -108,7 +117,53 @@ func (o *groupResourceType) Grants(
 	resource *v2.Resource,
 	token *pagination.Token,
 ) ([]*v2.Grant, string, annotations.Annotations, error) {
-	return nil, "", nil, nil
+	ctx, client := o.client2(ctx)
+
+	skip, b, err := unmarshalSkipToken(token)
+	if err != nil {
+		return nil, "", nil, err
+	}
+
+	members, resp, err := client.UserGroupMembersMembershipApi.GraphUserGroupMembersList(ctx, resource.Id.Resource).Skip(skip).Execute()
+	if err != nil {
+		return nil, "", nil, err
+	}
+	defer resp.Body.Close()
+
+	var rv []*v2.Grant
+	for i := range members {
+		member := &members[i]
+		switch member.To.GetType() {
+		case "user":
+			rv = append(rv, groupGrant(resource, resourceTypeUser.Id, member))
+		case "group":
+			rv = append(rv, groupGrant(resource, resourceTypeGroup.Id, member))
+		default:
+			continue
+		}
+	}
+	pt, err := marshalSkipToken(len(members), skip, b)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	return rv, pt, nil, nil
+}
+
+func groupGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.GraphConnection) *v2.Grant {
+	groupID := resource.Id.GetResource()
+	ur := &v2.Resource{Id: &v2.ResourceId{ResourceType: resoureTypeId, Resource: member.To.Id}}
+
+	var annos annotations.Annotations
+
+	return &v2.Grant{
+		Id: fmtResourceGrant(resource.Id, ur.Id, groupID),
+		Entitlement: &v2.Entitlement{
+			Id:       fmtResource(resource.Id, groupID),
+			Resource: resource,
+		},
+		Annotations: annos,
+		Principal:   ur,
+	}
 }
 
 func newGroupBuilder(jc1 jc1Func, jc2 jc2Func) *groupResourceType {
