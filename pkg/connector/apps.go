@@ -165,15 +165,15 @@ func (o *appResourceType) Grants(
 		}
 	}
 
-	var pt string
-	if len(assignments) == 0 {
-		b.Pop()
-	} else {
+	var nextToken string
+	if len(assignments) != 0 {
 		nextSkip := int64(len(assignments)) + int64(skip)
-		pt, err = b.NextToken(strconv.FormatInt(nextSkip, 10))
-		if err != nil {
-			return nil, "", nil, err
-		}
+		nextToken = strconv.FormatInt(nextSkip, 10)
+	}
+	// pops if nextToken is empty, going to the next phase
+	pt, err := b.NextToken(nextToken)
+	if err != nil {
+		return nil, "", nil, err
 	}
 
 	return rv, pt, nil, nil
