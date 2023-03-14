@@ -1,4 +1,4 @@
-`baton-jumpcloud` is a connector for Google Identity Platform built using the [Baton SDK](https://github.com/conductorone/baton-sdk). It communicates with the JumpCloud API to sync data about users, groups, roles, and apps.
+`baton-jumpcloud` is a connector for JumpCloud built using the [Baton SDK](https://github.com/conductorone/baton-sdk). It communicates with the JumpCloud API to sync data about users, groups, roles, and apps.
 
 Check out [Baton](https://github.com/conductorone/baton) to learn more the project in general.
 
