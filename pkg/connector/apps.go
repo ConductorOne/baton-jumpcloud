@@ -2,7 +2,9 @@ package connector
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
@@ -10,6 +12,11 @@ import (
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
+)
+
+const (
+	apiUserType      = "user"
+	apiUserGroupType = "user_group"
 )
 
 type appResourceType struct {
@@ -111,6 +118,10 @@ func appEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement 
 	}
 }
 
+type graphRequest interface {
+	Execute() ([]jcapi2.GraphConnection, *http.Response, error)
+}
+
 func (o *appResourceType) Grants(
 	ctx context.Context,
 	resource *v2.Resource,
@@ -121,12 +132,10 @@ func (o *appResourceType) Grants(
 	b := pagination.Bag{}
 	if token.Token == "" {
 		b.Push(pagination.PageState{
-			ResourceTypeID: "user",
-			Token:          "0",
+			ResourceTypeID: apiUserType,
 		})
 		b.Push(pagination.PageState{
-			ResourceTypeID: "user_group",
-			Token:          "0",
+			ResourceTypeID: apiUserGroupType,
 		})
 	} else {
 		err := b.Unmarshal(token.Token)
@@ -140,38 +149,64 @@ func (o *appResourceType) Grants(
 		return nil, "", nil, nil
 	}
 
-	skip64, err := strconv.ParseInt(current.Token, 10, 32)
-	if err != nil {
-		return nil, "", nil, err
+	var skip int32
+	if current.Token != "" {
+		skip64, err := strconv.ParseInt(current.Token, 10, 32)
+		if err != nil {
+			return nil, "", nil, err
+		}
+		skip = int32(skip64)
 	}
-	skip := int32(skip64)
+	var npt string
+	var rv []*v2.Grant
 
-	assignments, resp, err := client.ApplicationsApi.GraphApplicationAssociationsList(ctx, resource.Id.Resource).Skip(skip).Targets([]string{current.ResourceTypeID}).Execute()
+	var req graphRequest
+
+	if current.ResourceID == "" {
+		// No resource ID set, so we are listing associations for the resource type
+		req = client.ApplicationsApi.GraphApplicationAssociationsList(ctx, resource.Id.Resource).Skip(skip).Targets([]string{current.ResourceTypeID})
+	} else if current.ResourceTypeID == apiUserGroupType {
+		// We have a resourceID set, and our resource type is user group, so we are listing user group members
+		req = client.UserGroupMembersMembershipApi.GraphUserGroupMembersList(ctx, current.ResourceID).Skip(skip)
+	}
+
+	if req == nil {
+		return nil, "", nil, errors.New("unexpected state while listing application grants")
+	}
+
+	assignments, resp, err := req.Execute()
 	if err != nil {
 		return nil, "", nil, err
 	}
 	defer resp.Body.Close()
 
-	var rv []*v2.Grant
+	if len(assignments) != 0 {
+		nextSkip := int64(len(assignments)) + int64(skip)
+		npt = strconv.FormatInt(nextSkip, 10)
+	}
+	// pops if nextToken is empty, going to the next phase
+	err = b.Next(npt)
+	if err != nil {
+		return nil, "", nil, err
+	}
+
 	for i := range assignments {
 		member := &assignments[i]
 		switch member.To.GetType() {
-		case "user":
+		case apiUserType:
 			rv = append(rv, appGrant(resource, resourceTypeUser.Id, member))
-		case "user_group":
+		case apiUserGroupType:
 			rv = append(rv, appGrant(resource, resourceTypeGroup.Id, member))
+			b.Push(pagination.PageState{
+				ResourceTypeID: apiUserGroupType,
+				ResourceID:     member.To.GetId(),
+			})
 		default:
 			continue
 		}
 	}
 
-	var nextToken string
-	if len(assignments) != 0 {
-		nextSkip := int64(len(assignments)) + int64(skip)
-		nextToken = strconv.FormatInt(nextSkip, 10)
-	}
-	// pops if nextToken is empty, going to the next phase
-	pt, err := b.NextToken(nextToken)
+	pt, err := b.Marshal()
 	if err != nil {
 		return nil, "", nil, err
 	}
