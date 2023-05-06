@@ -38,7 +38,6 @@ build-jcapi2:
 	rm -rf pkg/jcapi2
 	mv build/jcapi2 pkg/
 	find pkg/jcapi2 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/conductorone\/baton\-jumpcloud\/pkg/g'
-	cd pkg/jcapi2 && go mod init github.com/conductorone/baton-jumpcloud/pkg/jcapi2 && go mod tidy -v
 
 .PHONY: build-jcapi1
 build-jcapi1:
@@ -55,7 +54,6 @@ build-jcapi1:
 	rm -rf pkg/jcapi1
 	mv build/jcapi1 pkg/
 	find pkg/jcapi1 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/conductorone\/baton\-jumpcloud\/pkg/g'
-	cd pkg/jcapi1 && go mod init github.com/conductorone/baton-jumpcloud/pkg/jcapi1 && go mod tidy -v
 
 .PHONY: lint
 lint:
