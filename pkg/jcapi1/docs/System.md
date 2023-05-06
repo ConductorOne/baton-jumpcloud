@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **AllowSshRootLogin** | Pointer to **bool** |  | [optional] 
 **AmazonInstanceID** | Pointer to **string** |  | [optional] 
 **Arch** | Pointer to **string** |  | [optional] 
+**ArchFamily** | Pointer to **string** |  | [optional] 
 **AzureAdJoined** | Pointer to **bool** |  | [optional] 
 **BuiltInCommands** | Pointer to [**[]SystemBuiltInCommandsInner**](SystemBuiltInCommandsInner.md) |  | [optional] [readonly] 
 **ConnectionHistory** | Pointer to **[]map[string]interface{}** |  | [optional] 
@@ -36,6 +37,7 @@ Name | Type | Description | Notes
 **OsVersionDetail** | Pointer to [**SystemOsVersionDetail**](SystemOsVersionDetail.md) |  | [optional] 
 **ProvisionMetadata** | Pointer to [**SystemProvisionMetadata**](SystemProvisionMetadata.md) |  | [optional] 
 **RemoteIP** | Pointer to **string** |  | [optional] 
+**SecureLoginEnabled** | Pointer to **bool** |  | [optional] 
 **SerialNumber** | Pointer to **string** |  | [optional] 
 **ServiceAccountState** | Pointer to [**SystemServiceAccountState**](SystemServiceAccountState.md) |  | [optional] 
 **SshRootEnabled** | Pointer to **bool** |  | [optional] 
@@ -290,6 +292,31 @@ SetArch sets Arch field to given value.
 `func (o *System) HasArch() bool`
 
 HasArch returns a boolean if a field has been set.
+
+### GetArchFamily
+
+`func (o *System) GetArchFamily() string`
+
+GetArchFamily returns the ArchFamily field if non-nil, zero value otherwise.
+
+### GetArchFamilyOk
+
+`func (o *System) GetArchFamilyOk() (*string, bool)`
+
+GetArchFamilyOk returns a tuple with the ArchFamily field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetArchFamily
+
+`func (o *System) SetArchFamily(v string)`
+
+SetArchFamily sets ArchFamily field to given value.
+
+### HasArchFamily
+
+`func (o *System) HasArchFamily() bool`
+
+HasArchFamily returns a boolean if a field has been set.
 
 ### GetAzureAdJoined
 
@@ -885,6 +912,31 @@ SetRemoteIP sets RemoteIP field to given value.
 `func (o *System) HasRemoteIP() bool`
 
 HasRemoteIP returns a boolean if a field has been set.
+
+### GetSecureLoginEnabled
+
+`func (o *System) GetSecureLoginEnabled() bool`
+
+GetSecureLoginEnabled returns the SecureLoginEnabled field if non-nil, zero value otherwise.
+
+### GetSecureLoginEnabledOk
+
+`func (o *System) GetSecureLoginEnabledOk() (*bool, bool)`
+
+GetSecureLoginEnabledOk returns a tuple with the SecureLoginEnabled field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSecureLoginEnabled
+
+`func (o *System) SetSecureLoginEnabled(v bool)`
+
+SetSecureLoginEnabled sets SecureLoginEnabled field to given value.
+
+### HasSecureLoginEnabled
+
+`func (o *System) HasSecureLoginEnabled() bool`
+
+HasSecureLoginEnabled returns a boolean if a field has been set.
 
 ### GetSerialNumber
 

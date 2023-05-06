@@ -4,7 +4,7 @@ All URIs are relative to *https://console.jumpcloud.com/api/v2*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**CloudInsightsCreateAccount**](CloudInsightsApi.md#CloudInsightsCreateAccount) | **Post** /cloudinsights/accounts | 
+[**CloudInsightsCreateAccount**](CloudInsightsApi.md#CloudInsightsCreateAccount) | **Post** /cloudinsights/accounts | Create AWS account record
 [**CloudInsightsCreateSavedView**](CloudInsightsApi.md#CloudInsightsCreateSavedView) | **Post** /cloudinsights/views | 
 [**CloudInsightsDeleteSavedView**](CloudInsightsApi.md#CloudInsightsDeleteSavedView) | **Delete** /cloudinsights/views/{view_id} | 
 [**CloudInsightsFetchDistinctFieldValues**](CloudInsightsApi.md#CloudInsightsFetchDistinctFieldValues) | **Post** /cloudinsights/events/distinct | 
@@ -22,7 +22,7 @@ Method | HTTP request | Description
 
 > CloudInsightsAccountPostResponse CloudInsightsCreateAccount(ctx).XOrgId(xOrgId).Body(body).Execute()
 
-
+Create AWS account record
 
 
 
@@ -35,7 +35,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -103,7 +103,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -171,7 +171,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -243,7 +243,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -311,7 +311,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -383,7 +383,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -449,7 +449,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -521,7 +521,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -587,7 +587,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -655,7 +655,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -729,7 +729,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {

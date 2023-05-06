@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **MemberQueryExemptions** | Pointer to [**[]GraphObject**](GraphObject.md) | Array of GraphObjects exempted from the query | [optional] 
 **MemberSuggestionsNotify** | Pointer to **bool** | True if notification emails are to be sent for membership suggestions. | [optional] 
 **MembershipAutomated** | Pointer to **bool** | True if membership of this group is automatically updated based on the Member Query and Member Query Exemptions, if configured | [optional] 
+**MembershipMethod** | Pointer to [**GroupMembershipMethodType**](GroupMembershipMethodType.md) |  | [optional] 
 **Name** | Pointer to **string** | Display name of a User Group. | [optional] 
 **SuggestionCounts** | Pointer to [**SuggestionCounts**](SuggestionCounts.md) |  | [optional] 
 **Type** | Pointer to **string** | The type of the group. | [optional] 
@@ -234,6 +235,31 @@ SetMembershipAutomated sets MembershipAutomated field to given value.
 `func (o *UserGroup) HasMembershipAutomated() bool`
 
 HasMembershipAutomated returns a boolean if a field has been set.
+
+### GetMembershipMethod
+
+`func (o *UserGroup) GetMembershipMethod() GroupMembershipMethodType`
+
+GetMembershipMethod returns the MembershipMethod field if non-nil, zero value otherwise.
+
+### GetMembershipMethodOk
+
+`func (o *UserGroup) GetMembershipMethodOk() (*GroupMembershipMethodType, bool)`
+
+GetMembershipMethodOk returns a tuple with the MembershipMethod field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMembershipMethod
+
+`func (o *UserGroup) SetMembershipMethod(v GroupMembershipMethodType)`
+
+SetMembershipMethod sets MembershipMethod field to given value.
+
+### HasMembershipMethod
+
+`func (o *UserGroup) HasMembershipMethod() bool`
+
+HasMembershipMethod returns a boolean if a field has been set.
 
 ### GetName
 

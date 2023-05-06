@@ -49,7 +49,9 @@ func (r CustomEmailsApiCustomEmailsCreateRequest) Execute() (*CustomEmail, *http
 /*
 CustomEmailsCreate Create custom email configuration
 
-Create the custom email configuration for the specified custom email type
+Create the custom email configuration for the specified custom email type.
+
+This action is only available to paying customers.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @return CustomEmailsApiCustomEmailsCreateRequest
@@ -775,7 +777,9 @@ func (r CustomEmailsApiCustomEmailsUpdateRequest) Execute() (*CustomEmail, *http
 /*
 CustomEmailsUpdate Update custom email configuration
 
-Update the custom email configuration for the specified custom email type
+Update the custom email configuration for the specified custom email type.
+
+This action is only available to paying customers.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param customEmailType

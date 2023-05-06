@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Attributes** | Pointer to **map[string]interface{}** |  | [optional] 
+**Attributes** | Pointer to [**GraphOperationSystemAllOfAttributes**](GraphOperationSystemAllOfAttributes.md) |  | [optional] 
 **Type** | **string** | Targets which a \&quot;user\&quot; can be associated to. | 
 
 ## Methods
@@ -28,20 +28,20 @@ but it doesn't guarantee that properties required by API are set
 
 ### GetAttributes
 
-`func (o *GraphOperationUserAllOf) GetAttributes() map[string]interface{}`
+`func (o *GraphOperationUserAllOf) GetAttributes() GraphOperationSystemAllOfAttributes`
 
 GetAttributes returns the Attributes field if non-nil, zero value otherwise.
 
 ### GetAttributesOk
 
-`func (o *GraphOperationUserAllOf) GetAttributesOk() (*map[string]interface{}, bool)`
+`func (o *GraphOperationUserAllOf) GetAttributesOk() (*GraphOperationSystemAllOfAttributes, bool)`
 
 GetAttributesOk returns a tuple with the Attributes field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetAttributes
 
-`func (o *GraphOperationUserAllOf) SetAttributes(v map[string]interface{})`
+`func (o *GraphOperationUserAllOf) SetAttributes(v GraphOperationSystemAllOfAttributes)`
 
 SetAttributes sets Attributes field to given value.
 

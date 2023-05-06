@@ -37,6 +37,7 @@ Method | HTTP request | Description
 [**ConnectwiseUpdateConfiguration**](ProvidersApi.md#ConnectwiseUpdateConfiguration) | **Patch** /integrations/connectwise/{UUID} | Update ConnectWise Integration configuration
 [**MtpIntegrationRetrieveAlerts**](ProvidersApi.md#MtpIntegrationRetrieveAlerts) | **Get** /providers/{provider_id}/integrations/ticketing/alerts | Get all ticketing alerts available for a provider&#39;s ticketing integration.
 [**MtpIntegrationRetrieveSyncErrors**](ProvidersApi.md#MtpIntegrationRetrieveSyncErrors) | **Get** /integrations/{integration_type}/{UUID}/errors | Retrieve Recent Integration Sync Errors
+[**PolicyGroupTemplatesDelete**](ProvidersApi.md#PolicyGroupTemplatesDelete) | **Delete** /providers/{provider_id}/policygrouptemplates/{id} | Deletes policy group template.
 [**PolicyGroupTemplatesGet**](ProvidersApi.md#PolicyGroupTemplatesGet) | **Get** /providers/{provider_id}/policygrouptemplates/{id} | Gets a provider&#39;s policy group template.
 [**PolicyGroupTemplatesGetConfiguredPolicyTemplate**](ProvidersApi.md#PolicyGroupTemplatesGetConfiguredPolicyTemplate) | **Get** /providers/{provider_id}/configuredpolicytemplates/{id} | Retrieve a configured policy template by id.
 [**PolicyGroupTemplatesList**](ProvidersApi.md#PolicyGroupTemplatesList) | **Get** /providers/{provider_id}/policygrouptemplates | List a provider&#39;s policy group templates.
@@ -85,7 +86,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -157,7 +158,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -225,7 +226,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -295,7 +296,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -367,7 +368,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -439,7 +440,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -509,7 +510,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -579,7 +580,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -659,7 +660,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -729,7 +730,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -809,7 +810,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -879,7 +880,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -959,7 +960,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1039,7 +1040,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1109,7 +1110,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1184,7 +1185,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1256,7 +1257,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1328,7 +1329,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1396,7 +1397,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1466,7 +1467,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1538,7 +1539,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1610,7 +1611,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1693,7 +1694,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1773,7 +1774,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1843,7 +1844,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1913,7 +1914,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1993,7 +1994,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2063,7 +2064,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2143,7 +2144,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2213,7 +2214,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2288,7 +2289,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2360,7 +2361,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2430,7 +2431,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2486,6 +2487,77 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
+## PolicyGroupTemplatesDelete
+
+> PolicyGroupTemplatesDelete(ctx, providerId, id).Execute()
+
+Deletes policy group template.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+)
+
+func main() {
+    providerId := "providerId_example" // string | 
+    id := "id_example" // string | 
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    r, err := apiClient.ProvidersApi.PolicyGroupTemplatesDelete(context.Background(), providerId, id).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `ProvidersApi.PolicyGroupTemplatesDelete``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**providerId** | **string** |  | 
+**id** | **string** |  | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPolicyGroupTemplatesDeleteRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+[x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
 ## PolicyGroupTemplatesGet
 
 > PolicyGroupTemplate PolicyGroupTemplatesGet(ctx, providerId, id).Execute()
@@ -2503,7 +2575,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2576,7 +2648,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2634,7 +2706,7 @@ Name | Type | Description  | Notes
 
 ## PolicyGroupTemplatesList
 
-> PolicyGroupTemplates PolicyGroupTemplatesList(ctx, providerId).Skip(skip).Sort(sort).Limit(limit).Filter(filter).Execute()
+> PolicyGroupTemplates PolicyGroupTemplatesList(ctx, providerId).Fields(fields).Skip(skip).Sort(sort).Limit(limit).Filter(filter).Execute()
 
 List a provider's policy group templates.
 
@@ -2649,11 +2721,12 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
     providerId := "providerId_example" // string | 
+    fields := []string{"Inner_example"} // []string | The comma separated fields included in the returned records. If omitted, the default list of fields will be returned.  (optional) (default to [])
     skip := int32(56) // int32 | The offset into the records to return. (optional) (default to 0)
     sort := []string{"Inner_example"} // []string | The comma separated fields used to sort the collection. Default sort is ascending, prefix with `-` to sort descending.  (optional) (default to [])
     limit := int32(56) // int32 | The number of records to return at once. Limited to 100. (optional) (default to 10)
@@ -2661,7 +2734,7 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.ProvidersApi.PolicyGroupTemplatesList(context.Background(), providerId).Skip(skip).Sort(sort).Limit(limit).Filter(filter).Execute()
+    resp, r, err := apiClient.ProvidersApi.PolicyGroupTemplatesList(context.Background(), providerId).Fields(fields).Skip(skip).Sort(sort).Limit(limit).Filter(filter).Execute()
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error when calling `ProvidersApi.PolicyGroupTemplatesList``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -2687,6 +2760,7 @@ Other parameters are passed through a pointer to a apiPolicyGroupTemplatesListRe
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 
+ **fields** | **[]string** | The comma separated fields included in the returned records. If omitted, the default list of fields will be returned.  | [default to []]
  **skip** | **int32** | The offset into the records to return. | [default to 0]
  **sort** | **[]string** | The comma separated fields used to sort the collection. Default sort is ascending, prefix with &#x60;-&#x60; to sort descending.  | [default to []]
  **limit** | **int32** | The number of records to return at once. Limited to 100. | [default to 10]
@@ -2727,7 +2801,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2805,7 +2879,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2886,7 +2960,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -2958,7 +3032,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3033,7 +3107,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3105,7 +3179,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3187,7 +3261,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3269,7 +3343,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3341,7 +3415,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3412,7 +3486,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3490,7 +3564,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3563,7 +3637,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3639,7 +3713,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3711,7 +3785,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3779,7 +3853,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3849,7 +3923,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3921,7 +3995,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -3993,7 +4067,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4063,7 +4137,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4133,7 +4207,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4213,7 +4287,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4293,7 +4367,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4373,7 +4447,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4443,7 +4517,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -4518,7 +4592,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {

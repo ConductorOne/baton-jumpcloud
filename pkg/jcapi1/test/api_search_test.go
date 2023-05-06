@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
-	openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
+	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 )
 
 func Test_jcapi1_SearchApiService(t *testing.T) {

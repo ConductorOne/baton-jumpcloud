@@ -37,8 +37,7 @@ build-jcapi2:
 	rm -rf build/jcapi2/go.mod build/jcapi2/go.sum
 	rm -rf pkg/jcapi2
 	mv build/jcapi2 pkg/
-	find pkg/jcapi2 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/ConductorOne\/baton\-jumpcloud\/pkg/g'
-	cd pkg/jcapi2 && go mod init github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2 && go mod tidy -v
+	find pkg/jcapi2 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/conductorone\/baton\-jumpcloud\/pkg/g'
 
 .PHONY: build-jcapi1
 build-jcapi1:
@@ -54,8 +53,7 @@ build-jcapi1:
 	rm -rf build/jcapi1/go.mod build/jcapi1/go.sum
 	rm -rf pkg/jcapi1
 	mv build/jcapi1 pkg/
-	find pkg/jcapi1 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/ConductorOne\/baton\-jumpcloud\/pkg/g'
-	cd pkg/jcapi1 && go mod init github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1 && go mod tidy -v
+	find pkg/jcapi1 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/GIT_USER_ID\/GIT_REPO_ID/conductorone\/baton\-jumpcloud\/pkg/g'
 
 .PHONY: lint
 lint:

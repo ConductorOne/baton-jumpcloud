@@ -2358,310 +2358,6 @@ func (a *UserGroupsApiService) GraphUserGroupTraverseSystemGroupExecute(r UserGr
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type UserGroupsApiGroupsSuggestionsGetRequest struct {
-	ctx context.Context
-	ApiService *UserGroupsApiService
-	groupId string
-	xOrgId *string
-	limit *int32
-	skip *int32
-}
-
-// Organization identifier that can be obtained from console settings.
-func (r UserGroupsApiGroupsSuggestionsGetRequest) XOrgId(xOrgId string) UserGroupsApiGroupsSuggestionsGetRequest {
-	r.xOrgId = &xOrgId
-	return r
-}
-
-// The number of records to return at once. Limited to 100.
-func (r UserGroupsApiGroupsSuggestionsGetRequest) Limit(limit int32) UserGroupsApiGroupsSuggestionsGetRequest {
-	r.limit = &limit
-	return r
-}
-
-// The offset into the records to return.
-func (r UserGroupsApiGroupsSuggestionsGetRequest) Skip(skip int32) UserGroupsApiGroupsSuggestionsGetRequest {
-	r.skip = &skip
-	return r
-}
-
-func (r UserGroupsApiGroupsSuggestionsGetRequest) Execute() ([]MemberSuggestion, *http.Response, error) {
-	return r.ApiService.GroupsSuggestionsGetExecute(r)
-}
-
-/*
-GroupsSuggestionsGet List Suggestions for a User Group
-
-This endpoint returns available suggestions for a given group
-#### Sample Request
-```
-curl -X GET https://console.jumpcloud.com/api/v2/usergroups/{GroupID}/suggestions \
-  -H 'Accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'x-api-key: {API_KEY}'
-
-```
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param groupId ID of the group
- @return UserGroupsApiGroupsSuggestionsGetRequest
-*/
-func (a *UserGroupsApiService) GroupsSuggestionsGet(ctx context.Context, groupId string) UserGroupsApiGroupsSuggestionsGetRequest {
-	return UserGroupsApiGroupsSuggestionsGetRequest{
-		ApiService: a,
-		ctx: ctx,
-		groupId: groupId,
-	}
-}
-
-// Execute executes the request
-//  @return []MemberSuggestion
-func (a *UserGroupsApiService) GroupsSuggestionsGetExecute(r UserGroupsApiGroupsSuggestionsGetRequest) ([]MemberSuggestion, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodGet
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  []MemberSuggestion
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UserGroupsApiService.GroupsSuggestionsGet")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/usergroups/{group_id}/suggestions"
-	localVarPath = strings.Replace(localVarPath, "{"+"group_id"+"}", url.PathEscape(parameterValueToString(r.groupId, "groupId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
-	}
-	if r.skip != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "skip", r.skip, "")
-	}
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.xOrgId != nil {
-		parameterAddToHeaderOrQuery(localVarHeaderParams, "x-org-id", r.xOrgId, "")
-	}
-	if r.ctx != nil {
-		// API Key Authentication
-		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
-			if apiKey, ok := auth["x-api-key"]; ok {
-				var key string
-				if apiKey.Prefix != "" {
-					key = apiKey.Prefix + " " + apiKey.Key
-				} else {
-					key = apiKey.Key
-				}
-				localVarHeaderParams["x-api-key"] = key
-			}
-		}
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type UserGroupsApiGroupsSuggestionsPostRequest struct {
-	ctx context.Context
-	ApiService *UserGroupsApiService
-	groupId string
-	body *GroupsSuggestionsPostRequest
-	xOrgId *string
-}
-
-func (r UserGroupsApiGroupsSuggestionsPostRequest) Body(body GroupsSuggestionsPostRequest) UserGroupsApiGroupsSuggestionsPostRequest {
-	r.body = &body
-	return r
-}
-
-// Organization identifier that can be obtained from console settings.
-func (r UserGroupsApiGroupsSuggestionsPostRequest) XOrgId(xOrgId string) UserGroupsApiGroupsSuggestionsPostRequest {
-	r.xOrgId = &xOrgId
-	return r
-}
-
-func (r UserGroupsApiGroupsSuggestionsPostRequest) Execute() ([]MemberSuggestionsPostResult, *http.Response, error) {
-	return r.ApiService.GroupsSuggestionsPostExecute(r)
-}
-
-/*
-GroupsSuggestionsPost List Suggestions for a User Group
-
-This endpoint applies the suggestions for the specified user group.
-#### Sample Request
-```
-curl -X PUT https://console.jumpcloud.com/api/v2/usergroups/{GroupID}/suggestions \
-  -H 'Accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -H 'x-api-key: {API_KEY}' \
-  -d '{
-         "user_ids": ["212345678901234567890123",
-                      "123456789012345678901234"]
-     }'
-```
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param groupId ID of the group
- @return UserGroupsApiGroupsSuggestionsPostRequest
-*/
-func (a *UserGroupsApiService) GroupsSuggestionsPost(ctx context.Context, groupId string) UserGroupsApiGroupsSuggestionsPostRequest {
-	return UserGroupsApiGroupsSuggestionsPostRequest{
-		ApiService: a,
-		ctx: ctx,
-		groupId: groupId,
-	}
-}
-
-// Execute executes the request
-//  @return []MemberSuggestionsPostResult
-func (a *UserGroupsApiService) GroupsSuggestionsPostExecute(r UserGroupsApiGroupsSuggestionsPostRequest) ([]MemberSuggestionsPostResult, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  []MemberSuggestionsPostResult
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UserGroupsApiService.GroupsSuggestionsPost")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/usergroups/{group_id}/suggestions"
-	localVarPath = strings.Replace(localVarPath, "{"+"group_id"+"}", url.PathEscape(parameterValueToString(r.groupId, "groupId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.body == nil {
-		return localVarReturnValue, nil, reportError("body is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	if r.xOrgId != nil {
-		parameterAddToHeaderOrQuery(localVarHeaderParams, "x-org-id", r.xOrgId, "")
-	}
-	// body params
-	localVarPostBody = r.body
-	if r.ctx != nil {
-		// API Key Authentication
-		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
-			if apiKey, ok := auth["x-api-key"]; ok {
-				var key string
-				if apiKey.Prefix != "" {
-					key = apiKey.Prefix + " " + apiKey.Key
-				} else {
-					key = apiKey.Key
-				}
-				localVarHeaderParams["x-api-key"] = key
-			}
-		}
-	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
 type UserGroupsApiGroupsUserDeleteRequest struct {
 	ctx context.Context
 	ApiService *UserGroupsApiService
@@ -3346,6 +3042,310 @@ func (a *UserGroupsApiService) GroupsUserPutExecute(r UserGroupsApiGroupsUserPut
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.xOrgId != nil {
+		parameterAddToHeaderOrQuery(localVarHeaderParams, "x-org-id", r.xOrgId, "")
+	}
+	// body params
+	localVarPostBody = r.body
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["x-api-key"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["x-api-key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type UserGroupsApiGroupsUserSuggestionsGetRequest struct {
+	ctx context.Context
+	ApiService *UserGroupsApiService
+	groupId string
+	xOrgId *string
+	limit *int32
+	skip *int32
+}
+
+// Organization identifier that can be obtained from console settings.
+func (r UserGroupsApiGroupsUserSuggestionsGetRequest) XOrgId(xOrgId string) UserGroupsApiGroupsUserSuggestionsGetRequest {
+	r.xOrgId = &xOrgId
+	return r
+}
+
+// The number of records to return at once. Limited to 100.
+func (r UserGroupsApiGroupsUserSuggestionsGetRequest) Limit(limit int32) UserGroupsApiGroupsUserSuggestionsGetRequest {
+	r.limit = &limit
+	return r
+}
+
+// The offset into the records to return.
+func (r UserGroupsApiGroupsUserSuggestionsGetRequest) Skip(skip int32) UserGroupsApiGroupsUserSuggestionsGetRequest {
+	r.skip = &skip
+	return r
+}
+
+func (r UserGroupsApiGroupsUserSuggestionsGetRequest) Execute() ([]MemberSuggestion, *http.Response, error) {
+	return r.ApiService.GroupsUserSuggestionsGetExecute(r)
+}
+
+/*
+GroupsUserSuggestionsGet List Suggestions for a User Group
+
+This endpoint returns available suggestions for a given group
+#### Sample Request
+```
+curl -X GET https://console.jumpcloud.com/api/v2/usergroups/{GroupID}/suggestions \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H 'x-api-key: {API_KEY}'
+
+```
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param groupId ID of the group
+ @return UserGroupsApiGroupsUserSuggestionsGetRequest
+*/
+func (a *UserGroupsApiService) GroupsUserSuggestionsGet(ctx context.Context, groupId string) UserGroupsApiGroupsUserSuggestionsGetRequest {
+	return UserGroupsApiGroupsUserSuggestionsGetRequest{
+		ApiService: a,
+		ctx: ctx,
+		groupId: groupId,
+	}
+}
+
+// Execute executes the request
+//  @return []MemberSuggestion
+func (a *UserGroupsApiService) GroupsUserSuggestionsGetExecute(r UserGroupsApiGroupsUserSuggestionsGetRequest) ([]MemberSuggestion, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  []MemberSuggestion
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UserGroupsApiService.GroupsUserSuggestionsGet")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/usergroups/{group_id}/suggestions"
+	localVarPath = strings.Replace(localVarPath, "{"+"group_id"+"}", url.PathEscape(parameterValueToString(r.groupId, "groupId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+	}
+	if r.skip != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "skip", r.skip, "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.xOrgId != nil {
+		parameterAddToHeaderOrQuery(localVarHeaderParams, "x-org-id", r.xOrgId, "")
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["x-api-key"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["x-api-key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type UserGroupsApiGroupsUserSuggestionsPostRequest struct {
+	ctx context.Context
+	ApiService *UserGroupsApiService
+	groupId string
+	body *GroupsUserSuggestionsPostRequest
+	xOrgId *string
+}
+
+func (r UserGroupsApiGroupsUserSuggestionsPostRequest) Body(body GroupsUserSuggestionsPostRequest) UserGroupsApiGroupsUserSuggestionsPostRequest {
+	r.body = &body
+	return r
+}
+
+// Organization identifier that can be obtained from console settings.
+func (r UserGroupsApiGroupsUserSuggestionsPostRequest) XOrgId(xOrgId string) UserGroupsApiGroupsUserSuggestionsPostRequest {
+	r.xOrgId = &xOrgId
+	return r
+}
+
+func (r UserGroupsApiGroupsUserSuggestionsPostRequest) Execute() ([]MemberSuggestionsPostResult, *http.Response, error) {
+	return r.ApiService.GroupsUserSuggestionsPostExecute(r)
+}
+
+/*
+GroupsUserSuggestionsPost Apply Suggestions for a User Group
+
+This endpoint applies the suggestions for the specified user group.
+#### Sample Request
+```
+curl -X PUT https://console.jumpcloud.com/api/v2/usergroups/{GroupID}/suggestions \
+  -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -H 'x-api-key: {API_KEY}' \
+  -d '{
+         "user_ids": ["212345678901234567890123",
+                      "123456789012345678901234"]
+     }'
+```
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param groupId ID of the group
+ @return UserGroupsApiGroupsUserSuggestionsPostRequest
+*/
+func (a *UserGroupsApiService) GroupsUserSuggestionsPost(ctx context.Context, groupId string) UserGroupsApiGroupsUserSuggestionsPostRequest {
+	return UserGroupsApiGroupsUserSuggestionsPostRequest{
+		ApiService: a,
+		ctx: ctx,
+		groupId: groupId,
+	}
+}
+
+// Execute executes the request
+//  @return []MemberSuggestionsPostResult
+func (a *UserGroupsApiService) GroupsUserSuggestionsPostExecute(r UserGroupsApiGroupsUserSuggestionsPostRequest) ([]MemberSuggestionsPostResult, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  []MemberSuggestionsPostResult
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "UserGroupsApiService.GroupsUserSuggestionsPost")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/usergroups/{group_id}/suggestions"
+	localVarPath = strings.Replace(localVarPath, "{"+"group_id"+"}", url.PathEscape(parameterValueToString(r.groupId, "groupId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.body == nil {
+		return localVarReturnValue, nil, reportError("body is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

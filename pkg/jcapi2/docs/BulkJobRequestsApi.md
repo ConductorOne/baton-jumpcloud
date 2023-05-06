@@ -4,6 +4,7 @@ All URIs are relative to *https://console.jumpcloud.com/api/v2*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**BulkUserExpires**](BulkJobRequestsApi.md#BulkUserExpires) | **Post** /bulk/user/expires | Bulk Expire Users
 [**BulkUserStatesCreate**](BulkJobRequestsApi.md#BulkUserStatesCreate) | **Post** /bulk/userstates | Create Scheduled Userstate Job
 [**BulkUserStatesDelete**](BulkJobRequestsApi.md#BulkUserStatesDelete) | **Delete** /bulk/userstates/{id} | Delete Scheduled Userstate Job
 [**BulkUserStatesGetNextScheduled**](BulkJobRequestsApi.md#BulkUserStatesGetNextScheduled) | **Get** /bulk/userstates/eventlist/next | Get the next scheduled state change for a list of users
@@ -12,6 +13,74 @@ Method | HTTP request | Description
 [**BulkUsersCreateResults**](BulkJobRequestsApi.md#BulkUsersCreateResults) | **Get** /bulk/users/{job_id}/results | List Bulk Users Results
 [**BulkUsersUpdate**](BulkJobRequestsApi.md#BulkUsersUpdate) | **Patch** /bulk/users | Bulk Users Update
 
+
+
+## BulkUserExpires
+
+> JobId BulkUserExpires(ctx).XOrgId(xOrgId).Body(body).Execute()
+
+Bulk Expire Users
+
+
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+)
+
+func main() {
+    xOrgId := "xOrgId_example" // string | Organization identifier that can be obtained from console settings. (optional)
+    body := []openapiclient.BulkUserExpire{*openapiclient.NewBulkUserExpire()} // []BulkUserExpire |  (optional)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.BulkJobRequestsApi.BulkUserExpires(context.Background()).XOrgId(xOrgId).Body(body).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `BulkJobRequestsApi.BulkUserExpires``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `BulkUserExpires`: JobId
+    fmt.Fprintf(os.Stdout, "Response from `BulkJobRequestsApi.BulkUserExpires`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiBulkUserExpiresRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **xOrgId** | **string** | Organization identifier that can be obtained from console settings. | 
+ **body** | [**[]BulkUserExpire**](BulkUserExpire.md) |  | 
+
+### Return type
+
+[**JobId**](JobId.md)
+
+### Authorization
+
+[x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
 
 
 ## BulkUserStatesCreate
@@ -32,7 +101,7 @@ import (
     "fmt"
     "os"
     "time"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -100,7 +169,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -170,7 +239,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -240,7 +309,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -314,7 +383,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -384,7 +453,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -460,7 +529,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {

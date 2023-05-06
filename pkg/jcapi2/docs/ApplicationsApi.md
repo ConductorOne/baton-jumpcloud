@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**ApplicationsDeleteLogo**](ApplicationsApi.md#ApplicationsDeleteLogo) | **Delete** /applications/{application_id}/logo | Delete application image
 [**ApplicationsGet**](ApplicationsApi.md#ApplicationsGet) | **Get** /applications/{application_id} | Get an Application
-[**ApplicationsPostLogo**](ApplicationsApi.md#ApplicationsPostLogo) | **Post** /applications/{application_id}/logo | 
+[**ApplicationsPostLogo**](ApplicationsApi.md#ApplicationsPostLogo) | **Post** /applications/{application_id}/logo | Save application logo
 [**GraphApplicationAssociationsList**](ApplicationsApi.md#GraphApplicationAssociationsList) | **Get** /applications/{application_id}/associations | List the associations of an Application
 [**GraphApplicationAssociationsPost**](ApplicationsApi.md#GraphApplicationAssociationsPost) | **Post** /applications/{application_id}/associations | Manage the associations of an Application
 [**GraphApplicationTraverseUser**](ApplicationsApi.md#GraphApplicationTraverseUser) | **Get** /applications/{application_id}/users | List the Users bound to an Application
@@ -33,7 +33,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -103,7 +103,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -162,7 +162,7 @@ Name | Type | Description  | Notes
 
 > ApplicationsPostLogo(ctx, applicationId).XOrgId(xOrgId).Image(image).Execute()
 
-
+Save application logo
 
 
 
@@ -175,7 +175,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -247,7 +247,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -325,7 +325,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -397,7 +397,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -475,7 +475,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -553,7 +553,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -627,7 +627,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {

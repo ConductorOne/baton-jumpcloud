@@ -26,7 +26,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 )
 
 func main() {
@@ -108,7 +108,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 )
 
 func main() {

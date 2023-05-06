@@ -307,8 +307,8 @@ servers:
 - url: https://console.jumpcloud.com/api/v2
 tags:
 - name: AccountManagerCalendar
-- name: AddOn
 - name: Active Directory
+- name: AddOn
 - name: Administrators
 - name: Apple MDM
 - name: Apple VPP
@@ -316,9 +316,9 @@ tags:
 - name: Authentication Policies
 - name: Bulk Job Requests
 - name: Cloud Insights
-- name: Commands
-- name: Command Templates
 - name: Command Results
+- name: Command Templates
+- name: Commands
 - name: Configuration
 - name: Countries
 - name: Custom Emails
@@ -327,20 +327,18 @@ tags:
 - name: Directory Insights
 - name: Duo
 - name: Edge
-- name: fde
 - name: FeatureTrials
 - name: G Suite
 - name: G Suite Import
+- name: Google EMM
 - name: Graph
 - name: Groups
-- name: Image
 - name: IP Lists
-- name: OS Lists
+- name: Image
 - name: Knowledge
 - name: LDAP Servers
 - name: Logos
 - name: Managed Service Provider
-- name: Push
 - name: Office 365
 - name: Office 365 Import
 - name: Organizations
@@ -348,37 +346,38 @@ tags:
 - name: Password Manager
 - name: Plan
 - name: Plan Feature
-- name: Trial Feature Insights
 - name: Policies
-- name: Policy Groups
 - name: Policy Group Associations
 - name: Policy Group Members & Membership
 - name: Policy Group Templates
+- name: Policy Groups
 - name: Policytemplates
 - name: Providers
+- name: Push
 - name: RADIUS Servers
-- name: Remote Assist
 - name: Recommendations
-- name: Samba Domains
-- name: Software Catalog
-- name: Software Apps
-- name: Subscriptions
-- name: SubscriptionComponent
-- name: SubscriptionData
-- name: System Groups
-- name: System Group Associations
-- name: System Group Members & Membership
-- name: System Insights
-- name: Systems
+- name: Remote Assist
 - name: SCIM Import
 - name: SSO
+- name: Samba Domains
+- name: Software Apps
+- name: Software Catalog
+- name: SubscriptionComponent
+- name: SubscriptionData
+- name: Subscriptions
+- name: System Group Associations
+- name: System Group Members & Membership
+- name: System Groups
+- name: System Insights
+- name: Systems
+- name: Trial Feature Insights
 - name: User Group Associations
-- name: User Groups
 - name: User Group Members & Membership
+- name: User Groups
 - name: Users
 - name: WebAuthn
 - name: Workday Import
-- name: Google EMM
+- name: fde
 paths:
   /accountManagerCalendar/{id}:
     x-functionalities-tags:
@@ -3722,7 +3721,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"ades":{"ios":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"macos":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}}},"allowMobileUserEnrollment":true,"appleCertCreatorAppleID":"string","appleSignedCert":"string","defaultIosUserEnrollmentDeviceGroupID":"string","defaultSystemGroupID":"string","dep":{"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"encryptedDepServerToken":"string","name":"string"}'
+            --data '{"ades":{"ios":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"setupOptions":["accessibility"],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"macos":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"setupOptions":["accessibility"],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}}},"allowMobileUserEnrollment":true,"appleCertCreatorAppleID":"string","appleSignedCert":"string","defaultIosUserEnrollmentDeviceGroupID":"string","defaultSystemGroupID":"string","dep":{"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"encryptedDepServerToken":"string","name":"string"}'
       - lang: Python
         source: |-
           import requests
@@ -3735,6 +3734,7 @@ paths:
                       "defaultDeviceGroupObjectIds": ["string"],
                       "enableZeroTouchEnrollment": True,
                       "setupAssistantOptions": [{"option": "accessibility"}],
+                      "setupOptions": ["accessibility"],
                       "welcomeScreen": {
                           "button": "string",
                           "paragraph": "string",
@@ -3745,6 +3745,7 @@ paths:
                       "defaultDeviceGroupObjectIds": ["string"],
                       "enableZeroTouchEnrollment": True,
                       "setupAssistantOptions": [{"option": "accessibility"}],
+                      "setupOptions": ["accessibility"],
                       "welcomeScreen": {
                           "button": "string",
                           "paragraph": "string",
@@ -3784,7 +3785,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/applemdms/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"ades":{"ios":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"macos":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}}},"allowMobileUserEnrollment":true,"appleCertCreatorAppleID":"string","appleSignedCert":"string","defaultIosUserEnrollmentDeviceGroupID":"string","defaultSystemGroupID":"string","dep":{"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"encryptedDepServerToken":"string","name":"string"}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/applemdms/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"ades":{"ios":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"setupOptions":["accessibility"],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"macos":{"defaultDeviceGroupObjectIds":["string"],"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"setupOptions":["accessibility"],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}}},"allowMobileUserEnrollment":true,"appleCertCreatorAppleID":"string","appleSignedCert":"string","defaultIosUserEnrollmentDeviceGroupID":"string","defaultSystemGroupID":"string","dep":{"enableZeroTouchEnrollment":true,"setupAssistantOptions":[{"option":"accessibility"}],"welcomeScreen":{"button":"string","paragraph":"string","title":"string"}},"encryptedDepServerToken":"string","name":"string"}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - mdm
@@ -4438,6 +4439,7 @@ paths:
           description: ""
       security:
       - x-api-key: []
+      summary: Save application logo
       tags:
       - Applications
       x-scopes:
@@ -4968,7 +4970,6 @@ paths:
       - Authentication Policies
       x-scopes:
       - authn
-      - authn.readonly
       x-codeSamples:
       - lang: Shell
         source: |-
@@ -5121,7 +5122,6 @@ paths:
       - Authentication Policies
       x-scopes:
       - authn
-      - authn.readonly
       x-codeSamples:
       - lang: Shell
         source: |-
@@ -5412,6 +5412,78 @@ paths:
   /authn/policy/fallback/{resource_type}:
     x-functionalities-tags:
     - policies
+  /bulk/user/expires:
+    post:
+      description: The endpoint allows you to start a bulk job to asynchronously expire
+        users.
+      operationId: bulk_userExpires
+      parameters:
+      - description: Organization identifier that can be obtained from console settings.
+        in: header
+        name: x-org-id
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/bulk-user-expire'
+              type: array
+        required: false
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/job-id'
+          description: Created
+      security:
+      - x-api-key: []
+      summary: Bulk Expire Users
+      tags:
+      - Bulk Job Requests
+      x-scopes:
+      - users
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/bulk/user/expires \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --header 'x-org-id: SOME_STRING_VALUE' \
+            --data '[{"attributes":[{}],"id":"string","organization":"string"}]'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/bulk/user/expires"
+
+          payload = [
+              {
+                  "attributes": [{}],
+                  "id": "string",
+                  "organization": "string"
+              }
+          ]
+          headers = {
+              "x-org-id": "SOME_STRING_VALUE",
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-org-id", "SOME_STRING_VALUE")
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/bulk/user/expires' -Method POST -Headers $headers -ContentType 'application/json' -Body '[{"attributes":[{}],"id":"string","organization":"string"}]'
+      x-codegen-request-body-name: body
   /bulk/users:
     patch:
       description: "The endpoint allows you to create a bulk job to asynchronously\
@@ -6364,6 +6436,7 @@ paths:
           description: ""
       security:
       - x-api-key: []
+      summary: Create AWS account record
       tags:
       - Cloud Insights
       x-scopes:
@@ -7580,9 +7653,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/CommandResultList'
           description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: ""
         "401":
-          content: {}
-          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
       security:
       - x-api-key: []
       summary: List all Command Results by Workflow
@@ -8118,8 +8224,10 @@ paths:
     - logos
   /customemails:
     post:
-      description: Create the custom email configuration for the specified custom
-        email type
+      description: |-
+        Create the custom email configuration for the specified custom email type.
+
+        This action is only available to paying customers.
       operationId: customEmails_create
       parameters:
       - description: Organization identifier that can be obtained from console settings.
@@ -8408,8 +8516,10 @@ paths:
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/customemails/{custom_email_type}' -Method GET -Headers $headers
     put:
-      description: Update the custom email configuration for the specified custom
-        email type
+      description: |-
+        Update the custom email configuration for the specified custom email type.
+
+        This action is only available to paying customers.
       operationId: customEmails_update
       parameters:
       - in: path
@@ -9628,6 +9738,7 @@ paths:
       - FeatureTrials
       x-scopes:
       - organizations
+      - organizations.readonly
       x-codeSamples:
       - lang: Shell
         source: |-
@@ -9653,6 +9764,782 @@ paths:
   /geolocation/countries:
     x-functionalities-tags:
     - geolocation
+  /google-emm/devices/{deviceId}:
+    get:
+      description: |-
+        Gets a Google EMM enrolled device details.
+
+        #### Sample Request
+        ```
+        curl -X GET https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId} \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Devices_GetDevice
+      parameters:
+      - in: path
+        name: deviceId
+        required: true
+        schema:
+          format: byte
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.Device'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Get device
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      - mdm.readonly
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request GET \
+            --url https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId} \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("GET", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}' -Method GET -Headers $headers
+  /google-emm/devices/{deviceId}/lock:
+    post:
+      description: |-
+        Locks a Google EMM enrolled device, as if the lock screen timeout had expired.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/lock \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Devices_LockDevice
+      parameters:
+      - in: path
+        name: deviceId
+        required: true
+        schema:
+          format: byte
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.CommandResponse'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Lock device
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/lock \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/lock"
+
+          payload = {}
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/lock' -Method POST -Headers $headers -ContentType 'application/json' -Body '{}'
+      x-codegen-request-body-name: body
+  /google-emm/devices/{deviceId}/policy_results:
+    get:
+      description: |-
+        Gets an android JSON policy for a Google EMM enrolled device.
+
+        #### Sample Request
+        ```
+        curl -X GET https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/policy_results \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Devices_GetDeviceAndroidPolicy
+      parameters:
+      - in: path
+        name: deviceId
+        required: true
+        schema:
+          format: byte
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.DeviceAndroidPolicy'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Get the policy JSON of a device
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      - mdm.readonly
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request GET \
+            --url https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/policy_results \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/policy_results"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("GET", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/policy_results' -Method GET -Headers $headers
+  /google-emm/devices/{deviceId}/relinquishownership:
+    post:
+      description: |-
+        Removes the work profile and all policies from a company-owned Android 8.0+ device, relinquishing the device for personal use. Apps and data associated with the personal profile(s) are preserved.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/reliquinshownership \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Devices_RelinquishOwnership
+      parameters:
+      - in: path
+        name: deviceId
+        required: true
+        schema:
+          format: byte
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.CommandResponse'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Relinquish Ownership of COPE device
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/relinquishownership \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/relinquishownership"
+
+          payload = {}
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/relinquishownership' -Method POST -Headers $headers -ContentType 'application/json' -Body '{}'
+      x-codegen-request-body-name: body
+  /google-emm/devices/{deviceId}/resetpassword:
+    post:
+      description: |-
+        Reset the user's password of a Google EMM enrolled device.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/resetpassword \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+          -d '{ 'new_password' : 'string' }' \
+        ```
+      operationId: Devices_ResetPassword
+      parameters:
+      - in: path
+        name: deviceId
+        required: true
+        schema:
+          format: byte
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Devices_ResetPassword_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.CommandResponse'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Reset Password of a device
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/resetpassword \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{"flags":["string"],"newPassword":"string"}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/resetpassword"
+
+          payload = {
+              "flags": ["string"],
+              "newPassword": "string"
+          }
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/devices/{deviceId}/resetpassword' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"flags":["string"],"newPassword":"string"}'
+      x-codegen-request-body-name: body
+  /google-emm/enterprises:
+    get:
+      description: "Lists all Google EMM enterprises. An empty list indicates that\
+        \ the Organization is not configured with a Google EMM enterprise yet. \n\n\
+        \ Note: Currently only one Google Enterprise per Organization is supported.\n\
+        \n#### Sample Request\n```\ncurl -X GET https://console.jumpcloud.com/api/v2/google-emm/enterprises\
+        \ \\\n  -H 'Accept: application/json' \\\n  -H 'Content-Type: application/json'\
+        \ \\\n  -H 'x-api-key: {API_KEY}' \\\n```"
+      operationId: Enterprises_ListEnterprises
+      parameters:
+      - in: query
+        name: queryParameters.limit
+        schema:
+          format: int64
+          type: string
+      - in: query
+        name: queryParameters.skip
+        schema:
+          format: int64
+          type: string
+      - explode: true
+        in: query
+        name: queryParameters.fields
+        schema:
+          items:
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.ListEnterprisesResponse'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: List Google Enterprises
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      - mdm.readonly
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request GET \
+            --url 'https://console.jumpcloud.com/api/v2/google-emm/enterprises?queryParameters.limit=SOME_STRING_VALUE&queryParameters.skip=SOME_STRING_VALUE&queryParameters.fields=SOME_ARRAY_VALUE' \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/enterprises"
+
+          querystring = {"queryParameters.limit":"SOME_STRING_VALUE","queryParameters.skip":"SOME_STRING_VALUE","queryParameters.fields":"SOME_ARRAY_VALUE"}
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("GET", url, headers=headers, params=querystring)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/enterprises?queryParameters.limit=SOME_STRING_VALUE&queryParameters.skip=SOME_STRING_VALUE&queryParameters.fields=SOME_ARRAY_VALUE' -Method GET -Headers $headers
+    post:
+      description: |-
+        Creates a Google EMM enterprise.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/enterprises \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+          -d '{ 'signupUrlName': 'string', 'enrollmentToken': 'string' }' \
+        ```
+      operationId: Enterprises_CreateEnterprise
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/jumpcloud.google_emm.CreateEnterpriseRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.Enterprise'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Create a Google Enterprise
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/enterprises \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{"enrollmentToken":"string","signupUrlName":"string"}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/enterprises"
+
+          payload = {
+              "enrollmentToken": "string",
+              "signupUrlName": "string"
+          }
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/enterprises' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"enrollmentToken":"string","signupUrlName":"string"}'
+      x-codegen-request-body-name: body
+  /google-emm/enterprises/{enterpriseId}:
+    delete:
+      description: |-
+        Removes a Google EMM enterprise.
+
+         Warning: This is a destructive operation and will remove all data associated with Google EMM enterprise from JumpCloud including devices and applications associated with the given enterprise.
+
+        #### Sample Request
+        ```
+        curl -X DELETE https://console.jumpcloud.com/api/v2/google-emm/devices/{enterpriseId} \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Enterprises_DeleteEnterprise
+      parameters:
+      - in: path
+        name: enterpriseId
+        required: true
+        schema:
+          format: byte
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Delete a Google Enterprise
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request DELETE \
+            --url https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId} \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("DELETE", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}' -Method DELETE -Headers $headers
+    patch:
+      description: |-
+        Updates a Google EMM enterprise details.
+
+        #### Sample Request
+        ```
+        curl -X PATCH https://console.jumpcloud.com/api/v2/google-emm/enterprises \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+          -d '{ 'allowDeviceEnrollment': true, 'deviceGroupId': 'string' }' \
+        ```
+      operationId: Enterprises_PatchEnterprise
+      parameters:
+      - in: path
+        name: enterpriseId
+        required: true
+        schema:
+          format: byte
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprises_PatchEnterprise_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.Enterprise'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Update a Google Enterprise
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request PATCH \
+            --url https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId} \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{"allowDeviceEnrollment":true,"deviceGroupId":"string"}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}"
+
+          payload = {
+              "allowDeviceEnrollment": True,
+              "deviceGroupId": "string"
+          }
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("PATCH", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}' -Method PATCH -Headers $headers -ContentType 'application/json' -Body '{"allowDeviceEnrollment":true,"deviceGroupId":"string"}'
+      x-codegen-request-body-name: body
+  /google-emm/enterprises/{enterpriseId}/connection-status:
+    get:
+      description: |-
+        Gives a connection status between JumpCloud and Google.
+
+        #### Sample Request
+        ```
+        curl -X GET https://console.jumpcloud.com/api/v2/google-emm/devices/{enterpriseId}/connection-status \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: Enterprises_GetConnectionStatus
+      parameters:
+      - in: path
+        name: enterpriseId
+        required: true
+        schema:
+          format: byte
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.ConnectionStatus'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Test connection with Google
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      - mdm.readonly
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request GET \
+            --url https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}/connection-status \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}/connection-status"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("GET", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/enterprises/{enterpriseId}/connection-status' -Method GET -Headers $headers
+  /google-emm/signup-urls:
+    post:
+      description: |-
+        Creates a Google EMM enterprise signup URL.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/signup-urls \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: SignupURLs_Create
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.SignupURL'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Get a Signup URL to enroll Google enterprise
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/signup-urls \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/signup-urls"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("POST", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/signup-urls' -Method POST -Headers $headers
+  /google-emm/web-tokens:
+    post:
+      description: |-
+        Creates a web token to access an embeddable managed Google Play web UI for a given Google EMM enterprise.
+
+        #### Sample Request
+        ```
+        curl -X POST https://console.jumpcloud.com/api/v2/google-emm/web-tokens \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+        ```
+      operationId: WebTokens_CreateWebToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/jumpcloud.google_emm.CreateWebTokenRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/jumpcloud.google_emm.WebToken'
+          description: A successful response.
+      security:
+      - x-api-key: []
+      summary: Get a web token to render Google Play iFrame
+      tags:
+      - Google EMM
+      x-dynamic-gateway: true
+      x-scopes:
+      - mdm
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/google-emm/web-tokens \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --data '{"enterpriseObjectId":"string","parentFrameUrl":"string"}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/google-emm/web-tokens"
+
+          payload = {
+              "enterpriseObjectId": "string",
+              "parentFrameUrl": "string"
+          }
+          headers = {
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/google-emm/web-tokens' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"enterpriseObjectId":"string","parentFrameUrl":"string"}'
+      x-codegen-request-body-name: body
   /groups:
     get:
       description: |-
@@ -15218,7 +16105,7 @@ paths:
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/ldapservers?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
-    - ldap-read
+    - ldap-management
   /ldapservers/{id}:
     get:
       description: |-
@@ -15258,7 +16145,7 @@ paths:
       tags:
       - LDAP Servers
       x-functionalities-tags:
-      - ldap-read
+      - ldap-management
       x-scopes:
       - directories
       - directories.readonly
@@ -15343,7 +16230,7 @@ paths:
       tags:
       - LDAP Servers
       x-functionalities-tags:
-      - ldap-update
+      - ldap-management
       x-scopes:
       - directories
       x-codeSamples:
@@ -15452,6 +16339,8 @@ paths:
       tags:
       - Graph
       - LDAP Servers
+      x-functionalities-tags:
+      - ldap-management
       x-scopes:
       - directories
       - directories.readonly
@@ -15531,6 +16420,8 @@ paths:
       tags:
       - Graph
       - LDAP Servers
+      x-functionalities-tags:
+      - ldap-management
       x-scopes:
       - directories
       x-codeSamples:
@@ -15677,6 +16568,8 @@ paths:
       summary: List Samba Domains
       tags:
       - Samba Domains
+      x-functionalities-tags:
+      - ldap-samba
       x-scopes:
       - directories
       - directories.readonly
@@ -15841,6 +16734,8 @@ paths:
       summary: Delete Samba Domain
       tags:
       - Samba Domains
+      x-functionalities-tags:
+      - ldap-samba
       x-scopes:
       - directories
       x-codeSamples:
@@ -15913,6 +16808,8 @@ paths:
       summary: Get Samba Domain
       tags:
       - Samba Domains
+      x-functionalities-tags:
+      - ldap-samba
       x-scopes:
       - directories
       - directories.readonly
@@ -16116,6 +17013,8 @@ paths:
       tags:
       - Graph
       - LDAP Servers
+      x-functionalities-tags:
+      - ldap-associations
       x-scopes:
       - groups
       - groups.readonly
@@ -16149,7 +17048,7 @@ paths:
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/ldapservers/{ldapserver_id}/usergroups?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
-    - ldap-read
+    - ldap-management
   /ldapservers/{ldapserver_id}/users:
     get:
       description: |-
@@ -16233,6 +17132,8 @@ paths:
       tags:
       - Graph
       - LDAP Servers
+      x-functionalities-tags:
+      - ldap-associations
       x-scopes:
       - users
       - users.readonly
@@ -16266,7 +17167,7 @@ paths:
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/ldapservers/{ldapserver_id}/users?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
-    - ldap-read
+    - ldap-management
   /logos/{id}:
     get:
       description: Return the logo image associated with the specified id
@@ -17550,9 +18451,6 @@ paths:
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/organizations/{id}/administratorlinks?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
     - organizations
-  /organizations/{id}/crypto:
-    x-functionalities-tags:
-    - organizations
   /organizations/{organization_id}/commandTemplates:
     x-functionalities-tags:
     - command-templates
@@ -17561,749 +18459,6 @@ paths:
     x-functionalities-tags:
     - command-templates
     - organizations
-  /oslists:
-    get:
-      description: |-
-        Retrieve all OS lists.
-
-        #### Sample Request
-        ```
-        curl https://console.jumpcloud.com/api/v2/oslists \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}'
-        ```
-      operationId: oslists_list
-      parameters:
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      - in: header
-        name: x-total-count
-        schema:
-          type: integer
-      - description: The number of records to return at once. Limited to 100.
-        in: query
-        name: limit
-        schema:
-          default: 10
-          type: integer
-      - description: The offset into the records to return.
-        in: query
-        name: skip
-        schema:
-          default: 0
-          minimum: 0
-          type: integer
-      - description: |-
-          A filter to apply to the query.
-
-          **Filter structure**: `<field>:<operator>:<value>`.
-
-          **field** = Populate with a valid field from an endpoint response.
-
-          **operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in.
-          _Note: v1 operators differ from v2 operators._
-
-          **value** = Populate with the value you want to search for. Is case sensitive. Supports wild cards.
-
-          **EX:** `GET /api/v2/groups?filter=name:eq:Test+Group`
-        explode: false
-        in: query
-        name: filter
-        schema:
-          default: "[]"
-          items:
-            type: string
-          type: array
-        style: form
-      - description: |
-          The comma separated fields used to sort the collection.
-          Default sort is ascending, prefix with `-` to sort descending.
-        explode: false
-        in: query
-        name: sort
-        schema:
-          default: "[]"
-          items:
-            type: string
-          type: array
-        style: form
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                items:
-                  $ref: '#/components/schemas/OSList'
-                type: array
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: List OS Version Restriction Lists
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      - authn.readonly
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request GET \
-            --url 'https://console.jumpcloud.com/api/v2/oslists?limit=10&skip=0' \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE' \
-            --header 'x-total-count: SOME_INTEGER_VALUE'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists"
-
-          querystring = {"limit":"10","skip":"0"}
-
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-total-count": "SOME_INTEGER_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE"
-          }
-
-          response = requests.request("GET", url, headers=headers, params=querystring)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-total-count", "SOME_INTEGER_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists?limit=10&skip=0' -Method GET -Headers $headers
-    post:
-      description: |-
-        Create an OS list.
-
-        #### Sample Request
-        ```
-        curl -X POST https://console.jumpcloud.com/api/v2/oslists \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}' \
-          -d '{
-            "name": "Sample OS List",
-            "entries": [
-              { "osName": "Windows", "release": "22H2", "major": "10", "minor": "1802"}
-            ]
-          }'
-        ```
-      operationId: oslists_post
-      parameters:
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OSListRequest'
-        required: false
-      responses:
-        "201":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OSList'
-          description: Created
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: Create OS List
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request POST \
-            --url https://console.jumpcloud.com/api/v2/oslists \
-            --header 'content-type: application/json' \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists"
-
-          payload = {
-              "description": "string",
-              "entries": [
-                  {
-                      "major": "string",
-                      "minor": "string",
-                      "osName": "string",
-                      "releaseName": "string"
-                  }
-              ],
-              "name": "string"
-          }
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE",
-              "content-type": "application/json"
-          }
-
-          response = requests.request("POST", url, json=payload, headers=headers)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      x-codegen-request-body-name: body
-    x-functionalities-tags:
-    - os-lists
-  /oslists/{id}:
-    delete:
-      description: |-
-        Delete a specific OS list.
-
-        #### Sample Request
-        ```
-        curl -X DELETE https://console.jumpcloud.com/api/v2/oslists/{id} \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}'
-        ```
-      operationId: oslists_delete
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OSList'
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: Delete an OS list
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request DELETE \
-            --url https://console.jumpcloud.com/api/v2/oslists/{id} \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists/{id}"
-
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE"
-          }
-
-          response = requests.request("DELETE", url, headers=headers)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists/{id}' -Method DELETE -Headers $headers
-    get:
-      description: |-
-        Return a specific OS list.
-
-        #### Sample Request
-        ```
-        curl https://console.jumpcloud.com/api/v2/oslists/{id} \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}'
-        ```
-      operationId: oslists_get
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OSList'
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: Get an OS list
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      - authn.readonly
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request GET \
-            --url https://console.jumpcloud.com/api/v2/oslists/{id} \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists/{id}"
-
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE"
-          }
-
-          response = requests.request("GET", url, headers=headers)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists/{id}' -Method GET -Headers $headers
-    patch:
-      description: |-
-        Update a specific OS list.
-
-        #### Sample Request
-        ```
-        curl -X PATCH https://console.jumpcloud.com/api/v2/oslists/{id} \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}' \
-          -d '{
-            "name": "New OS List Name"
-            "entries": [
-              { "osName": "Windows", "release": "22H2", "major": "10", "minor": "1802"}
-            ]
-          }'
-        ```
-      operationId: oslists_patch
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OSListRequest'
-        required: false
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OSList'
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: Update an OS list
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request PATCH \
-            --url https://console.jumpcloud.com/api/v2/oslists/{id} \
-            --header 'content-type: application/json' \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists/{id}"
-
-          payload = {
-              "description": "string",
-              "entries": [
-                  {
-                      "major": "string",
-                      "minor": "string",
-                      "osName": "string",
-                      "releaseName": "string"
-                  }
-              ],
-              "name": "string"
-          }
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE",
-              "content-type": "application/json"
-          }
-
-          response = requests.request("PATCH", url, json=payload, headers=headers)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists/{id}' -Method PATCH -Headers $headers -ContentType 'application/json' -Body '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      x-codegen-request-body-name: body
-    put:
-      description: |-
-        Replace a specific OS list.
-
-        #### Sample Request
-        ```
-        curl -X PUT https://console.jumpcloud.com/api/v2/oslists/{id} \
-          -H 'accept: application/json' \
-          -H 'content-type: application/json' \
-          -H 'x-api-key: {API_KEY}' \
-          -d '{
-            "name": "Sample IP List",
-            "entries": [
-              { "osName": "Windows", "release": "22H2", "major": "10", "minor": "1802"}
-            ]
-          }'
-        ```
-      operationId: oslists_put
-      parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-      - description: Organization identifier that can be obtained from console settings.
-        in: header
-        name: x-org-id
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OSListRequest'
-        required: false
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OSList'
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDetails'
-          description: ""
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "403":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "409":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: ""
-      security:
-      - x-api-key: []
-      summary: Replace an OS list
-      tags:
-      - OS Lists
-      x-scopes:
-      - authn
-      x-codeSamples:
-      - lang: Shell
-        source: |-
-          curl --request PUT \
-            --url https://console.jumpcloud.com/api/v2/oslists/{id} \
-            --header 'content-type: application/json' \
-            --header 'x-api-key: REPLACE_KEY_VALUE' \
-            --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      - lang: Python
-        source: |-
-          import requests
-
-          url = "https://console.jumpcloud.com/api/v2/oslists/{id}"
-
-          payload = {
-              "description": "string",
-              "entries": [
-                  {
-                      "major": "string",
-                      "minor": "string",
-                      "osName": "string",
-                      "releaseName": "string"
-                  }
-              ],
-              "name": "string"
-          }
-          headers = {
-              "x-org-id": "SOME_STRING_VALUE",
-              "x-api-key": "REPLACE_KEY_VALUE",
-              "content-type": "application/json"
-          }
-
-          response = requests.request("PUT", url, json=payload, headers=headers)
-
-          print(response.text)
-      - lang: Powershell
-        source: |-
-          $headers=@{}
-          $headers.Add("x-org-id", "SOME_STRING_VALUE")
-          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/oslists/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"description":"string","entries":[{"major":"string","minor":"string","osName":"string","releaseName":"string"}],"name":"string"}'
-      x-codegen-request-body-name: body
-    x-functionalities-tags:
-    - os-lists
   /partners:
     x-functionalities-tags:
     - partners-cs-discover-page
@@ -18336,9 +18491,27 @@ paths:
   /passwordmanager/sharedfolders/{folderId}:
     x-functionalities-tags:
     - pwm-user-folder-read
+  /passwordmanager/sharedfolders/{folderId}/groups:
+    x-functionalities-tags:
+    - pwm-group-folder-read
   /passwordmanager/sharedfolders/{folderId}/users:
     x-functionalities-tags:
     - pwm-user-folder-read
+  /passwordmanager/users:
+    x-functionalities-tags:
+    - pwm-user-read
+  /passwordmanager/users/reinvite:
+    x-functionalities-tags:
+    - pwm-user-read
+  /passwordmanager/users/{userId}:
+    x-functionalities-tags:
+    - pwm-user-read
+  /passwordmanager/users/{userId}/items:
+    x-functionalities-tags:
+    - pwm-user-items-read
+  /passwordmanager/users/{userId}/sharedFolders:
+    x-functionalities-tags:
+    - pwm-user-read
   /plan:
     x-functionalities-tags:
     - accounts-page-upgrade
@@ -18525,7 +18698,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"name":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
+            --data '{"name":"string","notes":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
       - lang: Python
         source: |-
           import requests
@@ -18534,6 +18707,7 @@ paths:
 
           payload = {
               "name": "string",
+              "notes": "string",
               "template": {"id": "string"},
               "values": [
                   {
@@ -18558,7 +18732,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/policies' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"name":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/policies' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"name":"string","notes":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - devices-windows-policy-crud
@@ -18752,7 +18926,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"name":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
+            --data '{"name":"string","notes":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
       - lang: Python
         source: |-
           import requests
@@ -18761,6 +18935,7 @@ paths:
 
           payload = {
               "name": "string",
+              "notes": "string",
               "template": {"id": "string"},
               "values": [
                   {
@@ -18785,7 +18960,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/policies/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"name":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/policies/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"name":"string","notes":"string","template":{"id":"string"},"values":[{"configFieldID":"string","sensitive":true,"value":"string"}]}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - devices-windows-policy-crud
@@ -23522,6 +23697,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/Organization'
           description: CREATED
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: |-
+            A 'Bad Request' error will be returned in one of the following scenarios:
+
+            * The request payload contains fields that are not allowed (only 'name' and 'maxSystemUsers' are allowed).
+            * The user creating the org specifies 'maxSystemUsers' in the request payload but does not have the organizations.billing scope.
+            * The required field 'name' is missing from the request payload or is an empty string or a string that only contains whitespaces.
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: A 'Forbidden' error will be returned if organization creation
+            is disabled for the provider.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
       security:
       - x-api-key: []
       summary: Create Provider Organization
@@ -23653,6 +23852,18 @@ paths:
         required: true
         schema:
           type: string
+      - description: |
+          The comma separated fields included in the returned records.
+          If omitted, the default list of fields will be returned.
+        explode: false
+        in: query
+        name: fields
+        schema:
+          default: "[]"
+          items:
+            type: string
+          type: array
+        style: form
       - description: The offset into the records to return.
         in: query
         name: skip
@@ -23774,6 +23985,85 @@ paths:
     x-functionalities-tags:
     - policy-group-templates
   /providers/{provider_id}/policygrouptemplates/{id}:
+    delete:
+      description: Deletes a Policy Group Template.
+      operationId: policyGroupTemplates_delete
+      parameters:
+      - in: path
+        name: provider_id
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content: {}
+          description: NO_CONTENT
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: ""
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+      security:
+      - x-api-key: []
+      summary: Deletes policy group template.
+      tags:
+      - Providers
+      - Managed Service Provider
+      - Policy Group Templates
+      x-scopes:
+      - groups
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request DELETE \
+            --url https://console.jumpcloud.com/api/v2/providers/{provider_id}/policygrouptemplates/{id} \
+            --header 'x-api-key: REPLACE_KEY_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/providers/{provider_id}/policygrouptemplates/{id}"
+
+          headers = {"x-api-key": "REPLACE_KEY_VALUE"}
+
+          response = requests.request("DELETE", url, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/providers/{provider_id}/policygrouptemplates/{id}' -Method DELETE -Headers $headers
     get:
       description: Retrieves a Policy Group Template for this provider.
       operationId: policyGroupTemplates_get
@@ -24063,6 +24353,23 @@ paths:
           default: 0
           minimum: 0
           type: integer
+      - description: |
+          The comma separated fields used to sort the collection.
+          Default sort is ascending, prefix with `-` to sort descending.
+        explode: false
+        in: query
+        name: sort
+        schema:
+          default: "[]"
+          items:
+            type: string
+          type: array
+        style: form
+      - description: The search string to query records
+        in: query
+        name: search
+        schema:
+          type: string
       responses:
         "200":
           content:
@@ -24070,9 +24377,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/QueuedCommandList'
           description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+          description: ""
         "401":
-          content: {}
-          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: ""
       security:
       - x-api-key: []
       summary: Fetch the queued Commands for an Organization
@@ -24085,7 +24425,7 @@ paths:
       - lang: Shell
         source: |-
           curl --request GET \
-            --url 'https://console.jumpcloud.com/api/v2/queuedcommand/workflows?limit=10&skip=0' \
+            --url 'https://console.jumpcloud.com/api/v2/queuedcommand/workflows?limit=10&skip=0&search=' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE'
       - lang: Python
@@ -24094,7 +24434,7 @@ paths:
 
           url = "https://console.jumpcloud.com/api/v2/queuedcommand/workflows"
 
-          querystring = {"limit":"10","skip":"0"}
+          querystring = {"limit":"10","skip":"0","search":""}
 
           headers = {
               "x-org-id": "SOME_STRING_VALUE",
@@ -24109,7 +24449,7 @@ paths:
           $headers=@{}
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/queuedcommand/workflows?limit=10&skip=0' -Method GET -Headers $headers
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/queuedcommand/workflows?limit=10&skip=0&search=' -Method GET -Headers $headers
     x-functionalities-tags:
     - queued-commands
   /queuedcommands:
@@ -26120,7 +26460,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"name":"string"}'
+            --data '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       - lang: Python
         source: |-
           import requests
@@ -26148,6 +26488,9 @@ paths:
                       "type": "string"
                   }
               ],
+              "memberSuggestionsNotify": True,
+              "membershipAutomated": True,
+              "membershipMethod": "NOTSET",
               "name": "string"
           }
           headers = {
@@ -26165,7 +26508,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"name":"string"}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - systemgroups
@@ -27041,6 +27384,173 @@ paths:
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/policygroups?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
     - systemgroups
+  /systemgroups/{group_id}/suggestions:
+    get:
+      description: |-
+        This endpoint returns available suggestions for a given system group
+        #### Sample Request
+        ```
+        curl -X GET https://console.jumpcloud.com/api/v2/systemgroups/{GroupID}/suggestions \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}'
+
+        ```
+      operationId: groups_system_suggestions_get
+      parameters:
+      - description: Organization identifier that can be obtained from console settings.
+        in: header
+        name: x-org-id
+        schema:
+          type: string
+      - description: The number of records to return at once. Limited to 100.
+        in: query
+        name: limit
+        schema:
+          default: 10
+          type: integer
+      - description: The offset into the records to return.
+        in: query
+        name: skip
+        schema:
+          default: 0
+          minimum: 0
+          type: integer
+      - description: ID of the group
+        in: path
+        name: group_id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/MemberSuggestion'
+                type: array
+          description: OK
+      security:
+      - x-api-key: []
+      summary: List Suggestions for a System Group
+      tags:
+      - System Groups
+      x-scopes:
+      - groups
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request GET \
+            --url 'https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions?limit=10&skip=0' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --header 'x-org-id: SOME_STRING_VALUE'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions"
+
+          querystring = {"limit":"10","skip":"0"}
+
+          headers = {
+              "x-org-id": "SOME_STRING_VALUE",
+              "x-api-key": "REPLACE_KEY_VALUE"
+          }
+
+          response = requests.request("GET", url, headers=headers, params=querystring)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-org-id", "SOME_STRING_VALUE")
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions?limit=10&skip=0' -Method GET -Headers $headers
+    post:
+      description: |-
+        This endpoint applies the suggestions for the specified system group.
+        #### Sample Request
+        ```
+        curl -X PUT https://console.jumpcloud.com/api/v2/systemgroups/{GroupID}/suggestions \
+          -H 'Accept: application/json' \
+          -H 'Content-Type: application/json' \
+          -H 'x-api-key: {API_KEY}' \
+          -d '{
+                 "object_ids": ["212345678901234567890123",
+                              "123456789012345678901234"]
+             }'
+        ```
+      operationId: groups_system_suggestions_post
+      parameters:
+      - description: Organization identifier that can be obtained from console settings.
+        in: header
+        name: x-org-id
+        schema:
+          type: string
+      - description: ID of the group
+        in: path
+        name: group_id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/groups_system_suggestions_post_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/MemberSuggestionsPostResult'
+                type: array
+          description: OK
+      security:
+      - x-api-key: []
+      summary: Apply Suggestions for a System Group
+      tags:
+      - System Groups
+      x-scopes:
+      - groups
+      x-codeSamples:
+      - lang: Shell
+        source: |-
+          curl --request POST \
+            --url https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions \
+            --header 'content-type: application/json' \
+            --header 'x-api-key: REPLACE_KEY_VALUE' \
+            --header 'x-org-id: SOME_STRING_VALUE' \
+            --data '{"object_ids":["string"]}'
+      - lang: Python
+        source: |-
+          import requests
+
+          url = "https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions"
+
+          payload = {"object_ids": ["string"]}
+          headers = {
+              "x-org-id": "SOME_STRING_VALUE",
+              "x-api-key": "REPLACE_KEY_VALUE",
+              "content-type": "application/json"
+          }
+
+          response = requests.request("POST", url, json=payload, headers=headers)
+
+          print(response.text)
+      - lang: Powershell
+        source: |-
+          $headers=@{}
+          $headers.Add("x-org-id", "SOME_STRING_VALUE")
+          $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
+          $headers.Add("content-type", "application/json")
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups/{group_id}/suggestions' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"object_ids":["string"]}'
+      x-codegen-request-body-name: body
+    x-functionalities-tags:
+    - groups
   /systemgroups/{group_id}/usergroups:
     get:
       description: |-
@@ -27477,7 +27987,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"name":"string"}'
+            --data '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       - lang: Python
         source: |-
           import requests
@@ -27505,6 +28015,9 @@ paths:
                       "type": "string"
                   }
               ],
+              "memberSuggestionsNotify": True,
+              "membershipAutomated": True,
+              "membershipMethod": "NOTSET",
               "name": "string"
           }
           headers = {
@@ -27522,7 +28035,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"name":"string"}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/systemgroups/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"attributes":{},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - systemgroups
@@ -35403,7 +35916,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"name":"string"}'
+            --data '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       - lang: Python
         source: |-
           import requests
@@ -35452,6 +35965,7 @@ paths:
               ],
               "memberSuggestionsNotify": True,
               "membershipAutomated": True,
+              "membershipMethod": "NOTSET",
               "name": "string"
           }
           headers = {
@@ -35469,7 +35983,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/usergroups' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"name":"string"}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/usergroups' -Method POST -Headers $headers -ContentType 'application/json' -Body '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - systems
@@ -36264,7 +36778,7 @@ paths:
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/usergroups/{group_id}/ldapservers?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
     - groups
-    - ldap-read
+    - ldap-management
   /usergroups/{group_id}/memberof:
     x-functionalities-tags:
     - groups
@@ -36815,7 +37329,7 @@ paths:
           -H 'x-api-key: {API_KEY}'
 
         ```
-      operationId: groups_suggestions_get
+      operationId: groups_user_suggestions_get
       parameters:
       - description: Organization identifier that can be obtained from console settings.
         in: header
@@ -36900,7 +37414,7 @@ paths:
                               "123456789012345678901234"]
              }'
         ```
-      operationId: groups_suggestions_post
+      operationId: groups_user_suggestions_post
       parameters:
       - description: Organization identifier that can be obtained from console settings.
         in: header
@@ -36917,7 +37431,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/groups_suggestions_post_request'
+              $ref: '#/components/schemas/groups_user_suggestions_post_request'
         required: true
       responses:
         "200":
@@ -36930,7 +37444,7 @@ paths:
           description: OK
       security:
       - x-api-key: []
-      summary: List Suggestions for a User Group
+      summary: Apply Suggestions for a User Group
       tags:
       - User Groups
       x-scopes:
@@ -37399,7 +37913,7 @@ paths:
             --header 'content-type: application/json' \
             --header 'x-api-key: REPLACE_KEY_VALUE' \
             --header 'x-org-id: SOME_STRING_VALUE' \
-            --data '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"name":"string"}'
+            --data '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       - lang: Python
         source: |-
           import requests
@@ -37448,6 +37962,7 @@ paths:
               ],
               "memberSuggestionsNotify": True,
               "membershipAutomated": True,
+              "membershipMethod": "NOTSET",
               "name": "string"
           }
           headers = {
@@ -37465,7 +37980,7 @@ paths:
           $headers.Add("x-org-id", "SOME_STRING_VALUE")
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $headers.Add("content-type", "application/json")
-          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/usergroups/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"name":"string"}'
+          $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/usergroups/{id}' -Method PUT -Headers $headers -ContentType 'application/json' -Body '{"attributes":{"sudo":{"enabled":true,"withoutPassword":true},"ldapGroups":[{"name":"string"}],"posixGroups":[{"id":0,"name":"string"}],"radius":{"reply":[{"name":"string","value":"string"}]},"sambaEnabled":true},"description":"string","email":"string","memberQuery":{"queryType":"FilterQuery","filters":[{"field":"string","operator":"eq","value":"string"}]},"memberQueryExemptions":[{"attributes":{},"id":"string","type":"string"}],"memberSuggestionsNotify":true,"membershipAutomated":true,"membershipMethod":"NOTSET","name":"string"}'
       x-codegen-request-body-name: body
     x-functionalities-tags:
     - groups
@@ -38261,7 +38776,7 @@ paths:
           $headers.Add("x-api-key", "REPLACE_KEY_VALUE")
           $response = Invoke-RestMethod -Uri 'https://console.jumpcloud.com/api/v2/users/{user_id}/ldapservers?limit=10&skip=0' -Method GET -Headers $headers
     x-functionalities-tags:
-    - ldap-read
+    - ldap-management
   /users/{user_id}/memberof:
     get:
       description: |-
@@ -40340,6 +40855,15 @@ components:
           type: string
         type: array
       style: form
+    trait:groupId:groupId:
+      description: |
+        Group Id in uuid format
+      in: path
+      name: groupId
+      required: true
+      schema:
+        format: uuid
+        type: string
     trait:gsuite:maxResults:
       description: Google Directory API maximum number of results per page. See https://developers.google.com/admin-sdk/directory/reference/rest/v1/users/list.
       in: query
@@ -40636,6 +41160,18 @@ components:
           schema:
             $ref: '#/components/schemas/SharedFolderDetails'
       description: Success
+    SharedFolderGroupUpdated:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupPwm'
+      description: Success
+    SharedFolderGroups:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedFolderGroups'
+      description: Success
     SharedFolderUsers:
       content:
         application/json:
@@ -40700,6 +41236,9 @@ components:
           button: button
           paragraph: paragraph
           title: title
+        setupOptions:
+        - null
+        - null
         enableZeroTouchEnrollment: true
         defaultDeviceGroupObjectIds:
         - defaultDeviceGroupObjectIds
@@ -40718,8 +41257,15 @@ components:
             JumpCloud Zero Touch Enrollment.
           type: boolean
         setupAssistantOptions:
+          description: A Setup Option wrapped as an object
           items:
             $ref: '#/components/schemas/DEPSetupAssistantOption'
+          type: array
+          x-deprecated: true
+        setupOptions:
+          description: A list of configured setup options for this enrollment.
+          items:
+            $ref: '#/components/schemas/SetupAssistantOption'
           type: array
         welcomeScreen:
           $ref: '#/components/schemas/DEPWelcomeScreen'
@@ -40735,6 +41281,9 @@ components:
             button: button
             paragraph: paragraph
             title: title
+          setupOptions:
+          - null
+          - null
           enableZeroTouchEnrollment: true
           defaultDeviceGroupObjectIds:
           - defaultDeviceGroupObjectIds
@@ -40747,6 +41296,9 @@ components:
             button: button
             paragraph: paragraph
             title: title
+          setupOptions:
+          - null
+          - null
           enableZeroTouchEnrollment: true
           defaultDeviceGroupObjectIds:
           - defaultDeviceGroupObjectIds
@@ -40885,6 +41437,9 @@ components:
               button: button
               paragraph: paragraph
               title: title
+            setupOptions:
+            - null
+            - null
             enableZeroTouchEnrollment: true
             defaultDeviceGroupObjectIds:
             - defaultDeviceGroupObjectIds
@@ -40897,6 +41452,9 @@ components:
               button: button
               paragraph: paragraph
               title: title
+            setupOptions:
+            - null
+            - null
             enableZeroTouchEnrollment: true
             defaultDeviceGroupObjectIds:
             - defaultDeviceGroupObjectIds
@@ -43086,6 +43644,44 @@ components:
       - $ref: '#/components/schemas/GraphAttribute-SambaEnabled'
       description: The graph attributes for a UserGroup.
       title: GroupAttributes (UserGroup)
+    GroupMembershipMethodType:
+      description: "The type of membership method for this group. Valid values include\
+        \ NOTSET, STATIC, DYNAMIC_REVIEW_REQUIRED, and DYNAMIC_AUTOMATED."
+      enum:
+      - NOTSET
+      - STATIC
+      - DYNAMIC_REVIEW_REQUIRED
+      - DYNAMIC_AUTOMATED
+      title: GroupMembershipMethodType
+      type: string
+    GroupPwm:
+      properties:
+        accessLevelId:
+          format: uuid
+          type: string
+        accessLevelName:
+          example: folder manager
+          type: string
+        description:
+          example: finance group
+          type: string
+        externalId:
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          example: group name
+          type: string
+        usersCount:
+          format: int32
+          type: integer
+      required:
+      - accessLevelId
+      - accessLevelName
+      - id
+      - name
+      type: object
     GroupType:
       description: The group type.
       enum:
@@ -43309,57 +43905,6 @@ components:
           items:
             type: string
           type: array
-      type: object
-    OSList:
-      example:
-        entries:
-        - major: major
-          minor: minor
-          releaseName: releaseName
-          osName: osName
-        - major: major
-          minor: minor
-          releaseName: releaseName
-          osName: osName
-        name: name
-        description: description
-        id: id
-      properties:
-        description:
-          type: string
-        entries:
-          items:
-            $ref: '#/components/schemas/OSList_entries_inner'
-          type: array
-        id:
-          type: string
-        name:
-          type: string
-      title: OSList
-      type: object
-    OSListRequest:
-      example:
-        entries:
-        - major: major
-          minor: minor
-          releaseName: releaseName
-          osName: osName
-        - major: major
-          minor: minor
-          releaseName: releaseName
-          osName: osName
-        name: name
-        description: description
-      properties:
-        description:
-          type: string
-        entries:
-          items:
-            $ref: '#/components/schemas/OSList_entries_inner'
-          type: array
-        name:
-          type: string
-      title: OSListRequest
       type: object
     OSRestriction:
       description: Contains OS properties to restrict the application of policies
@@ -43672,6 +44217,13 @@ components:
       type: object
     PolicyGroupTemplate:
       example:
+        members:
+        - name: name
+          id: id
+          policyTemplateId: policyTemplateId
+        - name: name
+          id: id
+          policyTemplateId: policyTemplateId
         name: name
         description: description
         id: id
@@ -43680,9 +44232,27 @@ components:
           type: string
         id:
           type: string
+        members:
+          items:
+            $ref: '#/components/schemas/PolicyGroupTemplateMember'
+          type: array
         name:
           type: string
       title: PolicyGroupTemplate
+      type: object
+    PolicyGroupTemplateMember:
+      example:
+        name: name
+        id: id
+        policyTemplateId: policyTemplateId
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        policyTemplateId:
+          type: string
+      title: PolicyGroupTemplateMember
       type: object
     PolicyGroupTemplateMembers:
       example:
@@ -43697,7 +44267,7 @@ components:
       properties:
         results:
           items:
-            $ref: '#/components/schemas/PolicyGroupTemplateMembers_results_inner'
+            $ref: '#/components/schemas/PolicyGroupTemplateMember'
           type: array
         totalCount:
           type: integer
@@ -43707,10 +44277,24 @@ components:
       example:
         totalCount: 0
         results:
-        - name: name
+        - members:
+          - name: name
+            id: id
+            policyTemplateId: policyTemplateId
+          - name: name
+            id: id
+            policyTemplateId: policyTemplateId
+          name: name
           description: description
           id: id
-        - name: name
+        - members:
+          - name: name
+            id: id
+            policyTemplateId: policyTemplateId
+          - name: name
+            id: id
+            policyTemplateId: policyTemplateId
+          name: name
           description: description
           id: id
       properties:
@@ -43727,6 +44311,7 @@ components:
       example:
         template:
           id: id
+        notes: notes
         values:
         - configFieldID: configFieldID
           sensitive: true
@@ -43738,6 +44323,9 @@ components:
       properties:
         name:
           description: The description for this specific Policy.
+          type: string
+        notes:
+          description: The notes for this specific Policy.
           type: string
         template:
           $ref: '#/components/schemas/PolicyRequest_template'
@@ -44143,6 +44731,7 @@ components:
           deliveryTypes:
           - agent
           - agent
+        notes: notes
         values:
         - configFieldID: configFieldID
           sensitive: true
@@ -44193,6 +44782,9 @@ components:
           type: string
         name:
           description: The description for this specific Policy.
+          type: string
+        notes:
+          description: The notes for this specific Policy.
           type: string
         template:
           $ref: '#/components/schemas/PolicyTemplate'
@@ -44724,6 +45316,20 @@ components:
       allOf:
       - $ref: '#/components/schemas/SharedFolder'
       - $ref: '#/components/schemas/PasswordsSecurity'
+    SharedFolderGroups:
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/GroupPwm'
+          type: array
+        totalCount:
+          example: 50
+          format: int32
+          type: integer
+      required:
+      - results
+      - totalCount
+      type: object
     SharedFolderUsers:
       properties:
         results:
@@ -45230,10 +45836,13 @@ components:
     SystemGroup:
       example:
         memberQuery: null
+        memberSuggestionsNotify: true
         name: name
         description: description
+        membershipAutomated: true
         attributes: "{}"
         id: id
+        membershipMethod: null
         type: system_group
         email: email
         memberQueryExemptions:
@@ -45264,6 +45873,15 @@ components:
           items:
             $ref: '#/components/schemas/GraphObject'
           type: array
+        memberSuggestionsNotify:
+          description: True if notification emails are to be sent for membership suggestions.
+          type: boolean
+        membershipAutomated:
+          description: "True if membership of this group is automatically updated\
+            \ based on the Member Query and Member Query Exemptions, if configured"
+          type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a System Group.
           type: string
@@ -45277,9 +45895,12 @@ components:
     SystemGroupPost:
       example:
         memberQuery: null
+        memberSuggestionsNotify: true
         name: name
         description: description
+        membershipAutomated: true
         attributes: "{}"
+        membershipMethod: null
         email: email
         memberQueryExemptions:
         - attributes: "{}"
@@ -45306,6 +45927,15 @@ components:
           items:
             $ref: '#/components/schemas/GraphObject'
           type: array
+        memberSuggestionsNotify:
+          description: True if notification emails are to be sent for membership suggestions.
+          type: boolean
+        membershipAutomated:
+          description: "True if membership of this group is automatically updated\
+            \ based on the Member Query and Member Query Exemptions, if configured"
+          type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a System Group.
           type: string
@@ -45316,9 +45946,12 @@ components:
     SystemGroupPut:
       example:
         memberQuery: null
+        memberSuggestionsNotify: true
         name: name
         description: description
+        membershipAutomated: true
         attributes: "{}"
+        membershipMethod: null
         email: email
         memberQueryExemptions:
         - attributes: "{}"
@@ -45345,6 +45978,15 @@ components:
           items:
             $ref: '#/components/schemas/GraphObject'
           type: array
+        memberSuggestionsNotify:
+          description: True if notification emails are to be sent for membership suggestions.
+          type: boolean
+        membershipAutomated:
+          description: "True if membership of this group is automatically updated\
+            \ based on the Member Query and Member Query Exemptions, if configured"
+          type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a System Group.
           type: string
@@ -45479,6 +46121,7 @@ components:
         membershipAutomated: true
         attributes: null
         id: id
+        membershipMethod: null
         suggestionCounts:
           add: 0
           total: 1
@@ -45518,6 +46161,8 @@ components:
           description: "True if membership of this group is automatically updated\
             \ based on the Member Query and Member Query Exemptions, if configured"
           type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a User Group.
           type: string
@@ -45538,6 +46183,7 @@ components:
         description: description
         membershipAutomated: true
         attributes: null
+        membershipMethod: null
         email: email
         memberQueryExemptions:
         - attributes: "{}"
@@ -45569,6 +46215,8 @@ components:
           description: "True if membership of this group is automatically updated\
             \ based on the Member Query and Member Query Exemptions, if configured"
           type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a User Group.
           type: string
@@ -45584,6 +46232,7 @@ components:
         description: description
         membershipAutomated: true
         attributes: null
+        membershipMethod: null
         email: email
         memberQueryExemptions:
         - attributes: "{}"
@@ -45615,6 +46264,8 @@ components:
           description: "True if membership of this group is automatically updated\
             \ based on the Member Query and Member Query Exemptions, if configured"
           type: boolean
+        membershipMethod:
+          $ref: '#/components/schemas/GroupMembershipMethodType'
         name:
           description: Display name of a User Group.
           type: string
@@ -45978,6 +46629,23 @@ components:
         username:
           type: string
       title: Bulk User Create
+      type: object
+    bulk-user-expire:
+      properties:
+        attributes:
+          description: Map of additional attributes.
+          items:
+            properties: {}
+            type: object
+          type: array
+        id:
+          description: Object ID of the systemuser to expire
+          type: string
+        organization:
+          description: The identifier for an organization to link this systemuser
+            to
+          type: string
+      title: Bulk User Expire
       type: object
     bulk-user-update:
       description: "See [V1 system user update](https://docs.jumpcloud.com/api/1.0/index.html#operation/systemusers_put)\
@@ -47246,6 +47914,506 @@ components:
         updatedAt:
           type: string
       title: Job WorkResult
+      type: object
+    jumpcloud.google_emm.CommandResponse:
+      type: object
+    jumpcloud.google_emm.CommonCriteriaModeInfo:
+      example:
+        commonCriteriaModeStatus: commonCriteriaModeStatus
+      properties:
+        commonCriteriaModeStatus:
+          type: string
+      type: object
+    jumpcloud.google_emm.ConnectionStatus:
+      example:
+        organizationObjectId: organizationObjectId
+        isConnected: true
+        enterpriseId: enterpriseId
+      properties:
+        enterpriseId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        isConnected:
+          type: boolean
+        organizationObjectId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+      type: object
+    jumpcloud.google_emm.CreateEnterpriseRequest:
+      properties:
+        enrollmentToken:
+          title: not logging because it contains sensitive information
+          type: string
+        signupUrlName:
+          title: not logging because it contains sensitive information
+          type: string
+      type: object
+    jumpcloud.google_emm.CreateWebTokenRequest:
+      properties:
+        enterpriseObjectId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        parentFrameUrl:
+          type: string
+      type: object
+    jumpcloud.google_emm.Device:
+      example:
+        deviceInformation:
+          deviceStateInfo:
+            disabledReason: disabledReason
+            policyCompliant: true
+            securityPosture:
+              devicePosture: devicePosture
+            lastStatusReportTime: lastStatusReportTime
+            deviceState: deviceState
+            lastPolicySyncTime: lastPolicySyncTime
+            commonCriteriaModeInfo:
+              commonCriteriaModeStatus: commonCriteriaModeStatus
+            deviceSettings:
+              verifyAppsEnabled: true
+              isDeviceSecure: true
+              encryptionStatus: encryptionStatus
+              isEncrypted: true
+              adbEnabled: true
+              unknownSourcesEnabled: true
+              developmentSettingsEnabled: true
+            appliedDeviceState: appliedDeviceState
+          memoryInfo:
+            totalRam: 1
+            totalInternalStorage: 6
+          hardwareInfo:
+            serialNumber: serialNumber
+            model: model
+            deviceBaseBandVersion: deviceBaseBandVersion
+            brand: brand
+            hardware: hardware
+            manufacturer: manufacturer
+          networkInfo:
+            meid: meid
+            imei: imei
+            telephonyInfo:
+            - phoneNumber: phoneNumber
+              carrierName: carrierName
+            - phoneNumber: phoneNumber
+              carrierName: carrierName
+            wifiMacAddress: wifiMacAddress
+          emmEnrollmentInfo:
+            enrollmentTime: enrollmentTime
+            ownership: ownership
+            policyName: policyName
+            managementMode: managementMode
+            appliedPolicyName: appliedPolicyName
+            appliedPolicyVersion: 0
+          softwareInfo:
+            androidBuildTime: androidBuildTime
+            androidDevicePolicyVersionCode: 5
+            bootloaderVersion: bootloaderVersion
+            securityPatchLevel: securityPatchLevel
+            primaryLanguageCode: primaryLanguageCode
+            androidVersion: androidVersion
+            deviceKernelVersion: deviceKernelVersion
+            systemUpdateInfo:
+              updateReceivedTime: updateReceivedTime
+              updateStatus: updateStatus
+            androidBuildNumber: androidBuildNumber
+            deviceBuildSignature: deviceBuildSignature
+        name: name
+        deviceId: deviceId
+      properties:
+        deviceId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        deviceInformation:
+          $ref: '#/components/schemas/jumpcloud.google_emm.DeviceInformation'
+        name:
+          type: string
+      type: object
+    jumpcloud.google_emm.DeviceAndroidPolicy:
+      example:
+        policy: policy
+      properties:
+        policy:
+          type: string
+      type: object
+    jumpcloud.google_emm.DeviceInformation:
+      example:
+        deviceStateInfo:
+          disabledReason: disabledReason
+          policyCompliant: true
+          securityPosture:
+            devicePosture: devicePosture
+          lastStatusReportTime: lastStatusReportTime
+          deviceState: deviceState
+          lastPolicySyncTime: lastPolicySyncTime
+          commonCriteriaModeInfo:
+            commonCriteriaModeStatus: commonCriteriaModeStatus
+          deviceSettings:
+            verifyAppsEnabled: true
+            isDeviceSecure: true
+            encryptionStatus: encryptionStatus
+            isEncrypted: true
+            adbEnabled: true
+            unknownSourcesEnabled: true
+            developmentSettingsEnabled: true
+          appliedDeviceState: appliedDeviceState
+        memoryInfo:
+          totalRam: 1
+          totalInternalStorage: 6
+        hardwareInfo:
+          serialNumber: serialNumber
+          model: model
+          deviceBaseBandVersion: deviceBaseBandVersion
+          brand: brand
+          hardware: hardware
+          manufacturer: manufacturer
+        networkInfo:
+          meid: meid
+          imei: imei
+          telephonyInfo:
+          - phoneNumber: phoneNumber
+            carrierName: carrierName
+          - phoneNumber: phoneNumber
+            carrierName: carrierName
+          wifiMacAddress: wifiMacAddress
+        emmEnrollmentInfo:
+          enrollmentTime: enrollmentTime
+          ownership: ownership
+          policyName: policyName
+          managementMode: managementMode
+          appliedPolicyName: appliedPolicyName
+          appliedPolicyVersion: 0
+        softwareInfo:
+          androidBuildTime: androidBuildTime
+          androidDevicePolicyVersionCode: 5
+          bootloaderVersion: bootloaderVersion
+          securityPatchLevel: securityPatchLevel
+          primaryLanguageCode: primaryLanguageCode
+          androidVersion: androidVersion
+          deviceKernelVersion: deviceKernelVersion
+          systemUpdateInfo:
+            updateReceivedTime: updateReceivedTime
+            updateStatus: updateStatus
+          androidBuildNumber: androidBuildNumber
+          deviceBuildSignature: deviceBuildSignature
+      properties:
+        deviceStateInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.DeviceStateInfo'
+        emmEnrollmentInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.EMMEnrollmentInfo'
+        hardwareInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.HardwareInfo'
+        memoryInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.MemoryInfo'
+        networkInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.NetworkInfo'
+        softwareInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.SoftwareInfo'
+      type: object
+    jumpcloud.google_emm.DeviceSettings:
+      example:
+        verifyAppsEnabled: true
+        isDeviceSecure: true
+        encryptionStatus: encryptionStatus
+        isEncrypted: true
+        adbEnabled: true
+        unknownSourcesEnabled: true
+        developmentSettingsEnabled: true
+      properties:
+        adbEnabled:
+          type: boolean
+        developmentSettingsEnabled:
+          type: boolean
+        encryptionStatus:
+          type: string
+        isDeviceSecure:
+          type: boolean
+        isEncrypted:
+          type: boolean
+        unknownSourcesEnabled:
+          type: boolean
+        verifyAppsEnabled:
+          type: boolean
+      type: object
+    jumpcloud.google_emm.DeviceStateInfo:
+      example:
+        disabledReason: disabledReason
+        policyCompliant: true
+        securityPosture:
+          devicePosture: devicePosture
+        lastStatusReportTime: lastStatusReportTime
+        deviceState: deviceState
+        lastPolicySyncTime: lastPolicySyncTime
+        commonCriteriaModeInfo:
+          commonCriteriaModeStatus: commonCriteriaModeStatus
+        deviceSettings:
+          verifyAppsEnabled: true
+          isDeviceSecure: true
+          encryptionStatus: encryptionStatus
+          isEncrypted: true
+          adbEnabled: true
+          unknownSourcesEnabled: true
+          developmentSettingsEnabled: true
+        appliedDeviceState: appliedDeviceState
+      properties:
+        appliedDeviceState:
+          type: string
+        commonCriteriaModeInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.CommonCriteriaModeInfo'
+        deviceSettings:
+          $ref: '#/components/schemas/jumpcloud.google_emm.DeviceSettings'
+        deviceState:
+          type: string
+        disabledReason:
+          type: string
+        lastPolicySyncTime:
+          type: string
+        lastStatusReportTime:
+          type: string
+        policyCompliant:
+          type: boolean
+        securityPosture:
+          $ref: '#/components/schemas/jumpcloud.google_emm.SecurityPosture'
+      type: object
+    jumpcloud.google_emm.EMMEnrollmentInfo:
+      example:
+        enrollmentTime: enrollmentTime
+        ownership: ownership
+        policyName: policyName
+        managementMode: managementMode
+        appliedPolicyName: appliedPolicyName
+        appliedPolicyVersion: 0
+      properties:
+        appliedPolicyName:
+          type: string
+        appliedPolicyVersion:
+          format: int64
+          type: integer
+        enrollmentTime:
+          type: string
+        managementMode:
+          type: string
+        ownership:
+          type: string
+        policyName:
+          type: string
+      type: object
+    jumpcloud.google_emm.Enterprise:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        allowDeviceEnrollment: true
+        organizationObjectId: organizationObjectId
+        contactEmail: contactEmail
+        deviceGroupId: deviceGroupId
+        displayName: displayName
+        name: name
+        objectId: objectId
+      properties:
+        allowDeviceEnrollment:
+          type: boolean
+        contactEmail:
+          description: not logging because it contains PII non-sensitive information.
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deviceGroupId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        displayName:
+          type: string
+        name:
+          type: string
+        objectId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+        organizationObjectId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+      type: object
+    jumpcloud.google_emm.HardwareInfo:
+      example:
+        serialNumber: serialNumber
+        model: model
+        deviceBaseBandVersion: deviceBaseBandVersion
+        brand: brand
+        hardware: hardware
+        manufacturer: manufacturer
+      properties:
+        brand:
+          type: string
+        deviceBaseBandVersion:
+          type: string
+        hardware:
+          type: string
+        manufacturer:
+          type: string
+        model:
+          type: string
+        serialNumber:
+          type: string
+      type: object
+    jumpcloud.google_emm.ListEnterprisesResponse:
+      example:
+        count: 0
+        enterprises:
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          allowDeviceEnrollment: true
+          organizationObjectId: organizationObjectId
+          contactEmail: contactEmail
+          deviceGroupId: deviceGroupId
+          displayName: displayName
+          name: name
+          objectId: objectId
+        - createdAt: 2000-01-23T04:56:07.000+00:00
+          allowDeviceEnrollment: true
+          organizationObjectId: organizationObjectId
+          contactEmail: contactEmail
+          deviceGroupId: deviceGroupId
+          displayName: displayName
+          name: name
+          objectId: objectId
+      properties:
+        count:
+          format: int64
+          type: integer
+        enterprises:
+          items:
+            $ref: '#/components/schemas/jumpcloud.google_emm.Enterprise'
+          type: array
+      type: object
+    jumpcloud.google_emm.MemoryInfo:
+      example:
+        totalRam: 1
+        totalInternalStorage: 6
+      properties:
+        totalInternalStorage:
+          format: int64
+          type: integer
+        totalRam:
+          format: int64
+          type: integer
+      type: object
+    jumpcloud.google_emm.NetworkInfo:
+      example:
+        meid: meid
+        imei: imei
+        telephonyInfo:
+        - phoneNumber: phoneNumber
+          carrierName: carrierName
+        - phoneNumber: phoneNumber
+          carrierName: carrierName
+        wifiMacAddress: wifiMacAddress
+      properties:
+        imei:
+          description: Not logging as it contains sensitive information.
+          type: string
+        meid:
+          description: Not logging as it contains sensitive information.
+          type: string
+        telephonyInfo:
+          items:
+            $ref: '#/components/schemas/jumpcloud.google_emm.TelephonyInfo'
+          type: array
+        wifiMacAddress:
+          description: Not logging as it contains sensitive information.
+          type: string
+      type: object
+    jumpcloud.google_emm.SecurityPosture:
+      example:
+        devicePosture: devicePosture
+      properties:
+        devicePosture:
+          type: string
+      type: object
+    jumpcloud.google_emm.SignupURL:
+      example:
+        name: name
+        url: url
+      properties:
+        name:
+          title: not logging because it contains sensitive information
+          type: string
+        url:
+          title: not logging because it contains sensitive information
+          type: string
+      type: object
+    jumpcloud.google_emm.SoftwareInfo:
+      example:
+        androidBuildTime: androidBuildTime
+        androidDevicePolicyVersionCode: 5
+        bootloaderVersion: bootloaderVersion
+        securityPatchLevel: securityPatchLevel
+        primaryLanguageCode: primaryLanguageCode
+        androidVersion: androidVersion
+        deviceKernelVersion: deviceKernelVersion
+        systemUpdateInfo:
+          updateReceivedTime: updateReceivedTime
+          updateStatus: updateStatus
+        androidBuildNumber: androidBuildNumber
+        deviceBuildSignature: deviceBuildSignature
+      properties:
+        androidBuildNumber:
+          type: string
+        androidBuildTime:
+          type: string
+        androidDevicePolicyVersionCode:
+          format: int64
+          type: integer
+        androidVersion:
+          type: string
+        bootloaderVersion:
+          type: string
+        deviceBuildSignature:
+          type: string
+        deviceKernelVersion:
+          type: string
+        primaryLanguageCode:
+          type: string
+        securityPatchLevel:
+          type: string
+        systemUpdateInfo:
+          $ref: '#/components/schemas/jumpcloud.google_emm.SystemUpdateInfo'
+      type: object
+    jumpcloud.google_emm.SystemUpdateInfo:
+      example:
+        updateReceivedTime: updateReceivedTime
+        updateStatus: updateStatus
+      properties:
+        updateReceivedTime:
+          type: string
+        updateStatus:
+          type: string
+      type: object
+    jumpcloud.google_emm.TelephonyInfo:
+      example:
+        phoneNumber: phoneNumber
+        carrierName: carrierName
+      properties:
+        carrierName:
+          description: Not logging as it contains sensitive information.
+          type: string
+        phoneNumber:
+          description: Not logging as it contains sensitive information.
+          type: string
+      type: object
+    jumpcloud.google_emm.WebToken:
+      example:
+        name: name
+        value: value
+      properties:
+        name:
+          title: not logging because it contains sensitive information
+          type: string
+        value:
+          title: not logging because it contains sensitive information
+          type: string
       type: object
     ldap-server:
       example:
@@ -50362,6 +51530,25 @@ components:
             $ref: '#/components/schemas/scheduled-userstate-result'
           type: array
       type: object
+    Devices_ResetPassword_request:
+      properties:
+        flags:
+          items:
+            type: string
+          type: array
+        newPassword:
+          description: Not logging as it contains sensitive information.
+          type: string
+      type: object
+    Enterprises_PatchEnterprise_request:
+      properties:
+        allowDeviceEnrollment:
+          type: boolean
+        deviceGroupId:
+          format: byte
+          pattern: "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+          type: string
+      type: object
     gsuites_listImportJumpcloudUsers_200_response:
       example:
         nextPageToken: nextPageToken
@@ -50823,7 +52010,19 @@ components:
         totalCount:
           type: integer
       type: object
-    groups_suggestions_post_request:
+    groups_system_suggestions_post_request:
+      properties:
+        object_ids:
+          items:
+            type: string
+          type: array
+      type: object
+      x-examples:
+        example-1:
+          object_ids:
+          - "212345678901234567890123"
+          - "123456789012345678901234"
+    groups_user_suggestions_post_request:
       properties:
         user_ids:
           items:
@@ -51285,13 +52484,15 @@ components:
       - type
       type: object
       example: null
+    GraphOperation_System_allOf_attributes:
+      allOf:
+      - $ref: '#/components/schemas/GraphAttributes'
+      - $ref: '#/components/schemas/GraphAttribute-Sudo'
+      type: object
     GraphOperation_System_allOf:
       properties:
         attributes:
-          allOf:
-          - $ref: '#/components/schemas/GraphAttributes'
-          - $ref: '#/components/schemas/GraphAttribute-Sudo'
-          type: object
+          $ref: '#/components/schemas/GraphOperation_System_allOf_attributes'
         type:
           description: Targets which a "system" can be associated to.
           enum:
@@ -51342,10 +52543,7 @@ components:
     GraphOperation_User_allOf:
       properties:
         attributes:
-          allOf:
-          - $ref: '#/components/schemas/GraphAttributes'
-          - $ref: '#/components/schemas/GraphAttribute-Sudo'
-          type: object
+          $ref: '#/components/schemas/GraphOperation_System_allOf_attributes'
         type:
           description: Targets which a "user" can be associated to.
           enum:
@@ -51411,22 +52609,6 @@ components:
       - id
       - name
       type: object
-    OSList_entries_inner:
-      example:
-        major: major
-        minor: minor
-        releaseName: releaseName
-        osName: osName
-      properties:
-        major:
-          type: string
-        minor:
-          type: string
-        osName:
-          type: string
-        releaseName:
-          type: string
-      type: object
     OSRestriction_appleRestrictions:
       description: "The Apple specific restricitons for this policy, if there are\
         \ any"
@@ -51444,19 +52626,6 @@ components:
             - user
             type: string
           type: array
-      type: object
-    PolicyGroupTemplateMembers_results_inner:
-      example:
-        name: name
-        id: id
-        policyTemplateId: policyTemplateId
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        policyTemplateId:
-          type: string
       type: object
     PolicyRequest_template:
       example:
@@ -52333,6 +53502,7 @@ x-tagGroups:
   - FeatureTrials
   - G Suite
   - G Suite Import
+  - Google EMM
   - Graph
   - Groups
   - IP Lists
@@ -52340,7 +53510,6 @@ x-tagGroups:
   - LDAP Servers
   - Logos
   - Managed Service Provider
-  - OS Lists
   - Office 365
   - Office 365 Import
   - Organizations

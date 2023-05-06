@@ -14,13 +14,27 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
-	openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func Test_jcapi2_PolicyGroupTemplatesApiService(t *testing.T) {
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
+
+	t.Run("Test PolicyGroupTemplatesApiService PolicyGroupTemplatesDelete", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		var providerId string
+		var id string
+
+		httpRes, err := apiClient.PolicyGroupTemplatesApi.PolicyGroupTemplatesDelete(context.Background(), providerId, id).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
 
 	t.Run("Test PolicyGroupTemplatesApiService PolicyGroupTemplatesGet", func(t *testing.T) {
 

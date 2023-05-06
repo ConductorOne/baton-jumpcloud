@@ -18,6 +18,8 @@ Method | HTTP request | Description
 [**GroupsSystemList**](SystemGroupsApi.md#GroupsSystemList) | **Get** /systemgroups | List all System Groups
 [**GroupsSystemPost**](SystemGroupsApi.md#GroupsSystemPost) | **Post** /systemgroups | Create a new System Group
 [**GroupsSystemPut**](SystemGroupsApi.md#GroupsSystemPut) | **Put** /systemgroups/{id} | Update a System Group
+[**GroupsSystemSuggestionsGet**](SystemGroupsApi.md#GroupsSystemSuggestionsGet) | **Get** /systemgroups/{group_id}/suggestions | List Suggestions for a System Group
+[**GroupsSystemSuggestionsPost**](SystemGroupsApi.md#GroupsSystemSuggestionsPost) | **Post** /systemgroups/{group_id}/suggestions | Apply Suggestions for a System Group
 
 
 
@@ -38,7 +40,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -116,7 +118,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -188,7 +190,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -264,7 +266,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -340,7 +342,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -420,7 +422,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -498,7 +500,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -576,7 +578,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -654,7 +656,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -732,7 +734,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -804,7 +806,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -876,7 +878,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -952,7 +954,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1020,7 +1022,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -1062,6 +1064,156 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**SystemGroup**](SystemGroup.md)
+
+### Authorization
+
+[x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## GroupsSystemSuggestionsGet
+
+> []MemberSuggestion GroupsSystemSuggestionsGet(ctx, groupId).XOrgId(xOrgId).Limit(limit).Skip(skip).Execute()
+
+List Suggestions for a System Group
+
+
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+)
+
+func main() {
+    groupId := "groupId_example" // string | ID of the group
+    xOrgId := "xOrgId_example" // string | Organization identifier that can be obtained from console settings. (optional)
+    limit := int32(56) // int32 | The number of records to return at once. Limited to 100. (optional) (default to 10)
+    skip := int32(56) // int32 | The offset into the records to return. (optional) (default to 0)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.SystemGroupsApi.GroupsSystemSuggestionsGet(context.Background(), groupId).XOrgId(xOrgId).Limit(limit).Skip(skip).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `SystemGroupsApi.GroupsSystemSuggestionsGet``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GroupsSystemSuggestionsGet`: []MemberSuggestion
+    fmt.Fprintf(os.Stdout, "Response from `SystemGroupsApi.GroupsSystemSuggestionsGet`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**groupId** | **string** | ID of the group | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGroupsSystemSuggestionsGetRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **xOrgId** | **string** | Organization identifier that can be obtained from console settings. | 
+ **limit** | **int32** | The number of records to return at once. Limited to 100. | [default to 10]
+ **skip** | **int32** | The offset into the records to return. | [default to 0]
+
+### Return type
+
+[**[]MemberSuggestion**](MemberSuggestion.md)
+
+### Authorization
+
+[x-api-key](../README.md#x-api-key)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## GroupsSystemSuggestionsPost
+
+> []MemberSuggestionsPostResult GroupsSystemSuggestionsPost(ctx, groupId).Body(body).XOrgId(xOrgId).Execute()
+
+Apply Suggestions for a System Group
+
+
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+)
+
+func main() {
+    groupId := "groupId_example" // string | ID of the group
+    body := *openapiclient.NewGroupsSystemSuggestionsPostRequest() // GroupsSystemSuggestionsPostRequest | 
+    xOrgId := "xOrgId_example" // string | Organization identifier that can be obtained from console settings. (optional)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.SystemGroupsApi.GroupsSystemSuggestionsPost(context.Background(), groupId).Body(body).XOrgId(xOrgId).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `SystemGroupsApi.GroupsSystemSuggestionsPost``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GroupsSystemSuggestionsPost`: []MemberSuggestionsPostResult
+    fmt.Fprintf(os.Stdout, "Response from `SystemGroupsApi.GroupsSystemSuggestionsPost`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**groupId** | **string** | ID of the group | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGroupsSystemSuggestionsPostRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+
+ **body** | [**GroupsSystemSuggestionsPostRequest**](GroupsSystemSuggestionsPostRequest.md) |  | 
+ **xOrgId** | **string** | Organization identifier that can be obtained from console settings. | 
+
+### Return type
+
+[**[]MemberSuggestionsPostResult**](MemberSuggestionsPostResult.md)
 
 ### Authorization
 

@@ -20,7 +20,7 @@ var _ MappedNullable = &PolicyGroupTemplateMembers{}
 
 // PolicyGroupTemplateMembers struct for PolicyGroupTemplateMembers
 type PolicyGroupTemplateMembers struct {
-	Results []PolicyGroupTemplateMembersResultsInner `json:"results,omitempty"`
+	Results []PolicyGroupTemplateMember `json:"results,omitempty"`
 	TotalCount *int32 `json:"totalCount,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
@@ -45,9 +45,9 @@ func NewPolicyGroupTemplateMembersWithDefaults() *PolicyGroupTemplateMembers {
 }
 
 // GetResults returns the Results field value if set, zero value otherwise.
-func (o *PolicyGroupTemplateMembers) GetResults() []PolicyGroupTemplateMembersResultsInner {
+func (o *PolicyGroupTemplateMembers) GetResults() []PolicyGroupTemplateMember {
 	if o == nil || IsNil(o.Results) {
-		var ret []PolicyGroupTemplateMembersResultsInner
+		var ret []PolicyGroupTemplateMember
 		return ret
 	}
 	return o.Results
@@ -55,7 +55,7 @@ func (o *PolicyGroupTemplateMembers) GetResults() []PolicyGroupTemplateMembersRe
 
 // GetResultsOk returns a tuple with the Results field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *PolicyGroupTemplateMembers) GetResultsOk() ([]PolicyGroupTemplateMembersResultsInner, bool) {
+func (o *PolicyGroupTemplateMembers) GetResultsOk() ([]PolicyGroupTemplateMember, bool) {
 	if o == nil || IsNil(o.Results) {
 		return nil, false
 	}
@@ -71,8 +71,8 @@ func (o *PolicyGroupTemplateMembers) HasResults() bool {
 	return false
 }
 
-// SetResults gets a reference to the given []PolicyGroupTemplateMembersResultsInner and assigns it to the Results field.
-func (o *PolicyGroupTemplateMembers) SetResults(v []PolicyGroupTemplateMembersResultsInner) {
+// SetResults gets a reference to the given []PolicyGroupTemplateMember and assigns it to the Results field.
+func (o *PolicyGroupTemplateMembers) SetResults(v []PolicyGroupTemplateMember) {
 	o.Results = v
 }
 

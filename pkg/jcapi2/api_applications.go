@@ -358,7 +358,7 @@ func (r ApplicationsApiApplicationsPostLogoRequest) Execute() (*http.Response, e
 }
 
 /*
-ApplicationsPostLogo Method for ApplicationsPostLogo
+ApplicationsPostLogo Save application logo
 
 This endpoint sets the logo for an application.
 
