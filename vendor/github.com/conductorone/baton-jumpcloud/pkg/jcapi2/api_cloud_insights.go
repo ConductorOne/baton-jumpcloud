@@ -47,7 +47,7 @@ func (r CloudInsightsApiCloudInsightsCreateAccountRequest) Execute() (*CloudInsi
 }
 
 /*
-CloudInsightsCreateAccount Method for CloudInsightsCreateAccount
+CloudInsightsCreateAccount Create AWS account record
 
 Allows you to create a single AWS account record
 

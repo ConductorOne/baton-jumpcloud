@@ -24,7 +24,7 @@ type GraphOperationUser struct {
 	Id string `json:"id"`
 	// How to modify the graph connection.
 	Op string `json:"op"`
-	Attributes *map[string]interface{} `json:"attributes,omitempty"`
+	Attributes *GraphOperationSystemAllOfAttributes `json:"attributes,omitempty"`
 	// Targets which a \"user\" can be associated to.
 	Type string `json:"type"`
 	AdditionalProperties map[string]interface{}
@@ -101,9 +101,9 @@ func (o *GraphOperationUser) SetOp(v string) {
 }
 
 // GetAttributes returns the Attributes field value if set, zero value otherwise.
-func (o *GraphOperationUser) GetAttributes() map[string]interface{} {
+func (o *GraphOperationUser) GetAttributes() GraphOperationSystemAllOfAttributes {
 	if o == nil || IsNil(o.Attributes) {
-		var ret map[string]interface{}
+		var ret GraphOperationSystemAllOfAttributes
 		return ret
 	}
 	return *o.Attributes
@@ -111,7 +111,7 @@ func (o *GraphOperationUser) GetAttributes() map[string]interface{} {
 
 // GetAttributesOk returns a tuple with the Attributes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GraphOperationUser) GetAttributesOk() (*map[string]interface{}, bool) {
+func (o *GraphOperationUser) GetAttributesOk() (*GraphOperationSystemAllOfAttributes, bool) {
 	if o == nil || IsNil(o.Attributes) {
 		return nil, false
 	}
@@ -127,8 +127,8 @@ func (o *GraphOperationUser) HasAttributes() bool {
 	return false
 }
 
-// SetAttributes gets a reference to the given map[string]interface{} and assigns it to the Attributes field.
-func (o *GraphOperationUser) SetAttributes(v map[string]interface{}) {
+// SetAttributes gets a reference to the given GraphOperationSystemAllOfAttributes and assigns it to the Attributes field.
+func (o *GraphOperationUser) SetAttributes(v GraphOperationSystemAllOfAttributes) {
 	o.Attributes = &v
 }
 

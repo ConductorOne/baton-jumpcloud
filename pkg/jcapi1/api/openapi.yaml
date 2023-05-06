@@ -1286,6 +1286,7 @@ paths:
       - Command Triggers
       x-scopes:
       - commands
+      - commands.schedule
       x-codeSamples:
       - lang: Shell
         source: |-
@@ -2532,6 +2533,8 @@ paths:
 
         Note: `passwordPolicy` settings are only used when `passwordCompliance` is set to "custom". We discourage the use of non-custom passwordCompliance values.
 
+        `emailDisclaimer` can only be modified by paying customers.
+
         `hasStripeCustomerId` is deprecated and will be removed.
 
         #### Sample Request
@@ -2694,9 +2697,6 @@ paths:
     x-functionalities-tags:
     - organizations
   /organizations/{id}/paymentdetails:
-    x-functionalities-tags:
-    - accounts-page-payment-info
-  /organizations/{id}/paymentdetails/card:
     x-functionalities-tags:
     - accounts-page-payment-info
   /organizations/{id}/paymentparams:
@@ -8252,6 +8252,7 @@ components:
           deviceIdentificationEnabled: true
           enableManagedUID: true
           windowsMDM:
+            autoEnroll: true
             enabled: true
           passwordPolicy:
             minChangePeriodInDays: 4
@@ -8436,6 +8437,7 @@ components:
         deviceIdentificationEnabled: true
         enableManagedUID: true
         windowsMDM:
+          autoEnroll: true
           enabled: true
         passwordPolicy:
           minChangePeriodInDays: 4
@@ -8977,6 +8979,7 @@ components:
         sshRootEnabled: true
         version: version
         lastContact: 2000-01-23T04:56:07.000+00:00
+        secureLoginEnabled: true
         tags:
         - tags
         - tags
@@ -9009,6 +9012,7 @@ components:
         agentVersion: agentVersion
         _id: _id
         arch: arch
+        archFamily: archFamily
         systemTimezone: 0
         desktopCapable: true
       properties:
@@ -9029,6 +9033,8 @@ components:
         amazonInstanceID:
           type: string
         arch:
+          type: string
+        archFamily:
           type: string
         azureAdJoined:
           type: boolean
@@ -9088,6 +9094,8 @@ components:
           $ref: '#/components/schemas/system_provisionMetadata'
         remoteIP:
           type: string
+        secureLoginEnabled:
+          type: boolean
         serialNumber:
           type: string
         serviceAccountState:
@@ -9205,6 +9213,7 @@ components:
           sshRootEnabled: true
           version: version
           lastContact: 2000-01-23T04:56:07.000+00:00
+          secureLoginEnabled: true
           tags:
           - tags
           - tags
@@ -9237,6 +9246,7 @@ components:
           agentVersion: agentVersion
           _id: _id
           arch: arch
+          archFamily: archFamily
           systemTimezone: 0
           desktopCapable: true
         - userMetrics:
@@ -9302,6 +9312,7 @@ components:
           sshRootEnabled: true
           version: version
           lastContact: 2000-01-23T04:56:07.000+00:00
+          secureLoginEnabled: true
           tags:
           - tags
           - tags
@@ -9334,6 +9345,7 @@ components:
           agentVersion: agentVersion
           _id: _id
           arch: arch
+          archFamily: archFamily
           systemTimezone: 0
           desktopCapable: true
       properties:
@@ -11022,8 +11034,12 @@ components:
       type: object
     organizationsettings_windowsMDM:
       example:
+        autoEnroll: true
         enabled: true
       properties:
+        autoEnroll:
+          description: Indicates if MDM Auto Enroll is active.
+          type: boolean
         enabled:
           description: Indicates if the Windows MDM is active.
           type: boolean
@@ -11514,6 +11530,7 @@ x-scopes:
 - commandrunner.legacy
 - commands
 - commands.readonly
+- commands.schedule
 - organizations
 - organizations.readonly
 - radius

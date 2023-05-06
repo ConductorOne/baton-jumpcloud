@@ -22,6 +22,7 @@ var _ MappedNullable = &PolicyGroupTemplate{}
 type PolicyGroupTemplate struct {
 	Description *string `json:"description,omitempty"`
 	Id *string `json:"id,omitempty"`
+	Members []PolicyGroupTemplateMember `json:"members,omitempty"`
 	Name *string `json:"name,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
@@ -109,6 +110,38 @@ func (o *PolicyGroupTemplate) SetId(v string) {
 	o.Id = &v
 }
 
+// GetMembers returns the Members field value if set, zero value otherwise.
+func (o *PolicyGroupTemplate) GetMembers() []PolicyGroupTemplateMember {
+	if o == nil || IsNil(o.Members) {
+		var ret []PolicyGroupTemplateMember
+		return ret
+	}
+	return o.Members
+}
+
+// GetMembersOk returns a tuple with the Members field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PolicyGroupTemplate) GetMembersOk() ([]PolicyGroupTemplateMember, bool) {
+	if o == nil || IsNil(o.Members) {
+		return nil, false
+	}
+	return o.Members, true
+}
+
+// HasMembers returns a boolean if a field has been set.
+func (o *PolicyGroupTemplate) HasMembers() bool {
+	if o != nil && !IsNil(o.Members) {
+		return true
+	}
+
+	return false
+}
+
+// SetMembers gets a reference to the given []PolicyGroupTemplateMember and assigns it to the Members field.
+func (o *PolicyGroupTemplate) SetMembers(v []PolicyGroupTemplateMember) {
+	o.Members = v
+}
+
 // GetName returns the Name field value if set, zero value otherwise.
 func (o *PolicyGroupTemplate) GetName() string {
 	if o == nil || IsNil(o.Name) {
@@ -157,6 +190,9 @@ func (o PolicyGroupTemplate) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Id) {
 		toSerialize["id"] = o.Id
 	}
+	if !IsNil(o.Members) {
+		toSerialize["members"] = o.Members
+	}
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
@@ -180,6 +216,7 @@ func (o *PolicyGroupTemplate) UnmarshalJSON(bytes []byte) (err error) {
 	if err = json.Unmarshal(bytes, &additionalProperties); err == nil {
 		delete(additionalProperties, "description")
 		delete(additionalProperties, "id")
+		delete(additionalProperties, "members")
 		delete(additionalProperties, "name")
 		o.AdditionalProperties = additionalProperties
 	}

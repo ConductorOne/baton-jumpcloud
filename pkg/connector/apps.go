@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
-	"github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"

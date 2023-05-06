@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **ConfigFields** | Pointer to [**[]PolicyTemplateConfigField**](PolicyTemplateConfigField.md) |  | [optional] 
 **Id** | Pointer to **string** | ObjectId uniquely identifying a Policy. | [optional] 
 **Name** | Pointer to **string** | The description for this specific Policy. | [optional] 
+**Notes** | Pointer to **string** | The notes for this specific Policy. | [optional] 
 **Template** | Pointer to [**PolicyTemplate**](PolicyTemplate.md) |  | [optional] 
 **Values** | Pointer to [**[]PolicyValue**](PolicyValue.md) |  | [optional] 
 
@@ -103,6 +104,31 @@ SetName sets Name field to given value.
 `func (o *PolicyWithDetails) HasName() bool`
 
 HasName returns a boolean if a field has been set.
+
+### GetNotes
+
+`func (o *PolicyWithDetails) GetNotes() string`
+
+GetNotes returns the Notes field if non-nil, zero value otherwise.
+
+### GetNotesOk
+
+`func (o *PolicyWithDetails) GetNotesOk() (*string, bool)`
+
+GetNotesOk returns a tuple with the Notes field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetNotes
+
+`func (o *PolicyWithDetails) SetNotes(v string)`
+
+SetNotes sets Notes field to given value.
+
+### HasNotes
+
+`func (o *PolicyWithDetails) HasNotes() bool`
+
+HasNotes returns a boolean if a field has been set.
 
 ### GetTemplate
 

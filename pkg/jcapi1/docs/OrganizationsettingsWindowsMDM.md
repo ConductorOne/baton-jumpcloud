@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**AutoEnroll** | Pointer to **bool** | Indicates if MDM Auto Enroll is active. | [optional] 
 **Enabled** | Pointer to **bool** | Indicates if the Windows MDM is active. | [optional] 
 
 ## Methods
@@ -24,6 +25,31 @@ will change when the set of required properties is changed
 NewOrganizationsettingsWindowsMDMWithDefaults instantiates a new OrganizationsettingsWindowsMDM object
 This constructor will only assign default values to properties that have it defined,
 but it doesn't guarantee that properties required by API are set
+
+### GetAutoEnroll
+
+`func (o *OrganizationsettingsWindowsMDM) GetAutoEnroll() bool`
+
+GetAutoEnroll returns the AutoEnroll field if non-nil, zero value otherwise.
+
+### GetAutoEnrollOk
+
+`func (o *OrganizationsettingsWindowsMDM) GetAutoEnrollOk() (*bool, bool)`
+
+GetAutoEnrollOk returns a tuple with the AutoEnroll field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetAutoEnroll
+
+`func (o *OrganizationsettingsWindowsMDM) SetAutoEnroll(v bool)`
+
+SetAutoEnroll sets AutoEnroll field to given value.
+
+### HasAutoEnroll
+
+`func (o *OrganizationsettingsWindowsMDM) HasAutoEnroll() bool`
+
+HasAutoEnroll returns a boolean if a field has been set.
 
 ### GetEnabled
 

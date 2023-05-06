@@ -30,6 +30,7 @@ type System struct {
 	AllowSshRootLogin *bool `json:"allowSshRootLogin,omitempty"`
 	AmazonInstanceID *string `json:"amazonInstanceID,omitempty"`
 	Arch *string `json:"arch,omitempty"`
+	ArchFamily *string `json:"archFamily,omitempty"`
 	AzureAdJoined *bool `json:"azureAdJoined,omitempty"`
 	BuiltInCommands []SystemBuiltInCommandsInner `json:"builtInCommands,omitempty"`
 	ConnectionHistory []map[string]interface{} `json:"connectionHistory,omitempty"`
@@ -53,6 +54,7 @@ type System struct {
 	OsVersionDetail *SystemOsVersionDetail `json:"osVersionDetail,omitempty"`
 	ProvisionMetadata *SystemProvisionMetadata `json:"provisionMetadata,omitempty"`
 	RemoteIP *string `json:"remoteIP,omitempty"`
+	SecureLoginEnabled *bool `json:"secureLoginEnabled,omitempty"`
 	SerialNumber *string `json:"serialNumber,omitempty"`
 	ServiceAccountState *SystemServiceAccountState `json:"serviceAccountState,omitempty"`
 	SshRootEnabled *bool `json:"sshRootEnabled,omitempty"`
@@ -371,6 +373,38 @@ func (o *System) HasArch() bool {
 // SetArch gets a reference to the given string and assigns it to the Arch field.
 func (o *System) SetArch(v string) {
 	o.Arch = &v
+}
+
+// GetArchFamily returns the ArchFamily field value if set, zero value otherwise.
+func (o *System) GetArchFamily() string {
+	if o == nil || IsNil(o.ArchFamily) {
+		var ret string
+		return ret
+	}
+	return *o.ArchFamily
+}
+
+// GetArchFamilyOk returns a tuple with the ArchFamily field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *System) GetArchFamilyOk() (*string, bool) {
+	if o == nil || IsNil(o.ArchFamily) {
+		return nil, false
+	}
+	return o.ArchFamily, true
+}
+
+// HasArchFamily returns a boolean if a field has been set.
+func (o *System) HasArchFamily() bool {
+	if o != nil && !IsNil(o.ArchFamily) {
+		return true
+	}
+
+	return false
+}
+
+// SetArchFamily gets a reference to the given string and assigns it to the ArchFamily field.
+func (o *System) SetArchFamily(v string) {
+	o.ArchFamily = &v
 }
 
 // GetAzureAdJoined returns the AzureAdJoined field value if set, zero value otherwise.
@@ -1129,6 +1163,38 @@ func (o *System) SetRemoteIP(v string) {
 	o.RemoteIP = &v
 }
 
+// GetSecureLoginEnabled returns the SecureLoginEnabled field value if set, zero value otherwise.
+func (o *System) GetSecureLoginEnabled() bool {
+	if o == nil || IsNil(o.SecureLoginEnabled) {
+		var ret bool
+		return ret
+	}
+	return *o.SecureLoginEnabled
+}
+
+// GetSecureLoginEnabledOk returns a tuple with the SecureLoginEnabled field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *System) GetSecureLoginEnabledOk() (*bool, bool) {
+	if o == nil || IsNil(o.SecureLoginEnabled) {
+		return nil, false
+	}
+	return o.SecureLoginEnabled, true
+}
+
+// HasSecureLoginEnabled returns a boolean if a field has been set.
+func (o *System) HasSecureLoginEnabled() bool {
+	if o != nil && !IsNil(o.SecureLoginEnabled) {
+		return true
+	}
+
+	return false
+}
+
+// SetSecureLoginEnabled gets a reference to the given bool and assigns it to the SecureLoginEnabled field.
+func (o *System) SetSecureLoginEnabled(v bool) {
+	o.SecureLoginEnabled = &v
+}
+
 // GetSerialNumber returns the SerialNumber field value if set, zero value otherwise.
 func (o *System) GetSerialNumber() string {
 	if o == nil || IsNil(o.SerialNumber) {
@@ -1486,6 +1552,9 @@ func (o System) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Arch) {
 		toSerialize["arch"] = o.Arch
 	}
+	if !IsNil(o.ArchFamily) {
+		toSerialize["archFamily"] = o.ArchFamily
+	}
 	if !IsNil(o.AzureAdJoined) {
 		toSerialize["azureAdJoined"] = o.AzureAdJoined
 	}
@@ -1553,6 +1622,9 @@ func (o System) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.RemoteIP) {
 		toSerialize["remoteIP"] = o.RemoteIP
 	}
+	if !IsNil(o.SecureLoginEnabled) {
+		toSerialize["secureLoginEnabled"] = o.SecureLoginEnabled
+	}
 	if !IsNil(o.SerialNumber) {
 		toSerialize["serialNumber"] = o.SerialNumber
 	}
@@ -1610,6 +1682,7 @@ func (o *System) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "allowSshRootLogin")
 		delete(additionalProperties, "amazonInstanceID")
 		delete(additionalProperties, "arch")
+		delete(additionalProperties, "archFamily")
 		delete(additionalProperties, "azureAdJoined")
 		delete(additionalProperties, "builtInCommands")
 		delete(additionalProperties, "connectionHistory")
@@ -1633,6 +1706,7 @@ func (o *System) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "osVersionDetail")
 		delete(additionalProperties, "provisionMetadata")
 		delete(additionalProperties, "remoteIP")
+		delete(additionalProperties, "secureLoginEnabled")
 		delete(additionalProperties, "serialNumber")
 		delete(additionalProperties, "serviceAccountState")
 		delete(additionalProperties, "sshRootEnabled")

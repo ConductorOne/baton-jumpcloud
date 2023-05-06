@@ -22,6 +22,8 @@ var _ MappedNullable = &PolicyRequest{}
 type PolicyRequest struct {
 	// The description for this specific Policy.
 	Name string `json:"name"`
+	// The notes for this specific Policy.
+	Notes *string `json:"notes,omitempty"`
 	Template *PolicyRequestTemplate `json:"template,omitempty"`
 	Values []PolicyValue `json:"values,omitempty"`
 	AdditionalProperties map[string]interface{}
@@ -69,6 +71,38 @@ func (o *PolicyRequest) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *PolicyRequest) SetName(v string) {
 	o.Name = v
+}
+
+// GetNotes returns the Notes field value if set, zero value otherwise.
+func (o *PolicyRequest) GetNotes() string {
+	if o == nil || IsNil(o.Notes) {
+		var ret string
+		return ret
+	}
+	return *o.Notes
+}
+
+// GetNotesOk returns a tuple with the Notes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PolicyRequest) GetNotesOk() (*string, bool) {
+	if o == nil || IsNil(o.Notes) {
+		return nil, false
+	}
+	return o.Notes, true
+}
+
+// HasNotes returns a boolean if a field has been set.
+func (o *PolicyRequest) HasNotes() bool {
+	if o != nil && !IsNil(o.Notes) {
+		return true
+	}
+
+	return false
+}
+
+// SetNotes gets a reference to the given string and assigns it to the Notes field.
+func (o *PolicyRequest) SetNotes(v string) {
+	o.Notes = &v
 }
 
 // GetTemplate returns the Template field value if set, zero value otherwise.
@@ -146,6 +180,9 @@ func (o PolicyRequest) MarshalJSON() ([]byte, error) {
 func (o PolicyRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["name"] = o.Name
+	if !IsNil(o.Notes) {
+		toSerialize["notes"] = o.Notes
+	}
 	if !IsNil(o.Template) {
 		toSerialize["template"] = o.Template
 	}
@@ -171,6 +208,7 @@ func (o *PolicyRequest) UnmarshalJSON(bytes []byte) (err error) {
 
 	if err = json.Unmarshal(bytes, &additionalProperties); err == nil {
 		delete(additionalProperties, "name")
+		delete(additionalProperties, "notes")
 		delete(additionalProperties, "template")
 		delete(additionalProperties, "values")
 		o.AdditionalProperties = additionalProperties

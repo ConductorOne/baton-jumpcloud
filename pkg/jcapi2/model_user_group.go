@@ -34,6 +34,7 @@ type UserGroup struct {
 	MemberSuggestionsNotify *bool `json:"memberSuggestionsNotify,omitempty"`
 	// True if membership of this group is automatically updated based on the Member Query and Member Query Exemptions, if configured
 	MembershipAutomated *bool `json:"membershipAutomated,omitempty"`
+	MembershipMethod *GroupMembershipMethodType `json:"membershipMethod,omitempty"`
 	// Display name of a User Group.
 	Name *string `json:"name,omitempty"`
 	SuggestionCounts *SuggestionCounts `json:"suggestionCounts,omitempty"`
@@ -317,6 +318,38 @@ func (o *UserGroup) SetMembershipAutomated(v bool) {
 	o.MembershipAutomated = &v
 }
 
+// GetMembershipMethod returns the MembershipMethod field value if set, zero value otherwise.
+func (o *UserGroup) GetMembershipMethod() GroupMembershipMethodType {
+	if o == nil || IsNil(o.MembershipMethod) {
+		var ret GroupMembershipMethodType
+		return ret
+	}
+	return *o.MembershipMethod
+}
+
+// GetMembershipMethodOk returns a tuple with the MembershipMethod field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UserGroup) GetMembershipMethodOk() (*GroupMembershipMethodType, bool) {
+	if o == nil || IsNil(o.MembershipMethod) {
+		return nil, false
+	}
+	return o.MembershipMethod, true
+}
+
+// HasMembershipMethod returns a boolean if a field has been set.
+func (o *UserGroup) HasMembershipMethod() bool {
+	if o != nil && !IsNil(o.MembershipMethod) {
+		return true
+	}
+
+	return false
+}
+
+// SetMembershipMethod gets a reference to the given GroupMembershipMethodType and assigns it to the MembershipMethod field.
+func (o *UserGroup) SetMembershipMethod(v GroupMembershipMethodType) {
+	o.MembershipMethod = &v
+}
+
 // GetName returns the Name field value if set, zero value otherwise.
 func (o *UserGroup) GetName() string {
 	if o == nil || IsNil(o.Name) {
@@ -447,6 +480,9 @@ func (o UserGroup) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.MembershipAutomated) {
 		toSerialize["membershipAutomated"] = o.MembershipAutomated
 	}
+	if !IsNil(o.MembershipMethod) {
+		toSerialize["membershipMethod"] = o.MembershipMethod
+	}
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
@@ -482,6 +518,7 @@ func (o *UserGroup) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "memberQueryExemptions")
 		delete(additionalProperties, "memberSuggestionsNotify")
 		delete(additionalProperties, "membershipAutomated")
+		delete(additionalProperties, "membershipMethod")
 		delete(additionalProperties, "name")
 		delete(additionalProperties, "suggestionCounts")
 		delete(additionalProperties, "type")

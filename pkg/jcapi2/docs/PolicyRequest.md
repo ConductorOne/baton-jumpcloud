@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | **string** | The description for this specific Policy. | 
+**Notes** | Pointer to **string** | The notes for this specific Policy. | [optional] 
 **Template** | Pointer to [**PolicyRequestTemplate**](PolicyRequestTemplate.md) |  | [optional] 
 **Values** | Pointer to [**[]PolicyValue**](PolicyValue.md) |  | [optional] 
 
@@ -46,6 +47,31 @@ and a boolean to check if the value has been set.
 
 SetName sets Name field to given value.
 
+
+### GetNotes
+
+`func (o *PolicyRequest) GetNotes() string`
+
+GetNotes returns the Notes field if non-nil, zero value otherwise.
+
+### GetNotesOk
+
+`func (o *PolicyRequest) GetNotesOk() (*string, bool)`
+
+GetNotesOk returns a tuple with the Notes field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetNotes
+
+`func (o *PolicyRequest) SetNotes(v string)`
+
+SetNotes sets Notes field to given value.
+
+### HasNotes
+
+`func (o *PolicyRequest) HasNotes() bool`
+
+HasNotes returns a boolean if a field has been set.
 
 ### GetTemplate
 

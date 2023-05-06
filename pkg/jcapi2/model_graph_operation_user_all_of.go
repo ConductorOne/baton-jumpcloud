@@ -20,7 +20,7 @@ var _ MappedNullable = &GraphOperationUserAllOf{}
 
 // GraphOperationUserAllOf struct for GraphOperationUserAllOf
 type GraphOperationUserAllOf struct {
-	Attributes *map[string]interface{} `json:"attributes,omitempty"`
+	Attributes *GraphOperationSystemAllOfAttributes `json:"attributes,omitempty"`
 	// Targets which a \"user\" can be associated to.
 	Type string `json:"type"`
 	AdditionalProperties map[string]interface{}
@@ -47,9 +47,9 @@ func NewGraphOperationUserAllOfWithDefaults() *GraphOperationUserAllOf {
 }
 
 // GetAttributes returns the Attributes field value if set, zero value otherwise.
-func (o *GraphOperationUserAllOf) GetAttributes() map[string]interface{} {
+func (o *GraphOperationUserAllOf) GetAttributes() GraphOperationSystemAllOfAttributes {
 	if o == nil || IsNil(o.Attributes) {
-		var ret map[string]interface{}
+		var ret GraphOperationSystemAllOfAttributes
 		return ret
 	}
 	return *o.Attributes
@@ -57,7 +57,7 @@ func (o *GraphOperationUserAllOf) GetAttributes() map[string]interface{} {
 
 // GetAttributesOk returns a tuple with the Attributes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *GraphOperationUserAllOf) GetAttributesOk() (*map[string]interface{}, bool) {
+func (o *GraphOperationUserAllOf) GetAttributesOk() (*GraphOperationSystemAllOfAttributes, bool) {
 	if o == nil || IsNil(o.Attributes) {
 		return nil, false
 	}
@@ -73,8 +73,8 @@ func (o *GraphOperationUserAllOf) HasAttributes() bool {
 	return false
 }
 
-// SetAttributes gets a reference to the given map[string]interface{} and assigns it to the Attributes field.
-func (o *GraphOperationUserAllOf) SetAttributes(v map[string]interface{}) {
+// SetAttributes gets a reference to the given GraphOperationSystemAllOfAttributes and assigns it to the Attributes field.
+func (o *GraphOperationUserAllOf) SetAttributes(v GraphOperationSystemAllOfAttributes) {
 	o.Attributes = &v
 }
 

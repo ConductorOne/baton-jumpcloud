@@ -6,7 +6,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **DefaultDeviceGroupObjectIds** | Pointer to **[]string** | An array of ObjectIDs identifying the default device groups for this specific type (based on the OS family) of automated device enrollment. Currently, only a single DeviceGroupID is supported. | [optional] 
 **EnableZeroTouchEnrollment** | Pointer to **bool** | A toggle to determine if ADE registered devices should go through JumpCloud Zero Touch Enrollment. | [optional] 
-**SetupAssistantOptions** | Pointer to [**[]DEPSetupAssistantOption**](DEPSetupAssistantOption.md) |  | [optional] 
+**SetupAssistantOptions** | Pointer to [**[]DEPSetupAssistantOption**](DEPSetupAssistantOption.md) | A Setup Option wrapped as an object | [optional] 
+**SetupOptions** | Pointer to [**[]SetupAssistantOption**](SetupAssistantOption.md) | A list of configured setup options for this enrollment. | [optional] 
 **WelcomeScreen** | Pointer to [**DEPWelcomeScreen**](DEPWelcomeScreen.md) |  | [optional] 
 
 ## Methods
@@ -112,6 +113,31 @@ SetSetupAssistantOptions sets SetupAssistantOptions field to given value.
 `func (o *ADE) HasSetupAssistantOptions() bool`
 
 HasSetupAssistantOptions returns a boolean if a field has been set.
+
+### GetSetupOptions
+
+`func (o *ADE) GetSetupOptions() []SetupAssistantOption`
+
+GetSetupOptions returns the SetupOptions field if non-nil, zero value otherwise.
+
+### GetSetupOptionsOk
+
+`func (o *ADE) GetSetupOptionsOk() (*[]SetupAssistantOption, bool)`
+
+GetSetupOptionsOk returns a tuple with the SetupOptions field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetSetupOptions
+
+`func (o *ADE) SetSetupOptions(v []SetupAssistantOption)`
+
+SetSetupOptions sets SetupOptions field to given value.
+
+### HasSetupOptions
+
+`func (o *ADE) HasSetupOptions() bool`
+
+HasSetupOptions returns a boolean if a field has been set.
 
 ### GetWelcomeScreen
 

@@ -1,4 +1,4 @@
-module github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1
+module github.com/conductorone/baton-jumpcloud/pkg/jcapi1
 
 go 1.20
 

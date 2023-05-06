@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
-	openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func Test_jcapi2_SystemGroupsApiService(t *testing.T) {
@@ -205,6 +205,34 @@ func Test_jcapi2_SystemGroupsApiService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.SystemGroupsApi.GroupsSystemPut(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test SystemGroupsApiService GroupsSystemSuggestionsGet", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.SystemGroupsApi.GroupsSystemSuggestionsGet(context.Background(), groupId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test SystemGroupsApiService GroupsSystemSuggestionsPost", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.SystemGroupsApi.GroupsSystemSuggestionsPost(context.Background(), groupId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

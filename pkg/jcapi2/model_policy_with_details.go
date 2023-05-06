@@ -25,6 +25,8 @@ type PolicyWithDetails struct {
 	Id *string `json:"id,omitempty"`
 	// The description for this specific Policy.
 	Name *string `json:"name,omitempty"`
+	// The notes for this specific Policy.
+	Notes *string `json:"notes,omitempty"`
 	Template *PolicyTemplate `json:"template,omitempty"`
 	Values []PolicyValue `json:"values,omitempty"`
 	AdditionalProperties map[string]interface{}
@@ -145,6 +147,38 @@ func (o *PolicyWithDetails) SetName(v string) {
 	o.Name = &v
 }
 
+// GetNotes returns the Notes field value if set, zero value otherwise.
+func (o *PolicyWithDetails) GetNotes() string {
+	if o == nil || IsNil(o.Notes) {
+		var ret string
+		return ret
+	}
+	return *o.Notes
+}
+
+// GetNotesOk returns a tuple with the Notes field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PolicyWithDetails) GetNotesOk() (*string, bool) {
+	if o == nil || IsNil(o.Notes) {
+		return nil, false
+	}
+	return o.Notes, true
+}
+
+// HasNotes returns a boolean if a field has been set.
+func (o *PolicyWithDetails) HasNotes() bool {
+	if o != nil && !IsNil(o.Notes) {
+		return true
+	}
+
+	return false
+}
+
+// SetNotes gets a reference to the given string and assigns it to the Notes field.
+func (o *PolicyWithDetails) SetNotes(v string) {
+	o.Notes = &v
+}
+
 // GetTemplate returns the Template field value if set, zero value otherwise.
 func (o *PolicyWithDetails) GetTemplate() PolicyTemplate {
 	if o == nil || IsNil(o.Template) {
@@ -228,6 +262,9 @@ func (o PolicyWithDetails) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
+	if !IsNil(o.Notes) {
+		toSerialize["notes"] = o.Notes
+	}
 	if !IsNil(o.Template) {
 		toSerialize["template"] = o.Template
 	}
@@ -255,6 +292,7 @@ func (o *PolicyWithDetails) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "configFields")
 		delete(additionalProperties, "id")
 		delete(additionalProperties, "name")
+		delete(additionalProperties, "notes")
 		delete(additionalProperties, "template")
 		delete(additionalProperties, "values")
 		o.AdditionalProperties = additionalProperties

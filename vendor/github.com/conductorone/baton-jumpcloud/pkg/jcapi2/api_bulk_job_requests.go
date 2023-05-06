@@ -24,6 +24,137 @@ import (
 // BulkJobRequestsApiService BulkJobRequestsApi service
 type BulkJobRequestsApiService service
 
+type BulkJobRequestsApiBulkUserExpiresRequest struct {
+	ctx context.Context
+	ApiService *BulkJobRequestsApiService
+	xOrgId *string
+	body *[]BulkUserExpire
+}
+
+// Organization identifier that can be obtained from console settings.
+func (r BulkJobRequestsApiBulkUserExpiresRequest) XOrgId(xOrgId string) BulkJobRequestsApiBulkUserExpiresRequest {
+	r.xOrgId = &xOrgId
+	return r
+}
+
+func (r BulkJobRequestsApiBulkUserExpiresRequest) Body(body []BulkUserExpire) BulkJobRequestsApiBulkUserExpiresRequest {
+	r.body = &body
+	return r
+}
+
+func (r BulkJobRequestsApiBulkUserExpiresRequest) Execute() (*JobId, *http.Response, error) {
+	return r.ApiService.BulkUserExpiresExecute(r)
+}
+
+/*
+BulkUserExpires Bulk Expire Users
+
+The endpoint allows you to start a bulk job to asynchronously expire users.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return BulkJobRequestsApiBulkUserExpiresRequest
+*/
+func (a *BulkJobRequestsApiService) BulkUserExpires(ctx context.Context) BulkJobRequestsApiBulkUserExpiresRequest {
+	return BulkJobRequestsApiBulkUserExpiresRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return JobId
+func (a *BulkJobRequestsApiService) BulkUserExpiresExecute(r BulkJobRequestsApiBulkUserExpiresRequest) (*JobId, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *JobId
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "BulkJobRequestsApiService.BulkUserExpires")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/bulk/user/expires"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.xOrgId != nil {
+		parameterAddToHeaderOrQuery(localVarHeaderParams, "x-org-id", r.xOrgId, "")
+	}
+	// body params
+	localVarPostBody = r.body
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["x-api-key"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["x-api-key"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type BulkJobRequestsApiBulkUserStatesCreateRequest struct {
 	ctx context.Context
 	ApiService *BulkJobRequestsApiService

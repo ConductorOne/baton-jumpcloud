@@ -318,7 +318,7 @@ go get golang.org/x/net/context
 Put the package under your project folder and add the following in import:
 
 ```golang
-import jcapi2 "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+import jcapi2 "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 ```
 
 To use a proxy, set the environment variable `HTTP_PROXY`:
@@ -411,7 +411,7 @@ Class | Method | HTTP request | Description
 *AppleMDMApi* | [**ApplemdmsRefreshdepdevices**](docs/AppleMDMApi.md#applemdmsrefreshdepdevices) | **Post** /applemdms/{apple_mdm_id}/refreshdepdevices | Refresh DEP Devices
 *ApplicationsApi* | [**ApplicationsDeleteLogo**](docs/ApplicationsApi.md#applicationsdeletelogo) | **Delete** /applications/{application_id}/logo | Delete application image
 *ApplicationsApi* | [**ApplicationsGet**](docs/ApplicationsApi.md#applicationsget) | **Get** /applications/{application_id} | Get an Application
-*ApplicationsApi* | [**ApplicationsPostLogo**](docs/ApplicationsApi.md#applicationspostlogo) | **Post** /applications/{application_id}/logo | 
+*ApplicationsApi* | [**ApplicationsPostLogo**](docs/ApplicationsApi.md#applicationspostlogo) | **Post** /applications/{application_id}/logo | Save application logo
 *ApplicationsApi* | [**GraphApplicationAssociationsList**](docs/ApplicationsApi.md#graphapplicationassociationslist) | **Get** /applications/{application_id}/associations | List the associations of an Application
 *ApplicationsApi* | [**GraphApplicationAssociationsPost**](docs/ApplicationsApi.md#graphapplicationassociationspost) | **Post** /applications/{application_id}/associations | Manage the associations of an Application
 *ApplicationsApi* | [**GraphApplicationTraverseUser**](docs/ApplicationsApi.md#graphapplicationtraverseuser) | **Get** /applications/{application_id}/users | List the Users bound to an Application
@@ -423,6 +423,7 @@ Class | Method | HTTP request | Description
 *AuthenticationPoliciesApi* | [**AuthnpoliciesList**](docs/AuthenticationPoliciesApi.md#authnpolicieslist) | **Get** /authn/policies | List Authentication Policies
 *AuthenticationPoliciesApi* | [**AuthnpoliciesPatch**](docs/AuthenticationPoliciesApi.md#authnpoliciespatch) | **Patch** /authn/policies/{id} | Patch Authentication Policy
 *AuthenticationPoliciesApi* | [**AuthnpoliciesPost**](docs/AuthenticationPoliciesApi.md#authnpoliciespost) | **Post** /authn/policies | Create an Authentication Policy
+*BulkJobRequestsApi* | [**BulkUserExpires**](docs/BulkJobRequestsApi.md#bulkuserexpires) | **Post** /bulk/user/expires | Bulk Expire Users
 *BulkJobRequestsApi* | [**BulkUserStatesCreate**](docs/BulkJobRequestsApi.md#bulkuserstatescreate) | **Post** /bulk/userstates | Create Scheduled Userstate Job
 *BulkJobRequestsApi* | [**BulkUserStatesDelete**](docs/BulkJobRequestsApi.md#bulkuserstatesdelete) | **Delete** /bulk/userstates/{id} | Delete Scheduled Userstate Job
 *BulkJobRequestsApi* | [**BulkUserStatesGetNextScheduled**](docs/BulkJobRequestsApi.md#bulkuserstatesgetnextscheduled) | **Get** /bulk/userstates/eventlist/next | Get the next scheduled state change for a list of users
@@ -430,7 +431,7 @@ Class | Method | HTTP request | Description
 *BulkJobRequestsApi* | [**BulkUsersCreate**](docs/BulkJobRequestsApi.md#bulkuserscreate) | **Post** /bulk/users | Bulk Users Create
 *BulkJobRequestsApi* | [**BulkUsersCreateResults**](docs/BulkJobRequestsApi.md#bulkuserscreateresults) | **Get** /bulk/users/{job_id}/results | List Bulk Users Results
 *BulkJobRequestsApi* | [**BulkUsersUpdate**](docs/BulkJobRequestsApi.md#bulkusersupdate) | **Patch** /bulk/users | Bulk Users Update
-*CloudInsightsApi* | [**CloudInsightsCreateAccount**](docs/CloudInsightsApi.md#cloudinsightscreateaccount) | **Post** /cloudinsights/accounts | 
+*CloudInsightsApi* | [**CloudInsightsCreateAccount**](docs/CloudInsightsApi.md#cloudinsightscreateaccount) | **Post** /cloudinsights/accounts | Create AWS account record
 *CloudInsightsApi* | [**CloudInsightsCreateSavedView**](docs/CloudInsightsApi.md#cloudinsightscreatesavedview) | **Post** /cloudinsights/views | 
 *CloudInsightsApi* | [**CloudInsightsDeleteSavedView**](docs/CloudInsightsApi.md#cloudinsightsdeletesavedview) | **Delete** /cloudinsights/views/{view_id} | 
 *CloudInsightsApi* | [**CloudInsightsFetchDistinctFieldValues**](docs/CloudInsightsApi.md#cloudinsightsfetchdistinctfieldvalues) | **Post** /cloudinsights/events/distinct | 
@@ -479,6 +480,18 @@ Class | Method | HTTP request | Description
 *GSuiteApi* | [**TranslationRulesGSuitePost**](docs/GSuiteApi.md#translationrulesgsuitepost) | **Post** /gsuites/{gsuite_id}/translationrules | Create a new G Suite Translation Rule
 *GSuiteImportApi* | [**GsuitesListImportJumpcloudUsers**](docs/GSuiteImportApi.md#gsuiteslistimportjumpcloudusers) | **Get** /gsuites/{gsuite_id}/import/jumpcloudusers | Get a list of users in Jumpcloud format to import from a Google Workspace account.
 *GSuiteImportApi* | [**GsuitesListImportUsers**](docs/GSuiteImportApi.md#gsuiteslistimportusers) | **Get** /gsuites/{gsuite_id}/import/users | Get a list of users to import from a G Suite instance
+*GoogleEMMApi* | [**DevicesGetDevice**](docs/GoogleEMMApi.md#devicesgetdevice) | **Get** /google-emm/devices/{deviceId} | Get device
+*GoogleEMMApi* | [**DevicesGetDeviceAndroidPolicy**](docs/GoogleEMMApi.md#devicesgetdeviceandroidpolicy) | **Get** /google-emm/devices/{deviceId}/policy_results | Get the policy JSON of a device
+*GoogleEMMApi* | [**DevicesLockDevice**](docs/GoogleEMMApi.md#deviceslockdevice) | **Post** /google-emm/devices/{deviceId}/lock | Lock device
+*GoogleEMMApi* | [**DevicesRelinquishOwnership**](docs/GoogleEMMApi.md#devicesrelinquishownership) | **Post** /google-emm/devices/{deviceId}/relinquishownership | Relinquish Ownership of COPE device
+*GoogleEMMApi* | [**DevicesResetPassword**](docs/GoogleEMMApi.md#devicesresetpassword) | **Post** /google-emm/devices/{deviceId}/resetpassword | Reset Password of a device
+*GoogleEMMApi* | [**EnterprisesCreateEnterprise**](docs/GoogleEMMApi.md#enterprisescreateenterprise) | **Post** /google-emm/enterprises | Create a Google Enterprise
+*GoogleEMMApi* | [**EnterprisesDeleteEnterprise**](docs/GoogleEMMApi.md#enterprisesdeleteenterprise) | **Delete** /google-emm/enterprises/{enterpriseId} | Delete a Google Enterprise
+*GoogleEMMApi* | [**EnterprisesGetConnectionStatus**](docs/GoogleEMMApi.md#enterprisesgetconnectionstatus) | **Get** /google-emm/enterprises/{enterpriseId}/connection-status | Test connection with Google
+*GoogleEMMApi* | [**EnterprisesListEnterprises**](docs/GoogleEMMApi.md#enterpriseslistenterprises) | **Get** /google-emm/enterprises | List Google Enterprises
+*GoogleEMMApi* | [**EnterprisesPatchEnterprise**](docs/GoogleEMMApi.md#enterprisespatchenterprise) | **Patch** /google-emm/enterprises/{enterpriseId} | Update a Google Enterprise
+*GoogleEMMApi* | [**SignupURLsCreate**](docs/GoogleEMMApi.md#signupurlscreate) | **Post** /google-emm/signup-urls | Get a Signup URL to enroll Google enterprise
+*GoogleEMMApi* | [**WebTokensCreateWebToken**](docs/GoogleEMMApi.md#webtokenscreatewebtoken) | **Post** /google-emm/web-tokens | Get a web token to render Google Play iFrame
 *GraphApi* | [**GraphActiveDirectoryAssociationsList**](docs/GraphApi.md#graphactivedirectoryassociationslist) | **Get** /activedirectories/{activedirectory_id}/associations | List the associations of an Active Directory instance
 *GraphApi* | [**GraphActiveDirectoryAssociationsPost**](docs/GraphApi.md#graphactivedirectoryassociationspost) | **Post** /activedirectories/{activedirectory_id}/associations | Manage the associations of an Active Directory instance
 *GraphApi* | [**GraphActiveDirectoryTraverseUser**](docs/GraphApi.md#graphactivedirectorytraverseuser) | **Get** /activedirectories/{activedirectory_id}/users | List the Users bound to an Active Directory instance
@@ -588,6 +601,7 @@ Class | Method | HTTP request | Description
 *ManagedServiceProviderApi* | [**AdministratorOrganizationsListByAdministrator**](docs/ManagedServiceProviderApi.md#administratororganizationslistbyadministrator) | **Get** /administrators/{id}/organizationlinks | List the association links between an Administrator and Organizations.
 *ManagedServiceProviderApi* | [**AdministratorOrganizationsListByOrganization**](docs/ManagedServiceProviderApi.md#administratororganizationslistbyorganization) | **Get** /organizations/{id}/administratorlinks | List the association links between an Organization and Administrators.
 *ManagedServiceProviderApi* | [**AdministratorOrganizationsRemoveByAdministrator**](docs/ManagedServiceProviderApi.md#administratororganizationsremovebyadministrator) | **Delete** /administrators/{administrator_id}/organizationlinks/{id} | Remove association between an Administrator and an Organization.
+*ManagedServiceProviderApi* | [**PolicyGroupTemplatesDelete**](docs/ManagedServiceProviderApi.md#policygrouptemplatesdelete) | **Delete** /providers/{provider_id}/policygrouptemplates/{id} | Deletes policy group template.
 *ManagedServiceProviderApi* | [**PolicyGroupTemplatesGet**](docs/ManagedServiceProviderApi.md#policygrouptemplatesget) | **Get** /providers/{provider_id}/policygrouptemplates/{id} | Gets a provider&#39;s policy group template.
 *ManagedServiceProviderApi* | [**PolicyGroupTemplatesGetConfiguredPolicyTemplate**](docs/ManagedServiceProviderApi.md#policygrouptemplatesgetconfiguredpolicytemplate) | **Get** /providers/{provider_id}/configuredpolicytemplates/{id} | Retrieve a configured policy template by id.
 *ManagedServiceProviderApi* | [**PolicyGroupTemplatesList**](docs/ManagedServiceProviderApi.md#policygrouptemplateslist) | **Get** /providers/{provider_id}/policygrouptemplates | List a provider&#39;s policy group templates.
@@ -601,12 +615,6 @@ Class | Method | HTTP request | Description
 *ManagedServiceProviderApi* | [**ProvidersPostAdmins**](docs/ManagedServiceProviderApi.md#providerspostadmins) | **Post** /providers/{provider_id}/administrators | Create a new Provider Administrator
 *ManagedServiceProviderApi* | [**ProvidersRetrieveInvoice**](docs/ManagedServiceProviderApi.md#providersretrieveinvoice) | **Get** /providers/{provider_id}/invoices/{ID} | Download a provider&#39;s invoice.
 *ManagedServiceProviderApi* | [**ProvidersRetrieveInvoices**](docs/ManagedServiceProviderApi.md#providersretrieveinvoices) | **Get** /providers/{provider_id}/invoices | List a provider&#39;s invoices.
-*OSListsApi* | [**OslistsDelete**](docs/OSListsApi.md#oslistsdelete) | **Delete** /oslists/{id} | Delete an OS list
-*OSListsApi* | [**OslistsGet**](docs/OSListsApi.md#oslistsget) | **Get** /oslists/{id} | Get an OS list
-*OSListsApi* | [**OslistsList**](docs/OSListsApi.md#oslistslist) | **Get** /oslists | List OS Version Restriction Lists
-*OSListsApi* | [**OslistsPatch**](docs/OSListsApi.md#oslistspatch) | **Patch** /oslists/{id} | Update an OS list
-*OSListsApi* | [**OslistsPost**](docs/OSListsApi.md#oslistspost) | **Post** /oslists | Create OS List
-*OSListsApi* | [**OslistsPut**](docs/OSListsApi.md#oslistsput) | **Put** /oslists/{id} | Replace an OS list
 *Office365Api* | [**GraphOffice365AssociationsList**](docs/Office365Api.md#graphoffice365associationslist) | **Get** /office365s/{office365_id}/associations | List the associations of an Office 365 instance
 *Office365Api* | [**GraphOffice365AssociationsPost**](docs/Office365Api.md#graphoffice365associationspost) | **Post** /office365s/{office365_id}/associations | Manage the associations of an Office 365 instance
 *Office365Api* | [**GraphOffice365TraverseUser**](docs/Office365Api.md#graphoffice365traverseuser) | **Get** /office365s/{office365_id}/users | List the Users bound to an Office 365 instance
@@ -648,6 +656,7 @@ Class | Method | HTTP request | Description
 *PolicyGroupMembersMembershipApi* | [**GraphPolicyGroupMembersList**](docs/PolicyGroupMembersMembershipApi.md#graphpolicygroupmemberslist) | **Get** /policygroups/{group_id}/members | List the members of a Policy Group
 *PolicyGroupMembersMembershipApi* | [**GraphPolicyGroupMembersPost**](docs/PolicyGroupMembersMembershipApi.md#graphpolicygroupmemberspost) | **Post** /policygroups/{group_id}/members | Manage the members of a Policy Group
 *PolicyGroupMembersMembershipApi* | [**GraphPolicyGroupMembership**](docs/PolicyGroupMembersMembershipApi.md#graphpolicygroupmembership) | **Get** /policygroups/{group_id}/membership | List the Policy Group&#39;s membership
+*PolicyGroupTemplatesApi* | [**PolicyGroupTemplatesDelete**](docs/PolicyGroupTemplatesApi.md#policygrouptemplatesdelete) | **Delete** /providers/{provider_id}/policygrouptemplates/{id} | Deletes policy group template.
 *PolicyGroupTemplatesApi* | [**PolicyGroupTemplatesGet**](docs/PolicyGroupTemplatesApi.md#policygrouptemplatesget) | **Get** /providers/{provider_id}/policygrouptemplates/{id} | Gets a provider&#39;s policy group template.
 *PolicyGroupTemplatesApi* | [**PolicyGroupTemplatesGetConfiguredPolicyTemplate**](docs/PolicyGroupTemplatesApi.md#policygrouptemplatesgetconfiguredpolicytemplate) | **Get** /providers/{provider_id}/configuredpolicytemplates/{id} | Retrieve a configured policy template by id.
 *PolicyGroupTemplatesApi* | [**PolicyGroupTemplatesList**](docs/PolicyGroupTemplatesApi.md#policygrouptemplateslist) | **Get** /providers/{provider_id}/policygrouptemplates | List a provider&#39;s policy group templates.
@@ -700,6 +709,7 @@ Class | Method | HTTP request | Description
 *ProvidersApi* | [**ConnectwiseUpdateConfiguration**](docs/ProvidersApi.md#connectwiseupdateconfiguration) | **Patch** /integrations/connectwise/{UUID} | Update ConnectWise Integration configuration
 *ProvidersApi* | [**MtpIntegrationRetrieveAlerts**](docs/ProvidersApi.md#mtpintegrationretrievealerts) | **Get** /providers/{provider_id}/integrations/ticketing/alerts | Get all ticketing alerts available for a provider&#39;s ticketing integration.
 *ProvidersApi* | [**MtpIntegrationRetrieveSyncErrors**](docs/ProvidersApi.md#mtpintegrationretrievesyncerrors) | **Get** /integrations/{integration_type}/{UUID}/errors | Retrieve Recent Integration Sync Errors
+*ProvidersApi* | [**PolicyGroupTemplatesDelete**](docs/ProvidersApi.md#policygrouptemplatesdelete) | **Delete** /providers/{provider_id}/policygrouptemplates/{id} | Deletes policy group template.
 *ProvidersApi* | [**PolicyGroupTemplatesGet**](docs/ProvidersApi.md#policygrouptemplatesget) | **Get** /providers/{provider_id}/policygrouptemplates/{id} | Gets a provider&#39;s policy group template.
 *ProvidersApi* | [**PolicyGroupTemplatesGetConfiguredPolicyTemplate**](docs/ProvidersApi.md#policygrouptemplatesgetconfiguredpolicytemplate) | **Get** /providers/{provider_id}/configuredpolicytemplates/{id} | Retrieve a configured policy template by id.
 *ProvidersApi* | [**PolicyGroupTemplatesList**](docs/ProvidersApi.md#policygrouptemplateslist) | **Get** /providers/{provider_id}/policygrouptemplates | List a provider&#39;s policy group templates.
@@ -775,6 +785,8 @@ Class | Method | HTTP request | Description
 *SystemGroupsApi* | [**GroupsSystemList**](docs/SystemGroupsApi.md#groupssystemlist) | **Get** /systemgroups | List all System Groups
 *SystemGroupsApi* | [**GroupsSystemPost**](docs/SystemGroupsApi.md#groupssystempost) | **Post** /systemgroups | Create a new System Group
 *SystemGroupsApi* | [**GroupsSystemPut**](docs/SystemGroupsApi.md#groupssystemput) | **Put** /systemgroups/{id} | Update a System Group
+*SystemGroupsApi* | [**GroupsSystemSuggestionsGet**](docs/SystemGroupsApi.md#groupssystemsuggestionsget) | **Get** /systemgroups/{group_id}/suggestions | List Suggestions for a System Group
+*SystemGroupsApi* | [**GroupsSystemSuggestionsPost**](docs/SystemGroupsApi.md#groupssystemsuggestionspost) | **Post** /systemgroups/{group_id}/suggestions | Apply Suggestions for a System Group
 *SystemInsightsApi* | [**SysteminsightsListAlf**](docs/SystemInsightsApi.md#systeminsightslistalf) | **Get** /systeminsights/alf | List System Insights ALF
 *SystemInsightsApi* | [**SysteminsightsListAlfExceptions**](docs/SystemInsightsApi.md#systeminsightslistalfexceptions) | **Get** /systeminsights/alf_exceptions | List System Insights ALF Exceptions
 *SystemInsightsApi* | [**SysteminsightsListAlfExplicitAuths**](docs/SystemInsightsApi.md#systeminsightslistalfexplicitauths) | **Get** /systeminsights/alf_explicit_auths | List System Insights ALF Explicit Authentications
@@ -873,13 +885,13 @@ Class | Method | HTTP request | Description
 *UserGroupsApi* | [**GraphUserGroupTraverseRadiusServer**](docs/UserGroupsApi.md#graphusergrouptraverseradiusserver) | **Get** /usergroups/{group_id}/radiusservers | List the RADIUS Servers bound to a User Group
 *UserGroupsApi* | [**GraphUserGroupTraverseSystem**](docs/UserGroupsApi.md#graphusergrouptraversesystem) | **Get** /usergroups/{group_id}/systems | List the Systems bound to a User Group
 *UserGroupsApi* | [**GraphUserGroupTraverseSystemGroup**](docs/UserGroupsApi.md#graphusergrouptraversesystemgroup) | **Get** /usergroups/{group_id}/systemgroups | List the System Groups bound to User Groups
-*UserGroupsApi* | [**GroupsSuggestionsGet**](docs/UserGroupsApi.md#groupssuggestionsget) | **Get** /usergroups/{group_id}/suggestions | List Suggestions for a User Group
-*UserGroupsApi* | [**GroupsSuggestionsPost**](docs/UserGroupsApi.md#groupssuggestionspost) | **Post** /usergroups/{group_id}/suggestions | List Suggestions for a User Group
 *UserGroupsApi* | [**GroupsUserDelete**](docs/UserGroupsApi.md#groupsuserdelete) | **Delete** /usergroups/{id} | Delete a User Group
 *UserGroupsApi* | [**GroupsUserGet**](docs/UserGroupsApi.md#groupsuserget) | **Get** /usergroups/{id} | View an individual User Group details
 *UserGroupsApi* | [**GroupsUserList**](docs/UserGroupsApi.md#groupsuserlist) | **Get** /usergroups | List all User Groups
 *UserGroupsApi* | [**GroupsUserPost**](docs/UserGroupsApi.md#groupsuserpost) | **Post** /usergroups | Create a new User Group
 *UserGroupsApi* | [**GroupsUserPut**](docs/UserGroupsApi.md#groupsuserput) | **Put** /usergroups/{id} | Update a User Group
+*UserGroupsApi* | [**GroupsUserSuggestionsGet**](docs/UserGroupsApi.md#groupsusersuggestionsget) | **Get** /usergroups/{group_id}/suggestions | List Suggestions for a User Group
+*UserGroupsApi* | [**GroupsUserSuggestionsPost**](docs/UserGroupsApi.md#groupsusersuggestionspost) | **Post** /usergroups/{group_id}/suggestions | Apply Suggestions for a User Group
 *UsersApi* | [**GraphUserAssociationsList**](docs/UsersApi.md#graphuserassociationslist) | **Get** /users/{user_id}/associations | List the associations of a User
 *UsersApi* | [**GraphUserAssociationsPost**](docs/UsersApi.md#graphuserassociationspost) | **Post** /users/{user_id}/associations | Manage the associations of a User
 *UsersApi* | [**GraphUserMemberOf**](docs/UsersApi.md#graphusermemberof) | **Get** /users/{user_id}/memberof | List the parent Groups of a User
@@ -984,6 +996,7 @@ Class | Method | HTTP request | Description
  - [BillingIntegrationCompanyType](docs/BillingIntegrationCompanyType.md)
  - [BulkScheduledStatechangeCreate](docs/BulkScheduledStatechangeCreate.md)
  - [BulkUserCreate](docs/BulkUserCreate.md)
+ - [BulkUserExpire](docs/BulkUserExpire.md)
  - [BulkUserStatesGetNextScheduled200Response](docs/BulkUserStatesGetNextScheduled200Response.md)
  - [BulkUserUpdate](docs/BulkUserUpdate.md)
  - [CloudInsightsAccountGet](docs/CloudInsightsAccountGet.md)
@@ -1068,11 +1081,13 @@ Class | Method | HTTP request | Description
  - [DEP](docs/DEP.md)
  - [DEPSetupAssistantOption](docs/DEPSetupAssistantOption.md)
  - [DEPWelcomeScreen](docs/DEPWelcomeScreen.md)
+ - [DevicesResetPasswordRequest](docs/DevicesResetPasswordRequest.md)
  - [Directory](docs/Directory.md)
  - [DuoAccount](docs/DuoAccount.md)
  - [DuoApplication](docs/DuoApplication.md)
  - [DuoApplicationReq](docs/DuoApplicationReq.md)
  - [DuoApplicationUpdateReq](docs/DuoApplicationUpdateReq.md)
+ - [EnterprisesPatchEnterpriseRequest](docs/EnterprisesPatchEnterpriseRequest.md)
  - [Error](docs/Error.md)
  - [ErrorDetails](docs/ErrorDetails.md)
  - [ErrorDetailsAllOf](docs/ErrorDetailsAllOf.md)
@@ -1122,6 +1137,7 @@ Class | Method | HTTP request | Description
  - [GraphOperationSoftwareAppAllOf](docs/GraphOperationSoftwareAppAllOf.md)
  - [GraphOperationSystem](docs/GraphOperationSystem.md)
  - [GraphOperationSystemAllOf](docs/GraphOperationSystemAllOf.md)
+ - [GraphOperationSystemAllOfAttributes](docs/GraphOperationSystemAllOfAttributes.md)
  - [GraphOperationSystemGroup](docs/GraphOperationSystemGroup.md)
  - [GraphOperationSystemGroupAllOf](docs/GraphOperationSystemGroupAllOf.md)
  - [GraphOperationSystemGroupMember](docs/GraphOperationSystemGroupMember.md)
@@ -1135,9 +1151,12 @@ Class | Method | HTTP request | Description
  - [GraphType](docs/GraphType.md)
  - [Group](docs/Group.md)
  - [GroupAttributesUserGroup](docs/GroupAttributesUserGroup.md)
+ - [GroupMembershipMethodType](docs/GroupMembershipMethodType.md)
+ - [GroupPwm](docs/GroupPwm.md)
  - [GroupType](docs/GroupType.md)
  - [GroupsInner](docs/GroupsInner.md)
- - [GroupsSuggestionsPostRequest](docs/GroupsSuggestionsPostRequest.md)
+ - [GroupsSystemSuggestionsPostRequest](docs/GroupsSystemSuggestionsPostRequest.md)
+ - [GroupsUserSuggestionsPostRequest](docs/GroupsUserSuggestionsPostRequest.md)
  - [Gsuite](docs/Gsuite.md)
  - [GsuitesListImportJumpcloudUsers200Response](docs/GsuitesListImportJumpcloudUsers200Response.md)
  - [GsuitesListImportUsers200Response](docs/GsuitesListImportUsers200Response.md)
@@ -1158,6 +1177,27 @@ Class | Method | HTTP request | Description
  - [IntegrationsResponse](docs/IntegrationsResponse.md)
  - [JobId](docs/JobId.md)
  - [JobWorkresult](docs/JobWorkresult.md)
+ - [JumpcloudGoogleEmmCommonCriteriaModeInfo](docs/JumpcloudGoogleEmmCommonCriteriaModeInfo.md)
+ - [JumpcloudGoogleEmmConnectionStatus](docs/JumpcloudGoogleEmmConnectionStatus.md)
+ - [JumpcloudGoogleEmmCreateEnterpriseRequest](docs/JumpcloudGoogleEmmCreateEnterpriseRequest.md)
+ - [JumpcloudGoogleEmmCreateWebTokenRequest](docs/JumpcloudGoogleEmmCreateWebTokenRequest.md)
+ - [JumpcloudGoogleEmmDevice](docs/JumpcloudGoogleEmmDevice.md)
+ - [JumpcloudGoogleEmmDeviceAndroidPolicy](docs/JumpcloudGoogleEmmDeviceAndroidPolicy.md)
+ - [JumpcloudGoogleEmmDeviceInformation](docs/JumpcloudGoogleEmmDeviceInformation.md)
+ - [JumpcloudGoogleEmmDeviceSettings](docs/JumpcloudGoogleEmmDeviceSettings.md)
+ - [JumpcloudGoogleEmmDeviceStateInfo](docs/JumpcloudGoogleEmmDeviceStateInfo.md)
+ - [JumpcloudGoogleEmmEMMEnrollmentInfo](docs/JumpcloudGoogleEmmEMMEnrollmentInfo.md)
+ - [JumpcloudGoogleEmmEnterprise](docs/JumpcloudGoogleEmmEnterprise.md)
+ - [JumpcloudGoogleEmmHardwareInfo](docs/JumpcloudGoogleEmmHardwareInfo.md)
+ - [JumpcloudGoogleEmmListEnterprisesResponse](docs/JumpcloudGoogleEmmListEnterprisesResponse.md)
+ - [JumpcloudGoogleEmmMemoryInfo](docs/JumpcloudGoogleEmmMemoryInfo.md)
+ - [JumpcloudGoogleEmmNetworkInfo](docs/JumpcloudGoogleEmmNetworkInfo.md)
+ - [JumpcloudGoogleEmmSecurityPosture](docs/JumpcloudGoogleEmmSecurityPosture.md)
+ - [JumpcloudGoogleEmmSignupURL](docs/JumpcloudGoogleEmmSignupURL.md)
+ - [JumpcloudGoogleEmmSoftwareInfo](docs/JumpcloudGoogleEmmSoftwareInfo.md)
+ - [JumpcloudGoogleEmmSystemUpdateInfo](docs/JumpcloudGoogleEmmSystemUpdateInfo.md)
+ - [JumpcloudGoogleEmmTelephonyInfo](docs/JumpcloudGoogleEmmTelephonyInfo.md)
+ - [JumpcloudGoogleEmmWebToken](docs/JumpcloudGoogleEmmWebToken.md)
  - [LdapGroup](docs/LdapGroup.md)
  - [LdapServer](docs/LdapServer.md)
  - [LdapServerAction](docs/LdapServerAction.md)
@@ -1165,9 +1205,6 @@ Class | Method | HTTP request | Description
  - [LdapserversPatchRequest](docs/LdapserversPatchRequest.md)
  - [MemberSuggestion](docs/MemberSuggestion.md)
  - [MemberSuggestionsPostResult](docs/MemberSuggestionsPostResult.md)
- - [OSList](docs/OSList.md)
- - [OSListEntriesInner](docs/OSListEntriesInner.md)
- - [OSListRequest](docs/OSListRequest.md)
  - [OSRestriction](docs/OSRestriction.md)
  - [OSRestrictionAppleRestrictions](docs/OSRestrictionAppleRestrictions.md)
  - [Office365](docs/Office365.md)
@@ -1186,8 +1223,8 @@ Class | Method | HTTP request | Description
  - [PolicyGroup](docs/PolicyGroup.md)
  - [PolicyGroupData](docs/PolicyGroupData.md)
  - [PolicyGroupTemplate](docs/PolicyGroupTemplate.md)
+ - [PolicyGroupTemplateMember](docs/PolicyGroupTemplateMember.md)
  - [PolicyGroupTemplateMembers](docs/PolicyGroupTemplateMembers.md)
- - [PolicyGroupTemplateMembersResultsInner](docs/PolicyGroupTemplateMembersResultsInner.md)
  - [PolicyGroupTemplates](docs/PolicyGroupTemplates.md)
  - [PolicyGroupTemplatesListConfiguredPolicyTemplates200Response](docs/PolicyGroupTemplatesListConfiguredPolicyTemplates200Response.md)
  - [PolicyRequest](docs/PolicyRequest.md)
@@ -1236,6 +1273,7 @@ Class | Method | HTTP request | Description
  - [SharedFolderAccessLevels](docs/SharedFolderAccessLevels.md)
  - [SharedFolderAccessLevelsResultsInner](docs/SharedFolderAccessLevelsResultsInner.md)
  - [SharedFolderDetails](docs/SharedFolderDetails.md)
+ - [SharedFolderGroups](docs/SharedFolderGroups.md)
  - [SharedFolderUsers](docs/SharedFolderUsers.md)
  - [SharedFolderUsersResultsInner](docs/SharedFolderUsersResultsInner.md)
  - [SharedFoldersList](docs/SharedFoldersList.md)

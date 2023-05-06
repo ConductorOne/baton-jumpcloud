@@ -24,7 +24,10 @@ type ADE struct {
 	DefaultDeviceGroupObjectIds []string `json:"defaultDeviceGroupObjectIds,omitempty"`
 	// A toggle to determine if ADE registered devices should go through JumpCloud Zero Touch Enrollment.
 	EnableZeroTouchEnrollment *bool `json:"enableZeroTouchEnrollment,omitempty"`
+	// A Setup Option wrapped as an object
 	SetupAssistantOptions []DEPSetupAssistantOption `json:"setupAssistantOptions,omitempty"`
+	// A list of configured setup options for this enrollment.
+	SetupOptions []SetupAssistantOption `json:"setupOptions,omitempty"`
 	WelcomeScreen *DEPWelcomeScreen `json:"welcomeScreen,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
@@ -145,6 +148,38 @@ func (o *ADE) SetSetupAssistantOptions(v []DEPSetupAssistantOption) {
 	o.SetupAssistantOptions = v
 }
 
+// GetSetupOptions returns the SetupOptions field value if set, zero value otherwise.
+func (o *ADE) GetSetupOptions() []SetupAssistantOption {
+	if o == nil || IsNil(o.SetupOptions) {
+		var ret []SetupAssistantOption
+		return ret
+	}
+	return o.SetupOptions
+}
+
+// GetSetupOptionsOk returns a tuple with the SetupOptions field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *ADE) GetSetupOptionsOk() ([]SetupAssistantOption, bool) {
+	if o == nil || IsNil(o.SetupOptions) {
+		return nil, false
+	}
+	return o.SetupOptions, true
+}
+
+// HasSetupOptions returns a boolean if a field has been set.
+func (o *ADE) HasSetupOptions() bool {
+	if o != nil && !IsNil(o.SetupOptions) {
+		return true
+	}
+
+	return false
+}
+
+// SetSetupOptions gets a reference to the given []SetupAssistantOption and assigns it to the SetupOptions field.
+func (o *ADE) SetSetupOptions(v []SetupAssistantOption) {
+	o.SetupOptions = v
+}
+
 // GetWelcomeScreen returns the WelcomeScreen field value if set, zero value otherwise.
 func (o *ADE) GetWelcomeScreen() DEPWelcomeScreen {
 	if o == nil || IsNil(o.WelcomeScreen) {
@@ -196,6 +231,9 @@ func (o ADE) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SetupAssistantOptions) {
 		toSerialize["setupAssistantOptions"] = o.SetupAssistantOptions
 	}
+	if !IsNil(o.SetupOptions) {
+		toSerialize["setupOptions"] = o.SetupOptions
+	}
 	if !IsNil(o.WelcomeScreen) {
 		toSerialize["welcomeScreen"] = o.WelcomeScreen
 	}
@@ -220,6 +258,7 @@ func (o *ADE) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "defaultDeviceGroupObjectIds")
 		delete(additionalProperties, "enableZeroTouchEnrollment")
 		delete(additionalProperties, "setupAssistantOptions")
+		delete(additionalProperties, "setupOptions")
 		delete(additionalProperties, "welcomeScreen")
 		o.AdditionalProperties = additionalProperties
 	}

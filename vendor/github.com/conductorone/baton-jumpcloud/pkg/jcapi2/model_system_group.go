@@ -31,6 +31,11 @@ type SystemGroup struct {
 	MemberQuery *FilterQuery `json:"memberQuery,omitempty"`
 	// Array of GraphObjects exempted from the query
 	MemberQueryExemptions []GraphObject `json:"memberQueryExemptions,omitempty"`
+	// True if notification emails are to be sent for membership suggestions.
+	MemberSuggestionsNotify *bool `json:"memberSuggestionsNotify,omitempty"`
+	// True if membership of this group is automatically updated based on the Member Query and Member Query Exemptions, if configured
+	MembershipAutomated *bool `json:"membershipAutomated,omitempty"`
+	MembershipMethod *GroupMembershipMethodType `json:"membershipMethod,omitempty"`
 	// Display name of a System Group.
 	Name *string `json:"name,omitempty"`
 	// The type of the group; always 'system' for a System Group.
@@ -249,6 +254,102 @@ func (o *SystemGroup) SetMemberQueryExemptions(v []GraphObject) {
 	o.MemberQueryExemptions = v
 }
 
+// GetMemberSuggestionsNotify returns the MemberSuggestionsNotify field value if set, zero value otherwise.
+func (o *SystemGroup) GetMemberSuggestionsNotify() bool {
+	if o == nil || IsNil(o.MemberSuggestionsNotify) {
+		var ret bool
+		return ret
+	}
+	return *o.MemberSuggestionsNotify
+}
+
+// GetMemberSuggestionsNotifyOk returns a tuple with the MemberSuggestionsNotify field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SystemGroup) GetMemberSuggestionsNotifyOk() (*bool, bool) {
+	if o == nil || IsNil(o.MemberSuggestionsNotify) {
+		return nil, false
+	}
+	return o.MemberSuggestionsNotify, true
+}
+
+// HasMemberSuggestionsNotify returns a boolean if a field has been set.
+func (o *SystemGroup) HasMemberSuggestionsNotify() bool {
+	if o != nil && !IsNil(o.MemberSuggestionsNotify) {
+		return true
+	}
+
+	return false
+}
+
+// SetMemberSuggestionsNotify gets a reference to the given bool and assigns it to the MemberSuggestionsNotify field.
+func (o *SystemGroup) SetMemberSuggestionsNotify(v bool) {
+	o.MemberSuggestionsNotify = &v
+}
+
+// GetMembershipAutomated returns the MembershipAutomated field value if set, zero value otherwise.
+func (o *SystemGroup) GetMembershipAutomated() bool {
+	if o == nil || IsNil(o.MembershipAutomated) {
+		var ret bool
+		return ret
+	}
+	return *o.MembershipAutomated
+}
+
+// GetMembershipAutomatedOk returns a tuple with the MembershipAutomated field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SystemGroup) GetMembershipAutomatedOk() (*bool, bool) {
+	if o == nil || IsNil(o.MembershipAutomated) {
+		return nil, false
+	}
+	return o.MembershipAutomated, true
+}
+
+// HasMembershipAutomated returns a boolean if a field has been set.
+func (o *SystemGroup) HasMembershipAutomated() bool {
+	if o != nil && !IsNil(o.MembershipAutomated) {
+		return true
+	}
+
+	return false
+}
+
+// SetMembershipAutomated gets a reference to the given bool and assigns it to the MembershipAutomated field.
+func (o *SystemGroup) SetMembershipAutomated(v bool) {
+	o.MembershipAutomated = &v
+}
+
+// GetMembershipMethod returns the MembershipMethod field value if set, zero value otherwise.
+func (o *SystemGroup) GetMembershipMethod() GroupMembershipMethodType {
+	if o == nil || IsNil(o.MembershipMethod) {
+		var ret GroupMembershipMethodType
+		return ret
+	}
+	return *o.MembershipMethod
+}
+
+// GetMembershipMethodOk returns a tuple with the MembershipMethod field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SystemGroup) GetMembershipMethodOk() (*GroupMembershipMethodType, bool) {
+	if o == nil || IsNil(o.MembershipMethod) {
+		return nil, false
+	}
+	return o.MembershipMethod, true
+}
+
+// HasMembershipMethod returns a boolean if a field has been set.
+func (o *SystemGroup) HasMembershipMethod() bool {
+	if o != nil && !IsNil(o.MembershipMethod) {
+		return true
+	}
+
+	return false
+}
+
+// SetMembershipMethod gets a reference to the given GroupMembershipMethodType and assigns it to the MembershipMethod field.
+func (o *SystemGroup) SetMembershipMethod(v GroupMembershipMethodType) {
+	o.MembershipMethod = &v
+}
+
 // GetName returns the Name field value if set, zero value otherwise.
 func (o *SystemGroup) GetName() string {
 	if o == nil || IsNil(o.Name) {
@@ -341,6 +442,15 @@ func (o SystemGroup) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.MemberQueryExemptions) {
 		toSerialize["memberQueryExemptions"] = o.MemberQueryExemptions
 	}
+	if !IsNil(o.MemberSuggestionsNotify) {
+		toSerialize["memberSuggestionsNotify"] = o.MemberSuggestionsNotify
+	}
+	if !IsNil(o.MembershipAutomated) {
+		toSerialize["membershipAutomated"] = o.MembershipAutomated
+	}
+	if !IsNil(o.MembershipMethod) {
+		toSerialize["membershipMethod"] = o.MembershipMethod
+	}
 	if !IsNil(o.Name) {
 		toSerialize["name"] = o.Name
 	}
@@ -371,6 +481,9 @@ func (o *SystemGroup) UnmarshalJSON(bytes []byte) (err error) {
 		delete(additionalProperties, "id")
 		delete(additionalProperties, "memberQuery")
 		delete(additionalProperties, "memberQueryExemptions")
+		delete(additionalProperties, "memberSuggestionsNotify")
+		delete(additionalProperties, "membershipAutomated")
+		delete(additionalProperties, "membershipMethod")
 		delete(additionalProperties, "name")
 		delete(additionalProperties, "type")
 		o.AdditionalProperties = additionalProperties

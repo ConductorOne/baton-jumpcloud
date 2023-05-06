@@ -1,15 +1,15 @@
-module github.com/ConductorOne/baton-jumpcloud
+module github.com/conductorone/baton-jumpcloud
 
 go 1.20
 
 require (
-	github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1 v0.0.0-20230327172533-cabed18e3426
-	github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2 v0.0.0-20230327172533-cabed18e3426
-	github.com/conductorone/baton-sdk v0.0.26
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/spf13/cobra v1.6.1
+	github.com/conductorone/baton-jumpcloud/pkg/jcapi1 v0.0.0-00010101000000-000000000000
+	github.com/conductorone/baton-jumpcloud/pkg/jcapi2 v0.0.0-00010101000000-000000000000
+	github.com/conductorone/baton-sdk v0.0.27
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
+	github.com/spf13/cobra v1.7.0
 	go.uber.org/zap v1.24.0
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
@@ -71,3 +71,6 @@ require (
 	modernc.org/memory v1.5.0 // indirect
 	modernc.org/sqlite v1.20.4 // indirect
 )
+
+replace github.com/conductorone/baton-jumpcloud/pkg/jcapi1 => ./pkg/jcapi1
+replace github.com/conductorone/baton-jumpcloud/pkg/jcapi2 => ./pkg/jcapi2

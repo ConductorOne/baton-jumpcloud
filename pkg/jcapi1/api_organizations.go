@@ -240,6 +240,8 @@ This endpoint allows you to update an Organization.
 
 Note: `passwordPolicy` settings are only used when `passwordCompliance` is set to "custom". We discourage the use of non-custom passwordCompliance values.
 
+`emailDisclaimer` can only be modified by paying customers.
+
 `hasStripeCustomerId` is deprecated and will be removed.
 
 #### Sample Request

@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Description** | Pointer to **string** |  | [optional] 
 **Id** | Pointer to **string** |  | [optional] 
+**Members** | Pointer to [**[]PolicyGroupTemplateMember**](PolicyGroupTemplateMember.md) |  | [optional] 
 **Name** | Pointer to **string** |  | [optional] 
 
 ## Methods
@@ -76,6 +77,31 @@ SetId sets Id field to given value.
 `func (o *PolicyGroupTemplate) HasId() bool`
 
 HasId returns a boolean if a field has been set.
+
+### GetMembers
+
+`func (o *PolicyGroupTemplate) GetMembers() []PolicyGroupTemplateMember`
+
+GetMembers returns the Members field if non-nil, zero value otherwise.
+
+### GetMembersOk
+
+`func (o *PolicyGroupTemplate) GetMembersOk() (*[]PolicyGroupTemplateMember, bool)`
+
+GetMembersOk returns a tuple with the Members field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMembers
+
+`func (o *PolicyGroupTemplate) SetMembers(v []PolicyGroupTemplateMember)`
+
+SetMembers sets Members field to given value.
+
+### HasMembers
+
+`func (o *PolicyGroupTemplate) HasMembers() bool`
+
+HasMembers returns a boolean if a field has been set.
 
 ### GetName
 

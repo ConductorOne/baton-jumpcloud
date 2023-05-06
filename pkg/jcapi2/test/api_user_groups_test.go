@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
-	openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func Test_jcapi2_UserGroupsApiService(t *testing.T) {
@@ -216,34 +216,6 @@ func Test_jcapi2_UserGroupsApiService(t *testing.T) {
 
 	})
 
-	t.Run("Test UserGroupsApiService GroupsSuggestionsGet", func(t *testing.T) {
-
-		t.Skip("skip test")  // remove to run test
-
-		var groupId string
-
-		resp, httpRes, err := apiClient.UserGroupsApi.GroupsSuggestionsGet(context.Background(), groupId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
-	t.Run("Test UserGroupsApiService GroupsSuggestionsPost", func(t *testing.T) {
-
-		t.Skip("skip test")  // remove to run test
-
-		var groupId string
-
-		resp, httpRes, err := apiClient.UserGroupsApi.GroupsSuggestionsPost(context.Background(), groupId).Execute()
-
-		require.Nil(t, err)
-		require.NotNil(t, resp)
-		assert.Equal(t, 200, httpRes.StatusCode)
-
-	})
-
 	t.Run("Test UserGroupsApiService GroupsUserDelete", func(t *testing.T) {
 
 		t.Skip("skip test")  // remove to run test
@@ -303,6 +275,34 @@ func Test_jcapi2_UserGroupsApiService(t *testing.T) {
 		var id string
 
 		resp, httpRes, err := apiClient.UserGroupsApi.GroupsUserPut(context.Background(), id).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test UserGroupsApiService GroupsUserSuggestionsGet", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.UserGroupsApi.GroupsUserSuggestionsGet(context.Background(), groupId).Execute()
+
+		require.Nil(t, err)
+		require.NotNil(t, resp)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
+	t.Run("Test UserGroupsApiService GroupsUserSuggestionsPost", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		var groupId string
+
+		resp, httpRes, err := apiClient.UserGroupsApi.GroupsUserSuggestionsPost(context.Background(), groupId).Execute()
 
 		require.Nil(t, err)
 		require.NotNil(t, resp)

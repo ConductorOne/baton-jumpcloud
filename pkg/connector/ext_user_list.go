@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 )
 
 type UserListRequest struct {

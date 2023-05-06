@@ -82,6 +82,8 @@ type APIClient struct {
 
 	GSuiteImportApi *GSuiteImportApiService
 
+	GoogleEMMApi *GoogleEMMApiService
+
 	GraphApi *GraphApiService
 
 	GroupsApi *GroupsApiService
@@ -95,8 +97,6 @@ type APIClient struct {
 	LogosApi *LogosApiService
 
 	ManagedServiceProviderApi *ManagedServiceProviderApiService
-
-	OSListsApi *OSListsApiService
 
 	Office365Api *Office365ApiService
 
@@ -181,6 +181,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.FeatureTrialsApi = (*FeatureTrialsApiService)(&c.common)
 	c.GSuiteApi = (*GSuiteApiService)(&c.common)
 	c.GSuiteImportApi = (*GSuiteImportApiService)(&c.common)
+	c.GoogleEMMApi = (*GoogleEMMApiService)(&c.common)
 	c.GraphApi = (*GraphApiService)(&c.common)
 	c.GroupsApi = (*GroupsApiService)(&c.common)
 	c.IPListsApi = (*IPListsApiService)(&c.common)
@@ -188,7 +189,6 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.LDAPServersApi = (*LDAPServersApiService)(&c.common)
 	c.LogosApi = (*LogosApiService)(&c.common)
 	c.ManagedServiceProviderApi = (*ManagedServiceProviderApiService)(&c.common)
-	c.OSListsApi = (*OSListsApiService)(&c.common)
 	c.Office365Api = (*Office365ApiService)(&c.common)
 	c.Office365ImportApi = (*Office365ImportApiService)(&c.common)
 	c.OrganizationsApi = (*OrganizationsApiService)(&c.common)
@@ -785,16 +785,17 @@ func formatErrorMessage(status string, v interface{}) string {
 	str := ""
 	metaValue := reflect.ValueOf(v).Elem()
 
-	field := metaValue.FieldByName("Title")
-	if field != (reflect.Value{}) {
-		str = fmt.Sprintf("%s", field.Interface())
+	if metaValue.Kind() == reflect.Struct {
+		field := metaValue.FieldByName("Title")
+		if field != (reflect.Value{}) {
+			str = fmt.Sprintf("%s", field.Interface())
+		}
+
+		field = metaValue.FieldByName("Detail")
+		if field != (reflect.Value{}) {
+			str = fmt.Sprintf("%s (%s)", str, field.Interface())
+		}
 	}
 
-	field = metaValue.FieldByName("Detail")
-	if field != (reflect.Value{}) {
-		str = fmt.Sprintf("%s (%s)", str, field.Interface())
-	}
-
-	// status title (detail)
 	return strings.TrimSpace(fmt.Sprintf("%s %s", status, str))
 }

@@ -20,6 +20,8 @@ var _ MappedNullable = &OrganizationsettingsWindowsMDM{}
 
 // OrganizationsettingsWindowsMDM struct for OrganizationsettingsWindowsMDM
 type OrganizationsettingsWindowsMDM struct {
+	// Indicates if MDM Auto Enroll is active.
+	AutoEnroll *bool `json:"autoEnroll,omitempty"`
 	// Indicates if the Windows MDM is active.
 	Enabled *bool `json:"enabled,omitempty"`
 	AdditionalProperties map[string]interface{}
@@ -42,6 +44,38 @@ func NewOrganizationsettingsWindowsMDM() *OrganizationsettingsWindowsMDM {
 func NewOrganizationsettingsWindowsMDMWithDefaults() *OrganizationsettingsWindowsMDM {
 	this := OrganizationsettingsWindowsMDM{}
 	return &this
+}
+
+// GetAutoEnroll returns the AutoEnroll field value if set, zero value otherwise.
+func (o *OrganizationsettingsWindowsMDM) GetAutoEnroll() bool {
+	if o == nil || IsNil(o.AutoEnroll) {
+		var ret bool
+		return ret
+	}
+	return *o.AutoEnroll
+}
+
+// GetAutoEnrollOk returns a tuple with the AutoEnroll field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *OrganizationsettingsWindowsMDM) GetAutoEnrollOk() (*bool, bool) {
+	if o == nil || IsNil(o.AutoEnroll) {
+		return nil, false
+	}
+	return o.AutoEnroll, true
+}
+
+// HasAutoEnroll returns a boolean if a field has been set.
+func (o *OrganizationsettingsWindowsMDM) HasAutoEnroll() bool {
+	if o != nil && !IsNil(o.AutoEnroll) {
+		return true
+	}
+
+	return false
+}
+
+// SetAutoEnroll gets a reference to the given bool and assigns it to the AutoEnroll field.
+func (o *OrganizationsettingsWindowsMDM) SetAutoEnroll(v bool) {
+	o.AutoEnroll = &v
 }
 
 // GetEnabled returns the Enabled field value if set, zero value otherwise.
@@ -86,6 +120,9 @@ func (o OrganizationsettingsWindowsMDM) MarshalJSON() ([]byte, error) {
 
 func (o OrganizationsettingsWindowsMDM) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
+	if !IsNil(o.AutoEnroll) {
+		toSerialize["autoEnroll"] = o.AutoEnroll
+	}
 	if !IsNil(o.Enabled) {
 		toSerialize["enabled"] = o.Enabled
 	}
@@ -107,6 +144,7 @@ func (o *OrganizationsettingsWindowsMDM) UnmarshalJSON(bytes []byte) (err error)
 	additionalProperties := make(map[string]interface{})
 
 	if err = json.Unmarshal(bytes, &additionalProperties); err == nil {
+		delete(additionalProperties, "autoEnroll")
 		delete(additionalProperties, "enabled")
 		o.AdditionalProperties = additionalProperties
 	}

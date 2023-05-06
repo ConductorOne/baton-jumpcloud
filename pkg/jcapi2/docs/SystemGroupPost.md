@@ -9,6 +9,9 @@ Name | Type | Description | Notes
 **Email** | Pointer to **string** | Email address of a System Group | [optional] 
 **MemberQuery** | Pointer to [**FilterQuery**](FilterQuery.md) |  | [optional] 
 **MemberQueryExemptions** | Pointer to [**[]GraphObject**](GraphObject.md) | Array of GraphObjects exempted from the query | [optional] 
+**MemberSuggestionsNotify** | Pointer to **bool** | True if notification emails are to be sent for membership suggestions. | [optional] 
+**MembershipAutomated** | Pointer to **bool** | True if membership of this group is automatically updated based on the Member Query and Member Query Exemptions, if configured | [optional] 
+**MembershipMethod** | Pointer to [**GroupMembershipMethodType**](GroupMembershipMethodType.md) |  | [optional] 
 **Name** | **string** | Display name of a System Group. | 
 
 ## Methods
@@ -154,6 +157,81 @@ SetMemberQueryExemptions sets MemberQueryExemptions field to given value.
 `func (o *SystemGroupPost) HasMemberQueryExemptions() bool`
 
 HasMemberQueryExemptions returns a boolean if a field has been set.
+
+### GetMemberSuggestionsNotify
+
+`func (o *SystemGroupPost) GetMemberSuggestionsNotify() bool`
+
+GetMemberSuggestionsNotify returns the MemberSuggestionsNotify field if non-nil, zero value otherwise.
+
+### GetMemberSuggestionsNotifyOk
+
+`func (o *SystemGroupPost) GetMemberSuggestionsNotifyOk() (*bool, bool)`
+
+GetMemberSuggestionsNotifyOk returns a tuple with the MemberSuggestionsNotify field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMemberSuggestionsNotify
+
+`func (o *SystemGroupPost) SetMemberSuggestionsNotify(v bool)`
+
+SetMemberSuggestionsNotify sets MemberSuggestionsNotify field to given value.
+
+### HasMemberSuggestionsNotify
+
+`func (o *SystemGroupPost) HasMemberSuggestionsNotify() bool`
+
+HasMemberSuggestionsNotify returns a boolean if a field has been set.
+
+### GetMembershipAutomated
+
+`func (o *SystemGroupPost) GetMembershipAutomated() bool`
+
+GetMembershipAutomated returns the MembershipAutomated field if non-nil, zero value otherwise.
+
+### GetMembershipAutomatedOk
+
+`func (o *SystemGroupPost) GetMembershipAutomatedOk() (*bool, bool)`
+
+GetMembershipAutomatedOk returns a tuple with the MembershipAutomated field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMembershipAutomated
+
+`func (o *SystemGroupPost) SetMembershipAutomated(v bool)`
+
+SetMembershipAutomated sets MembershipAutomated field to given value.
+
+### HasMembershipAutomated
+
+`func (o *SystemGroupPost) HasMembershipAutomated() bool`
+
+HasMembershipAutomated returns a boolean if a field has been set.
+
+### GetMembershipMethod
+
+`func (o *SystemGroupPost) GetMembershipMethod() GroupMembershipMethodType`
+
+GetMembershipMethod returns the MembershipMethod field if non-nil, zero value otherwise.
+
+### GetMembershipMethodOk
+
+`func (o *SystemGroupPost) GetMembershipMethodOk() (*GroupMembershipMethodType, bool)`
+
+GetMembershipMethodOk returns a tuple with the MembershipMethod field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetMembershipMethod
+
+`func (o *SystemGroupPost) SetMembershipMethod(v GroupMembershipMethodType)`
+
+SetMembershipMethod sets MembershipMethod field to given value.
+
+### HasMembershipMethod
+
+`func (o *SystemGroupPost) HasMembershipMethod() bool`
+
+HasMembershipMethod returns a boolean if a field has been set.
 
 ### GetName
 

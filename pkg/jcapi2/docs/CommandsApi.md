@@ -30,7 +30,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -85,7 +85,7 @@ Name | Type | Description  | Notes
 
 ## CommandsGetQueuedCommandsByWorkflow
 
-> QueuedCommandList CommandsGetQueuedCommandsByWorkflow(ctx).XOrgId(xOrgId).Limit(limit).Filter(filter).Skip(skip).Execute()
+> QueuedCommandList CommandsGetQueuedCommandsByWorkflow(ctx).XOrgId(xOrgId).Limit(limit).Filter(filter).Skip(skip).Sort(sort).Search(search).Execute()
 
 Fetch the queued Commands for an Organization
 
@@ -100,7 +100,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -108,10 +108,12 @@ func main() {
     limit := int32(56) // int32 |  (optional) (default to 10)
     filter := []string{"Inner_example"} // []string | A filter to apply to the query.  **Filter structure**: `<field>:<operator>:<value>`.  **field** = Populate with a valid field from an endpoint response.  **operator** =  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in. _Note: v1 operators differ from v2 operators._  **value** = Populate with the value you want to search for. Is case sensitive. Supports wild cards.  **EX:** `GET /api/v2/groups?filter=name:eq:Test+Group` (optional) (default to [])
     skip := int32(56) // int32 | The offset into the records to return. (optional) (default to 0)
+    sort := []string{"Inner_example"} // []string | The comma separated fields used to sort the collection. Default sort is ascending, prefix with `-` to sort descending.  (optional) (default to [])
+    search := "search_example" // string | The search string to query records (optional)
 
     configuration := openapiclient.NewConfiguration()
     apiClient := openapiclient.NewAPIClient(configuration)
-    resp, r, err := apiClient.CommandsApi.CommandsGetQueuedCommandsByWorkflow(context.Background()).XOrgId(xOrgId).Limit(limit).Filter(filter).Skip(skip).Execute()
+    resp, r, err := apiClient.CommandsApi.CommandsGetQueuedCommandsByWorkflow(context.Background()).XOrgId(xOrgId).Limit(limit).Filter(filter).Skip(skip).Sort(sort).Search(search).Execute()
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error when calling `CommandsApi.CommandsGetQueuedCommandsByWorkflow``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
@@ -136,6 +138,8 @@ Name | Type | Description  | Notes
  **limit** | **int32** |  | [default to 10]
  **filter** | **[]string** | A filter to apply to the query.  **Filter structure**: &#x60;&lt;field&gt;:&lt;operator&gt;:&lt;value&gt;&#x60;.  **field** &#x3D; Populate with a valid field from an endpoint response.  **operator** &#x3D;  Supported operators are: eq, ne, gt, ge, lt, le, between, search, in. _Note: v1 operators differ from v2 operators._  **value** &#x3D; Populate with the value you want to search for. Is case sensitive. Supports wild cards.  **EX:** &#x60;GET /api/v2/groups?filter&#x3D;name:eq:Test+Group&#x60; | [default to []]
  **skip** | **int32** | The offset into the records to return. | [default to 0]
+ **sort** | **[]string** | The comma separated fields used to sort the collection. Default sort is ascending, prefix with &#x60;-&#x60; to sort descending.  | [default to []]
+ **search** | **string** | The search string to query records | 
 
 ### Return type
 
@@ -172,7 +176,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -250,7 +254,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -322,7 +326,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {
@@ -400,7 +404,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi2"
+    openapiclient "github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 )
 
 func main() {

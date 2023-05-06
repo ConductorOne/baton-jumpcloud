@@ -290,7 +290,7 @@ go get golang.org/x/net/context
 Put the package under your project folder and add the following in import:
 
 ```golang
-import jcapi1 "github.com/ConductorOne/baton-jumpcloud/pkg/jcapi1"
+import jcapi1 "github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 ```
 
 To use a proxy, set the environment variable `HTTP_PROXY`:
