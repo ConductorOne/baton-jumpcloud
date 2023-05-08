@@ -39,7 +39,6 @@ type connectorClient struct {
 	connectorV2.ConnectorServiceClient
 	connectorV2.AssetServiceClient
 	ratelimitV1.RateLimiterClient
-	connectorV2.GrantManagerServiceClient
 }
 
 var ErrConnectorNotImplemented = errors.New("client does not implement connector connectorV2")
@@ -140,7 +139,6 @@ func (cw *wrapper) Run(ctx context.Context, serverCfg *connectorwrapperV1.Server
 	connectorV2.RegisterResourcesServiceServer(server, cw.server)
 	connectorV2.RegisterResourceTypesServiceServer(server, cw.server)
 	connectorV2.RegisterAssetServiceServer(server, cw.server)
-	connectorV2.RegisterGrantManagerServiceServer(server, cw.server)
 
 	rl, err := ratelimit2.NewLimiter(ctx, cw.now, serverCfg.RateLimiterConfig)
 	if err != nil {
@@ -297,8 +295,9 @@ func (cw *wrapper) C(ctx context.Context) (types.ConnectorClient, error) {
 		ConnectorServiceClient:     connectorV2.NewConnectorServiceClient(cw.conn),
 		AssetServiceClient:         connectorV2.NewAssetServiceClient(cw.conn),
 		RateLimiterClient:          ratelimitV1.NewRateLimiterClient(cw.conn),
-		GrantManagerServiceClient:  connectorV2.NewGrantManagerServiceClient(cw.conn),
 	}
+
+	// cw.wrappedClient = newWrappedClient(ctx, cw)
 
 	return cw.client, nil
 }
