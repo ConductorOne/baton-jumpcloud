@@ -9,6 +9,8 @@ import (
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -16,6 +18,7 @@ type userResourceType struct {
 	resourceType *v2.ResourceType
 	client1      jc1Func
 	client2      jc2Func
+	managers     map[string]*jcapi1.Systemuserreturn
 }
 
 func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -27,6 +30,7 @@ func newUserBuilder(jc1 jc1Func, jc2 jc2Func) *userResourceType {
 		resourceType: resourceTypeUser,
 		client1:      jc1,
 		client2:      jc2,
+		managers:     make(map[string]*jcapi1.Systemuserreturn),
 	}
 }
 
@@ -54,7 +58,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 
 	var rv []*v2.Resource
 	for i := range list.Results {
-		ur, err := userResource(ctx, &list.Results[i])
+		ur, err := o.userResource(ctx, &list.Results[i])
 		if err != nil {
 			return nil, "", nil, err
 		}
@@ -69,8 +73,8 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	return rv, pageToken, nil, nil
 }
 
-func userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {
-	trait, err := userTrait(ctx, user)
+func (o *userResourceType) userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {
+	trait, err := o.userTrait(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -79,19 +83,22 @@ func userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resou
 
 	return &v2.Resource{
 		Id:          fmtResourceId(resourceTypeUser.Id, user.GetId()),
-		DisplayName: userDisplayName(user),
+		DisplayName: o.userDisplayName(user),
 		Annotations: annos,
 	}, nil
 }
 
-func userDisplayName(user *jcapi1.Systemuserreturn) string {
+func (o *userResourceType) userDisplayName(user *jcapi1.Systemuserreturn) string {
 	if dn := user.GetDisplayname(); dn != "" {
 		return dn
 	}
 	return fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
 }
 
-func userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
+func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
+	ctx, client := o.client1(ctx)
+	l := ctxzap.Extract(ctx)
+
 	profile, err := structpb.NewStruct(map[string]interface{}{
 		"id": user.GetId(),
 	})
@@ -115,8 +122,29 @@ func userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrai
 		profile.Fields["username"] = structpb.NewStringValue(user.GetUsername())
 	}
 
+	var manager *jcapi1.Systemuserreturn
+	var ok bool
 	if user.HasManager() {
-		profile.Fields["manager_id"] = structpb.NewStringValue(user.GetManager())
+		managerID := user.GetManager()
+		profile.Fields["manager_id"] = structpb.NewStringValue(managerID)
+		manager, ok = o.managers[managerID]
+		if !ok {
+			m, _, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
+			if err != nil {
+				l.Error(
+					"baton-jumpcloud: failed to fetch manager details",
+					zap.Error(err),
+					zap.String("user_id", user.GetId()),
+					zap.String("manager_id", managerID),
+				)
+			}
+			manager = m
+			o.managers[user.GetManager()] = m
+		}
+
+		if manager != nil {
+			profile.Fields["manager"] = structpb.NewStringValue(manager.GetEmail())
+		}
 	}
 
 	if user.HasEmployeeIdentifier() {
