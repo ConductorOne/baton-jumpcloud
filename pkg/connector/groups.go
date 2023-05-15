@@ -2,12 +2,16 @@ package connector
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -147,6 +151,85 @@ func (o *groupResourceType) Grants(
 		return nil, "", nil, err
 	}
 	return rv, pt, nil, nil
+}
+
+func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, entitlement *v2.Entitlement) (annotations.Annotations, error) {
+	ctx, client := o.client2(ctx)
+	l := ctxzap.Extract(ctx)
+
+	if principal.Id.ResourceType != resourceTypeUser.Id {
+		l.Warn(
+			"baton-jumpcloud: only users can be granted group membership",
+			zap.String("principal_type", principal.Id.ResourceType),
+			zap.String("principal_id", principal.Id.Resource),
+		)
+		return nil, errors.New("baton-jumpcloud: only users can be granted group membership")
+	}
+
+	resp, err := client.UserGroupsApi.GraphUserGroupMembersPost(ctx, entitlement.Resource.Id.Resource).Body(jcapi2.GraphOperationUserGroupMember{
+		Id:   principal.Id.Resource,
+		Op:   "add",
+		Type: "user",
+	}).Execute()
+	if err != nil {
+		l.Error("failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusConflict {
+		l.Error(
+			"failed to add user to group",
+			zap.Error(err),
+			zap.String("group", entitlement.Resource.Id.Resource),
+			zap.String("user", principal.Id.Resource),
+			zap.Int("status", resp.StatusCode),
+		)
+		return nil, errors.New("baton-jumpcloud: failed adding user to group")
+	}
+
+	return nil, nil
+}
+
+func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annotations.Annotations, error) {
+	ctx, client := o.client2(ctx)
+	l := ctxzap.Extract(ctx)
+
+	entitlement := grant.Entitlement
+	principal := grant.Principal
+
+	if principal.Id.ResourceType != resourceTypeUser.Id {
+		l.Warn(
+			"baton-jumpcloud: only users can have group membership revoked",
+			zap.String("principal_type", principal.Id.ResourceType),
+			zap.String("principal_id", principal.Id.Resource),
+		)
+		return nil, errors.New("baton-jumpcloud: only users can have group membership revoked")
+	}
+
+	resp, err := client.UserGroupsApi.GraphUserGroupMembersPost(ctx, entitlement.Resource.Id.Resource).Body(jcapi2.GraphOperationUserGroupMember{
+		Id:   principal.Id.Resource,
+		Op:   "remove",
+		Type: "user",
+	}).Execute()
+	if err != nil {
+		l.Error("failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusNotFound {
+		l.Error(
+			"failed to remove user from group",
+			zap.Error(err),
+			zap.String("group", entitlement.Resource.Id.Resource),
+			zap.String("user", principal.Id.Resource),
+			zap.Int("status", resp.StatusCode),
+		)
+		return nil, errors.New("baton-jumpcloud: failed removing user from group")
+	}
+
+	return nil, nil
 }
 
 func groupGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.GraphConnection) *v2.Grant {

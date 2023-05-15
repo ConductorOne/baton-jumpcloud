@@ -3,7 +3,7 @@ module github.com/conductorone/baton-jumpcloud
 go 1.20
 
 require (
-	github.com/conductorone/baton-sdk v0.0.27
+	github.com/conductorone/baton-sdk v0.0.30
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.1

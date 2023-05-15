@@ -65,7 +65,9 @@ func run(ctx context.Context, cfg *config) error {
 		return err
 	}
 
-	r, err := sdk.NewConnectorRunner(ctx, c, cfg.C1zPath)
+	var opts []sdk.Option
+
+	r, err := sdk.NewConnectorRunner(ctx, c, cfg.C1zPath, opts...)
 	if err != nil {
 		l.Error("error creating connector runner", zap.Error(err))
 		return err
