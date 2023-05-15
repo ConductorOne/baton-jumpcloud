@@ -129,7 +129,7 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 		profile.Fields["manager_id"] = structpb.NewStringValue(managerID)
 		manager, ok = o.managers[managerID]
 		if !ok {
-			m, _, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
+			m, resp, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
 			if err != nil {
 				l.Error(
 					"baton-jumpcloud: failed to fetch manager details",
@@ -138,6 +138,8 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 					zap.String("manager_id", managerID),
 				)
 			}
+			defer resp.Body.Close()
+
 			manager = m
 			o.managers[user.GetManager()] = m
 		}
