@@ -175,6 +175,7 @@ func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, e
 		l.Error("failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusConflict {
 		l.Error(
@@ -215,6 +216,7 @@ func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annota
 		l.Error("failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusNotFound {
 		l.Error(
