@@ -95,10 +95,31 @@ func (o *userResourceType) userDisplayName(user *jcapi1.Systemuserreturn) string
 	return fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
 }
 
-func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
+func (o *userResourceType) fetchManager(ctx context.Context, managerID string) (*jcapi1.Systemuserreturn, error) {
 	ctx, client := o.client1(ctx)
 	l := ctxzap.Extract(ctx)
 
+	manager, ok := o.managers[managerID]
+	if ok {
+		return manager, nil
+	}
+
+	m, resp, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
+	if err != nil {
+		l.Error(
+			"baton-jumpcloud: failed to fetch manager details",
+			zap.Error(err),
+			zap.String("manager_id", managerID),
+		)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	o.managers[managerID] = m
+	return m, nil
+}
+
+func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
 	profile, err := structpb.NewStruct(map[string]interface{}{
 		"id": user.GetId(),
 	})
@@ -122,29 +143,11 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 		profile.Fields["username"] = structpb.NewStringValue(user.GetUsername())
 	}
 
-	var manager *jcapi1.Systemuserreturn
-	var ok bool
 	if user.HasManager() {
 		managerID := user.GetManager()
 		profile.Fields["manager_id"] = structpb.NewStringValue(managerID)
-		manager, ok = o.managers[managerID]
-		if !ok {
-			m, resp, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
-			if err != nil {
-				l.Error(
-					"baton-jumpcloud: failed to fetch manager details",
-					zap.Error(err),
-					zap.String("user_id", user.GetId()),
-					zap.String("manager_id", managerID),
-				)
-			}
-			defer resp.Body.Close()
-
-			manager = m
-			o.managers[user.GetManager()] = m
-		}
-
-		if manager != nil {
+		manager, err := o.fetchManager(ctx, managerID)
+		if err == nil && manager != nil {
 			profile.Fields["manager"] = structpb.NewStringValue(manager.GetEmail())
 		}
 	}
