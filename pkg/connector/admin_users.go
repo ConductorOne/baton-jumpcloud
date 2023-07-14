@@ -80,11 +80,11 @@ func adminUserResource(ctx context.Context, user *jcapi1.Userreturn) (*v2.Resour
 }
 
 func adminUserDisplayName(user *jcapi1.Userreturn) string {
-	dn := fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
+	dn := fmt.Sprintf("%s %s (Administrator)", user.GetFirstname(), user.GetLastname())
 	if dn != " " {
 		return dn
 	}
-	return user.GetEmail()
+	return user.GetEmail() + " (Administrator)"
 }
 
 func adminUserTrait(ctx context.Context, user *jcapi1.Userreturn) (*v2.UserTrait, error) {

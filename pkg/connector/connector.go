@@ -106,6 +106,7 @@ var (
 func (c *Jumpcloud) Metadata(ctx context.Context) (*v2.ConnectorMetadata, error) {
 	return &v2.ConnectorMetadata{
 		DisplayName: "JumpCloud",
+		Description: "Syncs users, groups, apps, and roles from JumpCloud",
 	}, nil
 }
 
