@@ -8,34 +8,59 @@ import (
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
-	"google.golang.org/protobuf/types/known/structpb"
+	sdkEntitlements "github.com/conductorone/baton-sdk/pkg/types/entitlement"
+	sdkGrants "github.com/conductorone/baton-sdk/pkg/types/grant"
+	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 )
 
-type adminUserResourceType struct {
+const adminAppID = "jumpcloud-administration-app"
+
+type administrationAppBuilder struct {
 	resourceType *v2.ResourceType
+	client1      jc1Func
 	ext          *ExtensionClient
 }
 
-func (o *adminUserResourceType) ResourceType(_ context.Context) *v2.ResourceType {
+func (o *administrationAppBuilder) ResourceType(_ context.Context) *v2.ResourceType {
 	return o.resourceType
 }
 
-func newAdminUserBuilder(ext *ExtensionClient) *adminUserResourceType {
-	return &adminUserResourceType{
-		resourceType: resourceTypeAdminUser,
+func newAdministrationAppBuilder(jc1 jc1Func, ext *ExtensionClient) *administrationAppBuilder {
+	return &administrationAppBuilder{
+		resourceType: resourceTypeAdministrationApp,
+		client1:      jc1,
 		ext:          ext,
 	}
 }
 
-func (o *adminUserResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ *pagination.Token) ([]*v2.Entitlement, string, annotations.Annotations, error) {
-	return nil, "", nil, nil
+func (o *administrationAppBuilder) Entitlements(_ context.Context, resource *v2.Resource, _ *pagination.Token) ([]*v2.Entitlement, string, annotations.Annotations, error) {
+	var rv []*v2.Entitlement
+
+	en := sdkEntitlements.NewAssignmentEntitlement(resource, "administrator", sdkEntitlements.WithGrantableTo(resourceTypeUser))
+	rv = append(rv, en)
+	return rv, "", nil, nil
 }
 
-func (o *adminUserResourceType) Grants(_ context.Context, _ *v2.Resource, _ *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
-	return nil, "", nil, nil
+func (o *administrationAppBuilder) lookForMatchingUser(ctx context.Context, email string) (*jcapi1.Systemuserreturn, error) {
+	ctx, client := o.client1(ctx)
+	list, resp, err := client.SystemusersApi.SystemusersList(ctx).Search(fmt.Sprintf("email:$eq:%s", email)).Execute()
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if len(list.Results) == 0 {
+		return nil, nil
+	}
+
+	if len(list.Results) > 1 {
+		return nil, fmt.Errorf("found multiple users with email %s", email)
+	}
+
+	return &list.Results[0], nil
 }
 
-func (o *adminUserResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, pt *pagination.Token) ([]*v2.Resource, string, annotations.Annotations, error) {
+func (o *administrationAppBuilder) Grants(ctx context.Context, resource *v2.Resource, pt *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
 	skip, b, err := unmarshalSkipToken(pt)
 	if err != nil {
 		return nil, "", nil, err
@@ -47,13 +72,31 @@ func (o *adminUserResourceType) List(ctx context.Context, parentResourceID *v2.R
 	}
 	defer resp.Body.Close()
 
-	var rv []*v2.Resource
-	for i := range users {
-		ur, err := adminUserResource(ctx, &users[i])
+	ctx, client := o.client1(ctx)
+
+	var rv []*v2.Grant
+	for _, u := range users {
+		userEmail := u.GetEmail()
+		list, resp, err := client.SystemusersApi.SystemusersList(ctx).Filter(fmt.Sprintf("email:$eq:%s", userEmail)).Execute()
 		if err != nil {
 			return nil, "", nil, err
 		}
-		rv = append(rv, ur)
+		defer resp.Body.Close()
+
+		if len(list.Results) != 1 {
+			return nil, "", nil, fmt.Errorf("found multiple users with email %s", userEmail)
+		}
+
+		user := list.Results[0]
+
+		rv = append(rv, sdkGrants.NewGrant(
+			resource,
+			"administrator",
+			&v2.ResourceId{
+				ResourceType: resourceTypeUser.Id,
+				Resource:     user.GetId(),
+			},
+		))
 	}
 
 	pageToken, err := marshalSkipToken(len(users), skip, b)
@@ -64,59 +107,14 @@ func (o *adminUserResourceType) List(ctx context.Context, parentResourceID *v2.R
 	return rv, pageToken, nil, nil
 }
 
-func adminUserResource(ctx context.Context, user *jcapi1.Userreturn) (*v2.Resource, error) {
-	trait, err := adminUserTrait(ctx, user)
+func (o *administrationAppBuilder) List(ctx context.Context, parentResourceID *v2.ResourceId, pt *pagination.Token) ([]*v2.Resource, string, annotations.Annotations, error) {
+	var rv []*v2.Resource
+
+	adminApp, err := sdkResources.NewAppResource("JumpCloud Administration", resourceTypeAdministrationApp, adminAppID, nil)
 	if err != nil {
-		return nil, err
+		return nil, "", nil, err
 	}
-	var annos annotations.Annotations
-	annos.Update(trait)
+	rv = append(rv, adminApp)
 
-	return &v2.Resource{
-		Id:          fmtResourceId(resourceTypeAdminUser.Id, user.GetId()),
-		DisplayName: adminUserDisplayName(user),
-		Annotations: annos,
-	}, nil
-}
-
-func adminUserDisplayName(user *jcapi1.Userreturn) string {
-	dn := fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
-	if dn != " " {
-		return dn
-	}
-	return user.GetEmail()
-}
-
-func adminUserTrait(ctx context.Context, user *jcapi1.Userreturn) (*v2.UserTrait, error) {
-	profile, err := structpb.NewStruct(map[string]interface{}{
-		"id": user.GetId(),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("baton-jumpcloud: failed to construct user profile for user trait: %w", err)
-	}
-
-	if user.HasOrganization() {
-		profile.Fields["organization"] = structpb.NewStringValue(user.GetOrganization())
-	}
-
-	ret := &v2.UserTrait{
-		Profile: profile,
-		Status:  &v2.UserTrait_Status{},
-	}
-	ret.Status.Status = v2.UserTrait_Status_STATUS_ENABLED
-
-	if user.GetSuspended() {
-		ret.Status.Status = v2.UserTrait_Status_STATUS_DISABLED
-		ret.Status.Details = "suspended"
-	}
-
-	email := user.GetEmail()
-	if email != "" {
-		ret.Emails = append(ret.Emails, &v2.UserTrait_Email{
-			Address:   email,
-			IsPrimary: true,
-		})
-	}
-
-	return ret, nil
+	return rv, "", nil, nil
 }

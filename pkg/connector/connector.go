@@ -80,12 +80,6 @@ var (
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_USER},
 		Description: "JumpCloud User: The User account is the core identity for your employees, and is the account type that is used to authenticate resources agains",
 	}
-	resourceTypeAdminUser = &v2.ResourceType{
-		Id:          "admin_user",
-		DisplayName: "Admin User",
-		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_USER},
-		Description: "JumpCloud Administrator: The JumpCloud administrator account is responsible for the management of your JumpCloud organizational tenan",
-	}
 	resourceTypeGroup = &v2.ResourceType{
 		Id:          "group",
 		DisplayName: "Group",
@@ -100,6 +94,11 @@ var (
 		Id:          "role",
 		DisplayName: "Role",
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_ROLE},
+	}
+	resourceTypeAdministrationApp = &v2.ResourceType{
+		Id:          "administration_app",
+		DisplayName: "JumpCloud Administration App",
+		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_APP},
 	}
 )
 
@@ -136,7 +135,7 @@ func (s *Jumpcloud) ResourceSyncers(ctx context.Context) []connectorbuilder.Reso
 		// https://support.jumpcloud.com/support/s/article/getting-started-jumpcloud-admin-accounts-vs-user-accounts-2019-08-21-10-36-47
 		newUserBuilder(s.client1, s.client2),
 		newGroupBuilder(s.client1, s.client2),
-		newAdminUserBuilder(s.ext),
+		newAdministrationAppBuilder(s.client1, s.ext),
 		newRoleBuilder(s.ext),
 		newAppBuilder(s.client1, s.client2),
 	}

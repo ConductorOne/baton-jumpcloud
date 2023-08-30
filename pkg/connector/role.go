@@ -85,7 +85,7 @@ func roleEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement
 		Resource:    resource,
 		DisplayName: fmt.Sprintf("%s Role Member", resource.DisplayName),
 		Description: fmt.Sprintf("Member of %s role", resource.DisplayName),
-		GrantableTo: []*v2.ResourceType{resourceTypeAdminUser},
+		GrantableTo: []*v2.ResourceType{resourceTypeUser},
 		Purpose:     v2.Entitlement_PURPOSE_VALUE_PERMISSION,
 		Slug:        resource.DisplayName,
 	}
@@ -135,7 +135,7 @@ func (o *roleResourceType) Grants(
 		if resource.Id.Resource != roleID {
 			continue
 		}
-		rv = append(rv, roleGrant(resource, resourceTypeAdminUser.Id, user))
+		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, user))
 	}
 	return rv, "", nil, nil
 }
