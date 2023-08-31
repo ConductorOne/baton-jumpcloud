@@ -135,8 +135,7 @@ func (s *Jumpcloud) ResourceSyncers(ctx context.Context) []connectorbuilder.Reso
 		// https://support.jumpcloud.com/support/s/article/getting-started-jumpcloud-admin-accounts-vs-user-accounts-2019-08-21-10-36-47
 		newUserBuilder(s.client1, s.client2),
 		newGroupBuilder(s.client1, s.client2),
-		newAdministrationAppBuilder(s.client1, s.ext),
-		newRoleBuilder(s.ext),
-		newAppBuilder(s.client1, s.client2),
+		newRoleBuilder(s.client1, s.ext),
+		newAppBuilder(s.client1, s.client2, s.ext),
 	}
 }

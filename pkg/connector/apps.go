@@ -12,17 +12,20 @@ import (
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
+	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 )
 
 const (
 	apiUserType      = "user"
 	apiUserGroupType = "user_group"
+	adminAppID       = "2UjI0eIRo77RGFwi2GKpAa0Til0"
 )
 
 type appResourceType struct {
 	resourceType *v2.ResourceType
 	client1      jc1Func
 	client2      jc2Func
+	ext          *ExtensionClient
 }
 
 func (o *appResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -34,6 +37,17 @@ func (o *appResourceType) List(
 	resourceID *v2.ResourceId,
 	token *pagination.Token,
 ) ([]*v2.Resource, string, annotations.Annotations, error) {
+	var rv []*v2.Resource
+
+	// If this is the first call to List, we need to create the JumpCloud Administration app
+	if token.Token == "" {
+		adminApp, err := sdkResources.NewAppResource("JumpCloud Administration", resourceTypeApp, adminAppID, nil)
+		if err != nil {
+			return nil, "", nil, err
+		}
+		rv = append(rv, adminApp)
+	}
+
 	ctx, client := o.client1(ctx)
 
 	skip, b, err := unmarshalSkipToken(token)
@@ -47,7 +61,6 @@ func (o *appResourceType) List(
 	}
 	defer resp.Body.Close()
 
-	var rv []*v2.Resource
 	for i := range apps.Results {
 		ur, err := appResource(ctx, &apps.Results[i])
 		if err != nil {
@@ -114,12 +127,59 @@ func appEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement 
 		Description: fmt.Sprintf("Assigned to %s app", resource.DisplayName),
 		GrantableTo: []*v2.ResourceType{resourceTypeUser},
 		Purpose:     v2.Entitlement_PURPOSE_VALUE_ASSIGNMENT,
-		Slug:        resource.DisplayName,
+		Slug:        "access",
 	}
 }
 
 type graphRequest interface {
 	Execute() ([]jcapi2.GraphConnection, *http.Response, error)
+}
+
+func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource, pt *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
+	skip, b, err := unmarshalSkipToken(pt)
+	if err != nil {
+		return nil, "", nil, err
+	}
+
+	appID := resource.Id.GetResource()
+
+	users, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	defer resp.Body.Close()
+
+	ctx, client := o.client1(ctx)
+
+	var rv []*v2.Grant
+	for _, u := range users {
+		user, err := fetchUserByEmail(ctx, client, u.GetEmail())
+		if err != nil {
+			return nil, "", nil, err
+		}
+
+		ur := &v2.Resource{Id: &v2.ResourceId{
+			ResourceType: resourceTypeUser.Id,
+			Resource:     user.GetId(),
+		},
+		}
+
+		rv = append(rv, &v2.Grant{
+			Id: fmtResourceGrant(resource.Id, ur.Id, appID),
+			Entitlement: &v2.Entitlement{
+				Id:       fmtResource(resource.Id, appID),
+				Resource: resource,
+			},
+			Principal: ur,
+		})
+	}
+
+	pageToken, err := marshalSkipToken(len(users), skip, b)
+	if err != nil {
+		return nil, "", nil, err
+	}
+
+	return rv, pageToken, nil, nil
 }
 
 func (o *appResourceType) Grants(
@@ -128,6 +188,10 @@ func (o *appResourceType) Grants(
 	token *pagination.Token,
 ) ([]*v2.Grant, string, annotations.Annotations, error) {
 	ctx, client := o.client2(ctx)
+
+	if resource.Id.Resource == adminAppID {
+		return o.adminGrants(ctx, resource, token)
+	}
 
 	b := pagination.Bag{}
 	if token.Token == "" {
@@ -231,10 +295,11 @@ func appGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.GraphC
 	}
 }
 
-func newAppBuilder(jc1 jc1Func, jc2 jc2Func) *appResourceType {
+func newAppBuilder(jc1 jc1Func, jc2 jc2Func, ext *ExtensionClient) *appResourceType {
 	return &appResourceType{
 		resourceType: resourceTypeApp,
 		client1:      jc1,
 		client2:      jc2,
+		ext:          ext,
 	}
 }

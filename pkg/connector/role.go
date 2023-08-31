@@ -15,6 +15,7 @@ import (
 
 type roleResourceType struct {
 	resourceType *v2.ResourceType
+	client       jc1Func
 	ext          *ExtensionClient
 
 	allUsers        []jcapi1.Userreturn
@@ -128,21 +129,29 @@ func (o *roleResourceType) Grants(
 		return nil, "", nil, err
 	}
 
+	ctx, client := o.client(ctx)
+
 	var rv []*v2.Grant
 	for i := range users {
-		user := &users[i]
-		roleID := fmtRoleNameAsID(user.GetRoleName())
+		adminUser := &users[i]
+		roleID := fmtRoleNameAsID(adminUser.GetRoleName())
 		if resource.Id.Resource != roleID {
 			continue
 		}
+
+		user, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
+		if err != nil {
+			return nil, "", nil, err
+		}
+
 		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, user))
 	}
 	return rv, "", nil, nil
 }
 
-func roleGrant(resource *v2.Resource, resoureTypeId string, user *jcapi1.Userreturn) *v2.Grant {
+func roleGrant(resource *v2.Resource, resourceTypeID string, user *jcapi1.Systemuserreturn) *v2.Grant {
 	roleID := resource.Id.GetResource()
-	ur := &v2.Resource{Id: &v2.ResourceId{ResourceType: resoureTypeId, Resource: user.GetId()}}
+	ur := &v2.Resource{Id: &v2.ResourceId{ResourceType: resourceTypeID, Resource: user.GetId()}}
 
 	var annos annotations.Annotations
 
@@ -157,9 +166,10 @@ func roleGrant(resource *v2.Resource, resoureTypeId string, user *jcapi1.Userret
 	}
 }
 
-func newRoleBuilder(ext *ExtensionClient) *roleResourceType {
+func newRoleBuilder(client jc1Func, ext *ExtensionClient) *roleResourceType {
 	return &roleResourceType{
 		resourceType: resourceTypeRole,
+		client:       client,
 		ext:          ext,
 	}
 }
