@@ -95,11 +95,6 @@ var (
 		DisplayName: "Role",
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_ROLE},
 	}
-	resourceTypeAdministrationApp = &v2.ResourceType{
-		Id:          "administration_app",
-		DisplayName: "JumpCloud Administration App",
-		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_APP},
-	}
 )
 
 func (c *Jumpcloud) Metadata(ctx context.Context) (*v2.ConnectorMetadata, error) {
