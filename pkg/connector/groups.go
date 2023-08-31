@@ -112,7 +112,7 @@ func groupEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlemen
 		Description: fmt.Sprintf("Member of %s group", resource.DisplayName),
 		GrantableTo: []*v2.ResourceType{resourceTypeUser},
 		Purpose:     v2.Entitlement_PURPOSE_VALUE_ASSIGNMENT,
-		Slug:        resource.DisplayName,
+		Slug:        "member",
 	}
 }
 
