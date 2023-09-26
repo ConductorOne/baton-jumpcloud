@@ -2,6 +2,7 @@ package connector
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
+	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -19,18 +21,20 @@ type userResourceType struct {
 	client1      jc1Func
 	client2      jc2Func
 	managers     map[string]*jcapi1.Systemuserreturn
+	ext          *ExtensionClient
 }
 
 func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 	return o.resourceType
 }
 
-func newUserBuilder(jc1 jc1Func, jc2 jc2Func) *userResourceType {
+func newUserBuilder(jc1 jc1Func, jc2 jc2Func, ext *ExtensionClient) *userResourceType {
 	return &userResourceType{
 		resourceType: resourceTypeUser,
 		client1:      jc1,
 		client2:      jc2,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
+		ext:          ext,
 	}
 }
 
@@ -43,6 +47,8 @@ func (o *userResourceType) Grants(_ context.Context, _ *v2.Resource, _ *paginati
 }
 
 func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, pt *pagination.Token) ([]*v2.Resource, string, annotations.Annotations, error) {
+	l := ctxzap.Extract(ctx)
+
 	ctx, client := o.client1(ctx)
 
 	skip, b, err := unmarshalSkipToken(pt)
@@ -50,27 +56,109 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 		return nil, "", nil, err
 	}
 
-	list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
-	if err != nil {
-		return nil, "", nil, err
+	if b.Current() == nil {
+		// Push onto stack in reverse
+		b.Push(pagination.PageState{
+			ResourceTypeID: "list-admin-users",
+		})
+		b.Push(pagination.PageState{
+			ResourceTypeID: "list-users",
+		})
 	}
-	defer resp.Body.Close()
-
 	var rv []*v2.Resource
-	for i := range list.Results {
-		ur, err := o.userResource(ctx, &list.Results[i])
+	var pageToken string
+	switch b.Current().ResourceTypeID {
+	case "list-users":
+		list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
 		if err != nil {
 			return nil, "", nil, err
 		}
-		rv = append(rv, ur)
-	}
+		defer resp.Body.Close()
 
-	pageToken, err := marshalSkipToken(len(list.Results), skip, b)
-	if err != nil {
-		return nil, "", nil, err
+		for i := range list.Results {
+			ur, err := o.userResource(ctx, &list.Results[i])
+			if err != nil {
+				return nil, "", nil, err
+			}
+			rv = append(rv, ur)
+		}
+		pageToken, err = marshalSkipToken(len(list.Results), skip, b)
+		if err != nil {
+			return nil, "", nil, err
+		}
+	case "list-admin-users":
+		adminUsers, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
+		if err != nil {
+			return nil, "", nil, err
+		}
+		defer resp.Body.Close()
+
+		for i := range adminUsers {
+			adminEmail := adminUsers[i].GetEmail()
+			adminUser, err := o.adminUserResource(ctx, &adminUsers[i])
+			if err != nil {
+				return nil, "", nil, err
+			}
+
+			// Check if the admin user is also a system user, if so we'll use that user instead
+			systemUser, err := fetchUserByEmail(ctx, client, adminEmail)
+			if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
+				return nil, "", nil, err
+			}
+
+			if systemUser != nil {
+				continue
+			}
+
+			l.Debug("admin user not found as system user, creating", zap.String("email", adminEmail))
+			rv = append(rv, adminUser)
+		}
+		pageToken, err = marshalSkipToken(len(adminUsers), skip, b)
+		if err != nil {
+			return nil, "", nil, err
+		}
+	default:
+		return nil, "", nil, fmt.Errorf("baton-jumpcloud: unknown page state: %s", b.Current().ResourceTypeID)
 	}
 
 	return rv, pageToken, nil, nil
+}
+
+func (o *userResourceType) adminUserResource(ctx context.Context, user *jcapi1.Userreturn) (*v2.Resource, error) {
+	profile := map[string]interface{}{
+		"id": user.GetId(),
+	}
+
+	if user.HasOrganization() {
+		profile["organization"] = user.GetOrganization()
+	}
+
+	userTraitOps := []sdkResources.UserTraitOption{
+		sdkResources.WithUserProfile(profile),
+	}
+
+	status := v2.UserTrait_Status_STATUS_ENABLED
+	if user.GetSuspended() {
+		status = v2.UserTrait_Status_STATUS_DISABLED
+	}
+	userTraitOps = append(userTraitOps, sdkResources.WithStatus(status))
+
+	email := user.GetEmail()
+	if email != "" {
+		userTraitOps = append(userTraitOps, sdkResources.WithEmail(email, true))
+	}
+
+	r, err := sdkResources.NewUserResource(
+		fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname()),
+		o.resourceType,
+		user.GetId(),
+		userTraitOps,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
 
 func (o *userResourceType) userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {

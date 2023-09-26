@@ -128,7 +128,7 @@ func (s *Jumpcloud) ResourceSyncers(ctx context.Context) []connectorbuilder.Reso
 		// NOTE: Jumpcloud has 'two' types of Users, "admin users" and... uh, "normal users".
 		// So, we put each in their own resource type.
 		// https://support.jumpcloud.com/support/s/article/getting-started-jumpcloud-admin-accounts-vs-user-accounts-2019-08-21-10-36-47
-		newUserBuilder(s.client1, s.client2),
+		newUserBuilder(s.client1, s.client2, s.ext),
 		newGroupBuilder(s.client1, s.client2),
 		newRoleBuilder(s.client1, s.ext),
 		newAppBuilder(s.client1, s.client2, s.ext),
