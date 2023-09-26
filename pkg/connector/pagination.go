@@ -26,7 +26,7 @@ func unmarshalSkipToken(token *pagination.Token) (int32, *pagination.Bag, error)
 
 func marshalSkipToken(newObjects int, lastSkip int32, b *pagination.Bag) (string, error) {
 	if newObjects == 0 {
-		return "", nil
+		return nextToken(b, "")
 	}
 	nextSkip := int64(newObjects) + int64(lastSkip)
 	pageToken, err := nextToken(b, strconv.FormatInt(nextSkip, 10))

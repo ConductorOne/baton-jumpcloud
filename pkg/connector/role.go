@@ -2,6 +2,7 @@ package connector
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -119,6 +120,10 @@ func (o *roleResourceType) cacheAllUsers(ctx context.Context) ([]jcapi1.Userretu
 	return rv, nil
 }
 
+type rolePrincipal interface {
+	GetId() string
+}
+
 func (o *roleResourceType) Grants(
 	ctx context.Context,
 	resource *v2.Resource,
@@ -139,17 +144,23 @@ func (o *roleResourceType) Grants(
 			continue
 		}
 
+		var principal rolePrincipal = adminUser
+
 		user, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
-		if err != nil {
+		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
 			return nil, "", nil, err
 		}
 
-		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, user))
+		if user != nil {
+			principal = user
+		}
+
+		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, principal))
 	}
 	return rv, "", nil, nil
 }
 
-func roleGrant(resource *v2.Resource, resourceTypeID string, user *jcapi1.Systemuserreturn) *v2.Grant {
+func roleGrant(resource *v2.Resource, resourceTypeID string, user rolePrincipal) *v2.Grant {
 	roleID := resource.Id.GetResource()
 	ur := &v2.Resource{Id: &v2.ResourceId{ResourceType: resourceTypeID, Resource: user.GetId()}}
 

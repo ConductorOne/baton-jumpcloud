@@ -135,6 +135,10 @@ type graphRequest interface {
 	Execute() ([]jcapi2.GraphConnection, *http.Response, error)
 }
 
+type appAdminPrincipal interface {
+	GetId() string
+}
+
 func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource, pt *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
 	skip, b, err := unmarshalSkipToken(pt)
 	if err != nil {
@@ -152,16 +156,24 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 	ctx, client := o.client1(ctx)
 
 	var rv []*v2.Grant
-	for _, u := range users {
-		user, err := fetchUserByEmail(ctx, client, u.GetEmail())
-		if err != nil {
+	for i := range users {
+		adminUser := &users[i]
+		var adminPrincipal appAdminPrincipal = adminUser
+
+		// If the user is a system user, we need to fetch the user by email to get the ID
+		systemUser, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
+		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
 			return nil, "", nil, err
 		}
+		if systemUser != nil {
+			adminPrincipal = systemUser
+		}
 
-		ur := &v2.Resource{Id: &v2.ResourceId{
-			ResourceType: resourceTypeUser.Id,
-			Resource:     user.GetId(),
-		},
+		ur := &v2.Resource{
+			Id: &v2.ResourceId{
+				ResourceType: resourceTypeUser.Id,
+				Resource:     adminPrincipal.GetId(),
+			},
 		}
 
 		rv = append(rv, &v2.Grant{
