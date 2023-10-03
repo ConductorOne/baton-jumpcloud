@@ -172,8 +172,11 @@ func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, e
 		Type: "user",
 	}).Execute()
 	if err != nil {
-		l.Error("failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
-		return nil, err
+		// If the user is already a member of the group, we get a 409 and we want to return success.
+		if resp == nil || resp.StatusCode != http.StatusConflict {
+			l.Error("failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+			return nil, err
+		}
 	}
 	defer resp.Body.Close()
 
@@ -213,8 +216,11 @@ func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annota
 		Type: "user",
 	}).Execute()
 	if err != nil {
-		l.Error("failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
-		return nil, err
+		// If the user is already not a member of the group, we get a 404 and we want to return success.
+		if resp == nil || resp.StatusCode != http.StatusNotFound {
+			l.Error("failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+			return nil, err
+		}
 	}
 	defer resp.Body.Close()
 
