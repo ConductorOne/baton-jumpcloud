@@ -58,17 +58,21 @@ Usage:
   baton-jumpcloud [command]
 
 Available Commands:
+  capabilities       Get connector capabilities
   completion         Generate the autocompletion script for the specified shell
   help               Help about any command
 
 Flags:
-      --api-key string      The API key for the JumpCloud account.  ($BATON_API_KEY)
-  -f, --file string         The path to the c1z file to sync with ($BATON_FILE) (default "sync.c1z")
-  -h, --help                help for baton-jumpcloud
-      --log-format string   The output format for logs: json, console ($BATON_LOG_FORMAT) (default "json")
-      --log-level string    The log level: debug, info, warn, error ($BATON_LOG_LEVEL) (default "info")
-      --org-id string       The Org ID for the JumpCloud account (optional). ($BATON_ORG_ID)
-  -v, --version             version for baton-jumpcloud
+      --api-key string         The API key for the JumpCloud account.  ($BATON_API_KEY)
+      --client-id string       The client ID used to authenticate with ConductorOne ($BATON_CLIENT_ID)
+      --client-secret string   The client secret used to authenticate with ConductorOne ($BATON_CLIENT_SECRET)
+  -f, --file string            The path to the c1z file to sync with ($BATON_FILE) (default "sync.c1z")
+  -h, --help                   help for baton-jumpcloud
+      --log-format string      The output format for logs: json, console ($BATON_LOG_FORMAT) (default "json")
+      --log-level string       The log level: debug, info, warn, error ($BATON_LOG_LEVEL) (default "info")
+      --org-id string          The Org ID for the JumpCloud account (optional). ($BATON_ORG_ID)
+  -p, --provisioning           This must be set in order for provisioning actions to be enabled. ($BATON_PROVISIONING)
+  -v, --version                version for baton-jumpcloud
 
 Use "baton-jumpcloud [command] --help" for more information about a command.
 ```
