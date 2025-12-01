@@ -11,7 +11,7 @@ import (
 	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
-	"github.com/conductorone/baton-sdk/pkg/pagination"
+	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 )
 
 type roleResourceType struct {
@@ -31,8 +31,8 @@ func (o *roleResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 func (o *roleResourceType) List(
 	ctx context.Context,
 	resourceID *v2.ResourceId,
-	token *pagination.Token,
-) ([]*v2.Resource, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
 	var rv []*v2.Resource
 
 	var annos annotations.Annotations
@@ -48,7 +48,7 @@ func (o *roleResourceType) List(
 			Annotations: annos,
 		})
 	}
-	return rv, "", nil, nil
+	return rv, nil, nil
 }
 
 // Jumpcloud doens't seem to publish API defs of Roles - just their string names in the support docs.
@@ -72,16 +72,16 @@ func fmtRoleNameAsID(roleName string) string {
 func (o *roleResourceType) Entitlements(
 	ctx context.Context,
 	resource *v2.Resource,
-	token *pagination.Token,
-) ([]*v2.Entitlement, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Entitlement, *sdkResources.SyncOpResults, error) {
 	var rv []*v2.Entitlement
 
-	rv = append(rv, roleEntitlement(ctx, resource))
+	rv = append(rv, roleEntitlement(resource))
 
-	return rv, "", nil, nil
+	return rv, nil, nil
 }
 
-func roleEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement {
+func roleEntitlement(resource *v2.Resource) *v2.Entitlement {
 	return &v2.Entitlement{
 		Id:          fmtResource(resource.Id, resource.Id.GetResource()),
 		Resource:    resource,
@@ -113,7 +113,7 @@ func (o *roleResourceType) cacheAllUsers(ctx context.Context) ([]jcapi1.Userretu
 		if len(users) == 0 {
 			break
 		}
-		skip += int32(len(users))
+		skip += int32(len(users)) //nolint:gosec // len(users) will never overflow int32 in practice
 	}
 	o.allUsers = rv
 	o.fetchedAllUsers = true
@@ -127,11 +127,11 @@ type rolePrincipal interface {
 func (o *roleResourceType) Grants(
 	ctx context.Context,
 	resource *v2.Resource,
-	token *pagination.Token,
-) ([]*v2.Grant, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
 	users, err := o.cacheAllUsers(ctx)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
 	ctx, client := o.client(ctx)
@@ -148,7 +148,7 @@ func (o *roleResourceType) Grants(
 
 		user, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
 		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 
 		if user != nil {
@@ -157,7 +157,7 @@ func (o *roleResourceType) Grants(
 
 		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, principal))
 	}
-	return rv, "", nil, nil
+	return rv, nil, nil
 }
 
 func roleGrant(resource *v2.Resource, resourceTypeID string, user rolePrincipal) *v2.Grant {

@@ -38,22 +38,22 @@ func newUserBuilder(jc1 jc1Func, jc2 jc2Func, ext *ExtensionClient) *userResourc
 	}
 }
 
-func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ *pagination.Token) ([]*v2.Entitlement, string, annotations.Annotations, error) {
-	return nil, "", nil, nil
+func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Entitlement, *sdkResources.SyncOpResults, error) {
+	return nil, nil, nil
 }
 
-func (o *userResourceType) Grants(_ context.Context, _ *v2.Resource, _ *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
-	return nil, "", nil, nil
+func (o *userResourceType) Grants(_ context.Context, _ *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
+	return nil, nil, nil
 }
 
-func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, pt *pagination.Token) ([]*v2.Resource, string, annotations.Annotations, error) {
+func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, opts sdkResources.SyncOpAttrs) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
 	l := ctxzap.Extract(ctx)
 
 	ctx, client := o.client1(ctx)
 
-	skip, b, err := unmarshalSkipToken(pt)
+	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
 	if b.Current() == nil {
@@ -71,39 +71,39 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	case "list-users":
 		list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		defer resp.Body.Close()
 
 		for i := range list.Results {
 			ur, err := o.userResource(ctx, &list.Results[i])
 			if err != nil {
-				return nil, "", nil, err
+				return nil, nil, err
 			}
 			rv = append(rv, ur)
 		}
 		pageToken, err = marshalSkipToken(len(list.Results), skip, b)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 	case "list-admin-users":
 		adminUsers, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		defer resp.Body.Close()
 
 		for i := range adminUsers {
 			adminEmail := adminUsers[i].GetEmail()
-			adminUser, err := o.adminUserResource(ctx, &adminUsers[i])
+			adminUser, err := o.adminUserResource(&adminUsers[i])
 			if err != nil {
-				return nil, "", nil, err
+				return nil, nil, err
 			}
 
 			// Check if the admin user is also a system user, if so we'll use that user instead
 			systemUser, err := fetchUserByEmail(ctx, client, adminEmail)
 			if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-				return nil, "", nil, err
+				return nil, nil, err
 			}
 
 			if systemUser != nil {
@@ -115,16 +115,16 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 		}
 		pageToken, err = marshalSkipToken(len(adminUsers), skip, b)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 	default:
-		return nil, "", nil, fmt.Errorf("baton-jumpcloud: unknown page state: %s", b.Current().ResourceTypeID)
+		return nil, nil, fmt.Errorf("baton-jumpcloud: unknown page state: %s", b.Current().ResourceTypeID)
 	}
 
-	return rv, pageToken, nil, nil
+	return rv, &sdkResources.SyncOpResults{NextPageToken: pageToken}, nil
 }
 
-func (o *userResourceType) adminUserResource(ctx context.Context, user *jcapi1.Userreturn) (*v2.Resource, error) {
+func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resource, error) {
 	profile := map[string]interface{}{
 		"id": user.GetId(),
 	}

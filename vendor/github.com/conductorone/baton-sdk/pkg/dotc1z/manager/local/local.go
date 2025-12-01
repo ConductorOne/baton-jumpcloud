@@ -6,18 +6,41 @@ import (
 	"io"
 	"os"
 
-	"github.com/conductorone/baton-sdk/pkg/dotc1z"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
+	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
+
+	"github.com/conductorone/baton-sdk/pkg/dotc1z"
 )
 
+var tracer = otel.Tracer("baton-sdk/pkg.dotc1z.manager.local")
+
 type localManager struct {
-	filePath string
-	tmpPath  string
+	filePath       string
+	tmpPath        string
+	tmpDir         string
+	decoderOptions []dotc1z.DecoderOption
+}
+
+type Option func(*localManager)
+
+func WithTmpDir(tmpDir string) Option {
+	return func(o *localManager) {
+		o.tmpDir = tmpDir
+	}
+}
+
+func WithDecoderOptions(opts ...dotc1z.DecoderOption) Option {
+	return func(o *localManager) {
+		o.decoderOptions = opts
+	}
 }
 
 func (l *localManager) copyFileToTmp(ctx context.Context) error {
-	tmp, err := os.CreateTemp("", "sync-*.c1z")
+	_, span := tracer.Start(ctx, "localManager.copyFileToTmp")
+	defer span.End()
+
+	tmp, err := os.CreateTemp(l.tmpDir, "sync-*.c1z")
 	if err != nil {
 		return err
 	}
@@ -47,6 +70,9 @@ func (l *localManager) copyFileToTmp(ctx context.Context) error {
 
 // LoadRaw returns an io.Reader of the bytes in the c1z file.
 func (l *localManager) LoadRaw(ctx context.Context) (io.ReadCloser, error) {
+	ctx, span := tracer.Start(ctx, "localManager.LoadRaw")
+	defer span.End()
+
 	err := l.copyFileToTmp(ctx)
 	if err != nil {
 		return nil, err
@@ -62,6 +88,9 @@ func (l *localManager) LoadRaw(ctx context.Context) (io.ReadCloser, error) {
 
 // LoadC1Z loads the C1Z file from the local file system.
 func (l *localManager) LoadC1Z(ctx context.Context) (*dotc1z.C1File, error) {
+	ctx, span := tracer.Start(ctx, "localManager.LoadC1Z")
+	defer span.End()
+
 	log := ctxzap.Extract(ctx)
 
 	err := l.copyFileToTmp(ctx)
@@ -73,13 +102,24 @@ func (l *localManager) LoadC1Z(ctx context.Context) (*dotc1z.C1File, error) {
 		"successfully loaded c1z locally",
 		zap.String("file_path", l.filePath),
 		zap.String("temp_path", l.tmpPath),
+		zap.String("tmp_dir", l.tmpDir),
 	)
 
-	return dotc1z.NewC1ZFile(ctx, l.tmpPath)
+	opts := []dotc1z.C1ZOption{
+		dotc1z.WithTmpDir(l.tmpDir),
+		dotc1z.WithPragma("journal_mode", "WAL"),
+	}
+	if len(l.decoderOptions) > 0 {
+		opts = append(opts, dotc1z.WithDecoderOptions(l.decoderOptions...))
+	}
+	return dotc1z.NewC1ZFile(ctx, l.tmpPath, opts...)
 }
 
 // SaveC1Z saves the C1Z file to the local file system.
 func (l *localManager) SaveC1Z(ctx context.Context) error {
+	ctx, span := tracer.Start(ctx, "localManager.SaveC1Z")
+	defer span.End()
+
 	log := ctxzap.Extract(ctx)
 
 	if l.tmpPath == "" {
@@ -111,6 +151,7 @@ func (l *localManager) SaveC1Z(ctx context.Context) error {
 		"successfully saved c1z locally",
 		zap.String("file_path", l.filePath),
 		zap.String("temp_path", l.tmpPath),
+		zap.String("tmp_dir", l.tmpDir),
 		zap.Int64("bytes", size),
 	)
 
@@ -118,6 +159,9 @@ func (l *localManager) SaveC1Z(ctx context.Context) error {
 }
 
 func (l *localManager) Close(ctx context.Context) error {
+	_, span := tracer.Start(ctx, "localManager.Close")
+	defer span.End()
+
 	err := os.Remove(l.tmpPath)
 	if err != nil {
 		return err
@@ -126,8 +170,14 @@ func (l *localManager) Close(ctx context.Context) error {
 }
 
 // New returns a new localManager that uses the given filePath.
-func New(ctx context.Context, filePath string) (*localManager, error) {
-	return &localManager{
+func New(ctx context.Context, filePath string, opts ...Option) (*localManager, error) {
+	ret := &localManager{
 		filePath: filePath,
-	}, nil
+	}
+
+	for _, opt := range opts {
+		opt(ret)
+	}
+
+	return ret, nil
 }
