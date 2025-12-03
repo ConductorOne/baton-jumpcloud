@@ -35,49 +35,49 @@ func (o *appResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 func (o *appResourceType) List(
 	ctx context.Context,
 	resourceID *v2.ResourceId,
-	token *pagination.Token,
-) ([]*v2.Resource, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
 	var rv []*v2.Resource
 
 	// If this is the first call to List, we need to create the JumpCloud Administration app
-	if token.Token == "" {
+	if opts.PageToken.Token == "" {
 		adminApp, err := sdkResources.NewAppResource("JumpCloud Administration", resourceTypeApp, adminAppID, nil)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		rv = append(rv, adminApp)
 	}
 
 	ctx, client := o.client1(ctx)
 
-	skip, b, err := unmarshalSkipToken(token)
+	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
 	apps, resp, err := client.ApplicationsApi.ApplicationsList(ctx).Skip(skip).Execute()
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 	defer resp.Body.Close()
 
 	for i := range apps.Results {
-		ur, err := appResource(ctx, &apps.Results[i])
+		ur, err := appResource(&apps.Results[i])
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		rv = append(rv, ur)
 	}
 
 	pageToken, err := marshalSkipToken(len(apps.Results), skip, b)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
-	return rv, pageToken, nil, nil
+	return rv, &sdkResources.SyncOpResults{NextPageToken: pageToken}, nil
 }
 
-func appResource(ctx context.Context, app *jcapi1.Application) (*v2.Resource, error) {
-	trait, err := appTrait(ctx, app)
+func appResource(app *jcapi1.Application) (*v2.Resource, error) {
+	trait, err := appTrait(app)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func appResource(ctx context.Context, app *jcapi1.Application) (*v2.Resource, er
 	}, nil
 }
 
-func appTrait(ctx context.Context, app *jcapi1.Application) (*v2.AppTrait, error) {
+func appTrait(app *jcapi1.Application) (*v2.AppTrait, error) {
 	ret := &v2.AppTrait{}
 
 	if app.HasLogo() {
@@ -110,16 +110,16 @@ func appTrait(ctx context.Context, app *jcapi1.Application) (*v2.AppTrait, error
 func (o *appResourceType) Entitlements(
 	ctx context.Context,
 	resource *v2.Resource,
-	token *pagination.Token,
-) ([]*v2.Entitlement, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Entitlement, *sdkResources.SyncOpResults, error) {
 	var rv []*v2.Entitlement
 
-	rv = append(rv, appEntitlement(ctx, resource))
+	rv = append(rv, appEntitlement(resource))
 
-	return rv, "", nil, nil
+	return rv, nil, nil
 }
 
-func appEntitlement(ctx context.Context, resource *v2.Resource) *v2.Entitlement {
+func appEntitlement(resource *v2.Resource) *v2.Entitlement {
 	return &v2.Entitlement{
 		Id:          fmtResource(resource.Id, resource.Id.GetResource()),
 		Resource:    resource,
@@ -139,17 +139,17 @@ type appAdminPrincipal interface {
 	GetId() string
 }
 
-func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource, pt *pagination.Token) ([]*v2.Grant, string, annotations.Annotations, error) {
-	skip, b, err := unmarshalSkipToken(pt)
+func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource, opts sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
+	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
 	appID := resource.Id.GetResource()
 
 	users, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 	defer resp.Body.Close()
 
@@ -163,7 +163,7 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 		// If the user is a system user, we need to fetch the user by email to get the ID
 		systemUser, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
 		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		if systemUser != nil {
 			adminPrincipal = systemUser
@@ -188,25 +188,25 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 
 	pageToken, err := marshalSkipToken(len(users), skip, b)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
-	return rv, pageToken, nil, nil
+	return rv, &sdkResources.SyncOpResults{NextPageToken: pageToken}, nil
 }
 
 func (o *appResourceType) Grants(
 	ctx context.Context,
 	resource *v2.Resource,
-	token *pagination.Token,
-) ([]*v2.Grant, string, annotations.Annotations, error) {
+	opts sdkResources.SyncOpAttrs,
+) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
 	ctx, client := o.client2(ctx)
 
 	if resource.Id.Resource == adminAppID {
-		return o.adminGrants(ctx, resource, token)
+		return o.adminGrants(ctx, resource, opts)
 	}
 
 	b := pagination.Bag{}
-	if token.Token == "" {
+	if opts.PageToken.Token == "" {
 		b.Push(pagination.PageState{
 			ResourceTypeID: apiUserType,
 		})
@@ -214,22 +214,22 @@ func (o *appResourceType) Grants(
 			ResourceTypeID: apiUserGroupType,
 		})
 	} else {
-		err := b.Unmarshal(token.Token)
+		err := b.Unmarshal(opts.PageToken.Token)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 	}
 
 	current := b.Current()
 	if current == nil {
-		return nil, "", nil, nil
+		return nil, nil, nil
 	}
 
 	var skip int32
 	if current.Token != "" {
 		skip64, err := strconv.ParseInt(current.Token, 10, 32)
 		if err != nil {
-			return nil, "", nil, err
+			return nil, nil, err
 		}
 		skip = int32(skip64)
 	}
@@ -247,12 +247,12 @@ func (o *appResourceType) Grants(
 	}
 
 	if req == nil {
-		return nil, "", nil, errors.New("unexpected state while listing application grants")
+		return nil, nil, errors.New("unexpected state while listing application grants")
 	}
 
 	assignments, resp, err := req.Execute()
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 	defer resp.Body.Close()
 
@@ -263,7 +263,7 @@ func (o *appResourceType) Grants(
 	// pops if nextToken is empty, going to the next phase
 	err = b.Next(npt)
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
 	for i := range assignments {
@@ -284,10 +284,10 @@ func (o *appResourceType) Grants(
 
 	pt, err := b.Marshal()
 	if err != nil {
-		return nil, "", nil, err
+		return nil, nil, err
 	}
 
-	return rv, pt, nil, nil
+	return rv, &sdkResources.SyncOpResults{NextPageToken: pt}, nil
 }
 
 func appGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.GraphConnection) *v2.Grant {

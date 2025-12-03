@@ -23,7 +23,7 @@ func fmtResourceId(resourceTypeID string, id string) *v2.ResourceId {
 	}
 }
 
-func fmtResource(resourceID *v2.ResourceId, role string) string {
+func fmtResource(resourceID *v2.ResourceId, _ string) string {
 	return fmt.Sprintf(
 		"%s:%s",
 		resourceID.ResourceType,

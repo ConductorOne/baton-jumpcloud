@@ -52,7 +52,7 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 		Path:     "/api/users",
 		RawQuery: qp.Encode(),
 	}
-	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -61,7 +61,6 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 		req.Header.Set("x-org-id", ulr.orgId)
 	}
 	req.Header.Set("x-api-key", ulr.apiKey)
-	req = req.WithContext(ctx)
 
 	resp, err := ulr.client.Do(req)
 	if err != nil {
