@@ -13,6 +13,8 @@ import (
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -42,8 +44,45 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 	return nil, nil, nil
 }
 
-func (o *userResourceType) Grants(_ context.Context, _ *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
-	return nil, nil, nil
+func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
+	userID := resource.Id.Resource
+
+	adminUser, resp, err := o.ext.UserGet(userID).Execute(ctx)
+	if err != nil {
+		if status.Code(err) == codes.NotFound {
+			return nil, nil, err
+		}
+		return nil, nil, fmt.Errorf("failed to get user for grant discovery: %w", err)
+	}
+	defer resp.Body.Close()
+
+	roleName := adminUser.GetRoleName()
+	if roleName == "" {
+		return nil, nil, nil
+	}
+
+	roleID := fmtRoleNameAsID(roleName)
+	roleRes := &v2.Resource{
+		Id: &v2.ResourceId{
+			ResourceType: resourceTypeRole.Id,
+			Resource:     roleID,
+		},
+		DisplayName: roleName,
+	}
+
+	// Create grant for the role entitlement.
+	var annos annotations.Annotations
+	grant := &v2.Grant{
+		Id: fmtResourceGrant(roleRes.Id, resource.Id, roleID),
+		Entitlement: &v2.Entitlement{
+			Id:       fmtResource(roleRes.Id, roleID),
+			Resource: roleRes,
+		},
+		Annotations: annos,
+		Principal:   resource,
+	}
+
+	return []*v2.Grant{grant}, nil, nil
 }
 
 func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, opts sdkResources.SyncOpAttrs) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
