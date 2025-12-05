@@ -15,3 +15,12 @@ func (ec *ExtensionClient) UserList() *UserListRequest {
 		orgId:  ec.orgId,
 	}
 }
+
+func (ec *ExtensionClient) UserGet(userID string) *UserGetRequest {
+	return &UserGetRequest{
+		client: ec.client,
+		apiKey: ec.apiKey,
+		orgId:  ec.orgId,
+		userID: userID,
+	}
+}

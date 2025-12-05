@@ -2,13 +2,10 @@ package connector
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
-	"sync"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
@@ -18,10 +15,6 @@ type roleResourceType struct {
 	resourceType *v2.ResourceType
 	client       jc1Func
 	ext          *ExtensionClient
-
-	allUsers        []jcapi1.Userreturn
-	fetchedAllUsers bool
-	allUsersMtx     sync.Mutex
 }
 
 func (o *roleResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -93,88 +86,14 @@ func roleEntitlement(resource *v2.Resource) *v2.Entitlement {
 	}
 }
 
-func (o *roleResourceType) cacheAllUsers(ctx context.Context) ([]jcapi1.Userreturn, error) {
-	o.allUsersMtx.Lock()
-	defer o.allUsersMtx.Unlock()
-	if o.fetchedAllUsers {
-		return o.allUsers, nil
-	}
-
-	skip := int32(0)
-	rv := []jcapi1.Userreturn{}
-	for {
-		users, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
-		if err != nil {
-			return nil, err
-		}
-		_ = resp.Body.Close()
-
-		rv = append(rv, users...)
-		if len(users) == 0 {
-			break
-		}
-		skip += int32(len(users)) //nolint:gosec // len(users) will never overflow int32 in practice
-	}
-	o.allUsers = rv
-	o.fetchedAllUsers = true
-	return rv, nil
-}
-
-type rolePrincipal interface {
-	GetId() string
-}
-
 func (o *roleResourceType) Grants(
-	ctx context.Context,
-	resource *v2.Resource,
-	opts sdkResources.SyncOpAttrs,
+	_ context.Context,
+	_ *v2.Resource,
+	_ sdkResources.SyncOpAttrs,
 ) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
-	users, err := o.cacheAllUsers(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ctx, client := o.client(ctx)
-
-	var rv []*v2.Grant
-	for i := range users {
-		adminUser := &users[i]
-		roleID := fmtRoleNameAsID(adminUser.GetRoleName())
-		if resource.Id.Resource != roleID {
-			continue
-		}
-
-		var principal rolePrincipal = adminUser
-
-		user, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
-		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-			return nil, nil, err
-		}
-
-		if user != nil {
-			principal = user
-		}
-
-		rv = append(rv, roleGrant(resource, resourceTypeUser.Id, principal))
-	}
-	return rv, nil, nil
-}
-
-func roleGrant(resource *v2.Resource, resourceTypeID string, user rolePrincipal) *v2.Grant {
-	roleID := resource.Id.GetResource()
-	ur := &v2.Resource{Id: &v2.ResourceId{ResourceType: resourceTypeID, Resource: user.GetId()}}
-
-	var annos annotations.Annotations
-
-	return &v2.Grant{
-		Id: fmtResourceGrant(resource.Id, ur.Id, roleID),
-		Entitlement: &v2.Entitlement{
-			Id:       fmtResource(resource.Id, roleID),
-			Resource: resource,
-		},
-		Annotations: annos,
-		Principal:   ur,
-	}
+	// Grants for roles are now discovered from User.Grants() to avoid caching all users.
+	// This improves performance and memory usage for large organizations.
+	return nil, nil, nil
 }
 
 func newRoleBuilder(client jc1Func, ext *ExtensionClient) *roleResourceType {
