@@ -44,7 +44,7 @@ func fmtResourceGrant(resourceID *v2.ResourceId, principalId *v2.ResourceId, per
 
 func fetchUserByEmail(ctx context.Context, client *jcapi1.APIClient, email string) (*jcapi1.Systemuserreturn, error) {
 	if email == "" {
-		return nil, errors.New("email cannot be empty")
+		return nil, fmt.Errorf("email parameter cannot be empty when fetching user by email")
 	}
 
 	if u, ok := userCache.Load(email); ok {
@@ -53,7 +53,7 @@ func fetchUserByEmail(ctx context.Context, client *jcapi1.APIClient, email strin
 
 	list, resp, err := client.SystemusersApi.SystemusersList(ctx).Filter(fmt.Sprintf("email:$eq:%s", email)).Execute()
 	if err != nil {
-		return nil, err
+		return nil, wrapSDKError(err, resp, "failed to list users")
 	}
 	defer resp.Body.Close()
 

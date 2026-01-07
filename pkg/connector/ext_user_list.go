@@ -2,20 +2,16 @@ package connector
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 
 	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/conductorone/baton-sdk/pkg/uhttp"
 )
 
 type UserListRequest struct {
-	client *http.Client
+	client *uhttp.BaseHttpClient
 	apiKey string
 	orgId  string
 	skip   int32
@@ -40,7 +36,7 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 	// --data '{"email":"user@example.com","enableMultiFactor":true,"firstname":"string","growthData":{},"lastWhatsNewChecked":"2019-08-24","lastname":"string","roleName":"string"}'
 	//
 	// JumpCloud doesn't export the List endpoint in their
-	// OpenAPI spec, but they do epxort the PUT...
+	// OpenAPI spec, but they do export the PUT...
 	// .... so.. here we go!
 
 	qp := url.Values{}
@@ -48,95 +44,67 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 		qp.Set("skip", strconv.FormatInt(int64(ulr.skip), 10))
 	}
 
-	u := url.URL{
+	u := &url.URL{
 		Scheme:   "https",
 		Host:     "console.jumpcloud.com",
 		Path:     "/api/users",
 		RawQuery: qp.Encode(),
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	req.Header.Set("Accept", "application/json")
+
+	var reqOpts []uhttp.RequestOption
+	reqOpts = append(reqOpts, uhttp.WithAcceptJSONHeader())
+	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ulr.apiKey))
 	if ulr.orgId != "" {
-		req.Header.Set("x-org-id", ulr.orgId)
-	}
-	req.Header.Set("x-api-key", ulr.apiKey)
-
-	resp, err := ulr.client.Do(req)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, nil, fmt.Errorf("jumpcloud: invalid response code '%d' to list users", resp.StatusCode)
+		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ulr.orgId))
 	}
 
-	data, err := io.ReadAll(resp.Body)
+	req, err := ulr.client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rv := &listUserResponse{}
-	err = json.Unmarshal(data, rv)
+	resp, err := ulr.client.Do(req, uhttp.WithJSONResponse(rv))
 	if err != nil {
-		return nil, nil, err
+		return nil, resp, err
 	}
+
 	return rv.Results, resp, nil
 }
 
 type UserGetRequest struct {
-	client *http.Client
+	client *uhttp.BaseHttpClient
 	apiKey string
 	orgId  string
 	userID string
 }
 
+// Execute fetches an admin user by ID.
+// Uses uhttp.Do() with WithJSONResponse for automatic JSON unmarshaling and error handling.
 func (ugr *UserGetRequest) Execute(ctx context.Context) (*jcapi1.Userreturn, *http.Response, error) {
-	baseURL := &url.URL{
+	u := &url.URL{
 		Scheme: "https",
 		Host:   "console.jumpcloud.com",
-	}
-	fullURL, err := url.JoinPath(baseURL.String(), "api", "users", ugr.userID)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to construct URL: %w", err)
+		Path:   "/api/users/" + url.PathEscape(ugr.userID),
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fullURL, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	req.Header.Set("Accept", "application/json")
+	var reqOpts []uhttp.RequestOption
+	reqOpts = append(reqOpts, uhttp.WithAcceptJSONHeader())
+	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ugr.apiKey))
 	if ugr.orgId != "" {
-		req.Header.Set("x-org-id", ugr.orgId)
+		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ugr.orgId))
 	}
-	req.Header.Set("x-api-key", ugr.apiKey)
 
-	resp, err := ugr.client.Do(req)
+	req, err := ugr.client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
 	if err != nil {
 		return nil, nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, resp, status.Errorf(codes.NotFound, "jumpcloud: user not found with id '%s'", ugr.userID)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, resp, fmt.Errorf("jumpcloud: invalid response code '%d' to get user", resp.StatusCode)
-	}
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, resp, err
 	}
 
 	rv := &jcapi1.Userreturn{}
-	err = json.Unmarshal(data, rv)
+	resp, err := ugr.client.Do(req, uhttp.WithJSONResponse(rv))
 	if err != nil {
 		return nil, resp, err
 	}
+
 	return rv, resp, nil
 }

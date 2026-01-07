@@ -43,7 +43,7 @@ func (o *appResourceType) List(
 	if opts.PageToken.Token == "" {
 		adminApp, err := sdkResources.NewAppResource("JumpCloud Administration", resourceTypeApp, adminAppID, nil)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to create JumpCloud Administration app resource: %w", err)
 		}
 		rv = append(rv, adminApp)
 	}
@@ -57,14 +57,14 @@ func (o *appResourceType) List(
 
 	apps, resp, err := client.ApplicationsApi.ApplicationsList(ctx).Skip(skip).Execute()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, wrapSDKError(err, resp, "failed to list applications")
 	}
 	defer resp.Body.Close()
 
 	for i := range apps.Results {
 		ur, err := appResource(&apps.Results[i])
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to construct app resource during application list: %w", err)
 		}
 		rv = append(rv, ur)
 	}
@@ -79,7 +79,7 @@ func (o *appResourceType) List(
 func appResource(app *jcapi1.Application) (*v2.Resource, error) {
 	trait, err := appTrait(app)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to construct app trait during app resource creation: %w", err)
 	}
 
 	var annos annotations.Annotations
@@ -149,7 +149,7 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 
 	users, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -163,7 +163,7 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 		// If the user is a system user, we need to fetch the user by email to get the ID
 		systemUser, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
 		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-			return nil, nil, err
+			return nil, nil, wrapSDKError(err, nil, "failed to fetch system user by email during admin grants processing")
 		}
 		if systemUser != nil {
 			adminPrincipal = systemUser
@@ -216,7 +216,7 @@ func (o *appResourceType) Grants(
 	} else {
 		err := b.Unmarshal(opts.PageToken.Token)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to unmarshal pagination bag during app grants: %w", err)
 		}
 	}
 
@@ -229,7 +229,7 @@ func (o *appResourceType) Grants(
 	if current.Token != "" {
 		skip64, err := strconv.ParseInt(current.Token, 10, 32)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to parse skip value from pagination token during app grants: %w", err)
 		}
 		skip = int32(skip64)
 	}
@@ -247,12 +247,12 @@ func (o *appResourceType) Grants(
 	}
 
 	if req == nil {
-		return nil, nil, errors.New("unexpected state while listing application grants")
+		return nil, nil, fmt.Errorf("unexpected pagination state while listing application grants: resourceID=%s, resourceTypeID=%s", current.ResourceID, current.ResourceTypeID)
 	}
 
 	assignments, resp, err := req.Execute()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, wrapSDKError(err, resp, "failed to list application associations")
 	}
 	defer resp.Body.Close()
 
@@ -263,7 +263,7 @@ func (o *appResourceType) Grants(
 	// pops if nextToken is empty, going to the next phase
 	err = b.Next(npt)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to advance to next page during app grants pagination: %w", err)
 	}
 
 	for i := range assignments {
@@ -284,7 +284,7 @@ func (o *appResourceType) Grants(
 
 	pt, err := b.Marshal()
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to marshal page token after listing app grants: %w", err)
 	}
 
 	return rv, &sdkResources.SyncOpResults{NextPageToken: pt}, nil

@@ -1,9 +1,9 @@
 package connector
 
-import "net/http"
+import "github.com/conductorone/baton-sdk/pkg/uhttp"
 
 type ExtensionClient struct {
-	client *http.Client
+	client *uhttp.BaseHttpClient
 	apiKey string
 	orgId  string
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/conductorone/baton-sdk/pkg/uhttp"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
 )
 
 type Connector struct {
@@ -52,8 +53,14 @@ func WithAPIKey(ctx context.Context, apiKey string, orgId string) Option {
 
 		c._client1 = jcapi1.NewAPIClient(cc1)
 		c._client2 = jcapi2.NewAPIClient(cc2)
+
+		baseHttpClient, err := uhttp.NewBaseHttpClientWithContext(ctx, httpClient)
+		if err != nil {
+			return err
+		}
+
 		c.ext = &ExtensionClient{
-			client: httpClient,
+			client: baseHttpClient,
 			apiKey: apiKey,
 			orgId:  orgId,
 		}
@@ -90,12 +97,16 @@ func New(ctx context.Context, opts ...Option) (*Connector, error) {
 	c := &Connector{}
 	for _, opt := range opts {
 		if err := opt(c); err != nil {
-			return nil, fmt.Errorf("failed to apply option: %w", err)
+			return nil, fmt.Errorf("failed to apply connector option during initialization: %w", err)
 		}
 	}
 
 	if c._client1 == nil || c._client2 == nil {
-		return nil, fmt.Errorf("no client configuration provided")
+		return nil, uhttp.WrapErrors(
+			codes.InvalidArgument,
+			"connector initialization failed: API client not configured",
+			fmt.Errorf("API clients not properly initialized during connector setup"),
+		)
 	}
 
 	return c, nil
@@ -147,13 +158,18 @@ func (c *Connector) Validate(ctx context.Context) (annotations.Annotations, erro
 	_, resp, err := client.DirectoriesApi.DirectoriesList(ctx).Limit(1).Execute()
 	if err != nil {
 		l.Error("DirectoriesList for Validate Failed", zap.Error(err))
-		return nil, fmt.Errorf("jumpcloud-connector: failed to verify api key: %w", err)
+		return nil, wrapSDKError(err, resp, "failed to verify api key")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		err := fmt.Errorf("jumpcloud-connector verify returned non-200: '%d'", resp.StatusCode)
-		l.Error("Invalid Status Code from Verify", zap.Error(err))
+		code := httpStatusToGRPCCode(resp.StatusCode)
+		err := uhttp.WrapErrors(
+			code,
+			fmt.Sprintf("validate: unexpected status code %d", resp.StatusCode),
+			nil,
+		)
+		l.Error("jumpcloud-connector: Invalid Status Code from Validate", zap.Error(err))
 		return nil, err
 	}
 

@@ -14,7 +14,6 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -46,12 +45,9 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 
 func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
 	userID := resource.Id.Resource
-
+	// Only admin users have role grants. System users won't be found in the admin users endpoint.
 	adminUser, resp, err := o.ext.UserGet(userID).Execute(ctx)
-	if err != nil {
-		if status.Code(err) == codes.NotFound {
-			return nil, nil, err
-		}
+	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 		return nil, nil, fmt.Errorf("failed to get user for grant discovery: %w", err)
 	}
 	defer resp.Body.Close()
@@ -110,7 +106,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	case "list-users":
 		list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, wrapSDKError(err, resp, "failed to list users")
 		}
 		defer resp.Body.Close()
 
@@ -128,7 +124,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	case "list-admin-users":
 		adminUsers, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 		}
 		defer resp.Body.Close()
 
@@ -157,7 +153,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			return nil, nil, err
 		}
 	default:
-		return nil, nil, fmt.Errorf("baton-jumpcloud: unknown page state: %s", b.Current().ResourceTypeID)
+		return nil, nil, fmt.Errorf("unknown page state encountered during user list pagination: %s", b.Current().ResourceTypeID)
 	}
 
 	return rv, &sdkResources.SyncOpResults{NextPageToken: pageToken}, nil
@@ -194,7 +190,7 @@ func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resou
 		userTraitOps,
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create resource for admin user: %w", err)
 	}
 
 	return r, nil
@@ -203,7 +199,7 @@ func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resou
 func (o *userResourceType) userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {
 	trait, err := o.userTrait(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get user trait during user resource creation: %w", err)
 	}
 	var annos annotations.Annotations
 	annos.Update(trait)
@@ -238,7 +234,7 @@ func (o *userResourceType) fetchManager(ctx context.Context, managerID string) (
 			zap.Error(err),
 			zap.String("manager_id", managerID),
 		)
-		return nil, err
+		return nil, wrapSDKError(err, resp, "failed to fetch manager details")
 	}
 	defer resp.Body.Close()
 
@@ -251,7 +247,7 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 		"id": user.GetId(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("baton-jumpcloud: failed to construct user profile for user trait: %w", err)
+		return nil, fmt.Errorf("failed to construct user profile during user trait creation: %w", err)
 	}
 
 	if user.HasJobTitle() {
