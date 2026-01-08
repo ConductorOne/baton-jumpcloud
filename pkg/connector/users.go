@@ -2,11 +2,11 @@ package connector
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
@@ -19,23 +19,19 @@ import (
 
 type userResourceType struct {
 	resourceType *v2.ResourceType
-	client1      jc1Func
-	client2      jc2Func
+	client       *client.Client
 	managers     map[string]*jcapi1.Systemuserreturn
-	ext          *ExtensionClient
 }
 
 func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 	return o.resourceType
 }
 
-func newUserBuilder(jc1 jc1Func, jc2 jc2Func, ext *ExtensionClient) *userResourceType {
+func newUserBuilder(client *client.Client) *userResourceType {
 	return &userResourceType{
 		resourceType: resourceTypeUser,
-		client1:      jc1,
-		client2:      jc2,
+		client:       client,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
-		ext:          ext,
 	}
 }
 
@@ -46,11 +42,10 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
 	userID := resource.Id.Resource
 	// Only admin users have role grants. System users won't be found in the admin users endpoint.
-	adminUser, resp, err := o.ext.UserGet(userID).Execute(ctx)
+	adminUser, _, err := o.client.GetUserByID(ctx, userID)
 	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 		return nil, nil, fmt.Errorf("failed to get user for grant discovery: %w", err)
 	}
-	defer resp.Body.Close()
 
 	roleName := adminUser.GetRoleName()
 	if roleName == "" {
@@ -84,8 +79,6 @@ func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ 
 func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.ResourceId, opts sdkResources.SyncOpAttrs) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
 	l := ctxzap.Extract(ctx)
 
-	ctx, client := o.client1(ctx)
-
 	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
 		return nil, nil, err
@@ -104,29 +97,29 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	var pageToken string
 	switch b.Current().ResourceTypeID {
 	case "list-users":
-		list, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(skip).Execute()
+		options := &client.Options{}
+		systemUsers, _, nextPageToken, err := o.client.ListSystemUsers(ctx, options.WithSkip(skip))
 		if err != nil {
-			return nil, nil, wrapSDKError(err, resp, "failed to list users")
+			return nil, nil, fmt.Errorf("failed to list system users: %w", err)
 		}
-		defer resp.Body.Close()
 
-		for i := range list.Results {
-			ur, err := o.userResource(ctx, &list.Results[i])
+		for i := range systemUsers {
+			ur, err := o.userResource(ctx, &systemUsers[i])
 			if err != nil {
 				return nil, nil, err
 			}
 			rv = append(rv, ur)
 		}
-		pageToken, err = marshalSkipToken(len(list.Results), skip, b)
+		pageToken, err = marshalSkipToken(nextPageToken, b)
 		if err != nil {
 			return nil, nil, err
 		}
 	case "list-admin-users":
-		adminUsers, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
+		options := &client.Options{}
+		adminUsers, _, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 		}
-		defer resp.Body.Close()
 
 		for i := range adminUsers {
 			adminEmail := adminUsers[i].GetEmail()
@@ -136,8 +129,9 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			}
 
 			// Check if the admin user is also a system user, if so we'll use that user instead
-			systemUser, err := fetchUserByEmail(ctx, client, adminEmail)
-			if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
+			// TODO (luisina) > use a cache to store user by email, to avoid making multiple requests to the API
+			systemUser, err := o.client.FetchUserByEmail(ctx, adminEmail)
+			if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 				return nil, nil, err
 			}
 
@@ -148,7 +142,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			l.Debug("admin user not found as system user, creating", zap.String("email", adminEmail))
 			rv = append(rv, adminUser)
 		}
-		pageToken, err = marshalSkipToken(len(adminUsers), skip, b)
+		pageToken, err = marshalSkipToken(nextPageToken, b)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -218,30 +212,6 @@ func (o *userResourceType) userDisplayName(user *jcapi1.Systemuserreturn) string
 	return fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
 }
 
-func (o *userResourceType) fetchManager(ctx context.Context, managerID string) (*jcapi1.Systemuserreturn, error) {
-	ctx, client := o.client1(ctx)
-	l := ctxzap.Extract(ctx)
-
-	manager, ok := o.managers[managerID]
-	if ok {
-		return manager, nil
-	}
-
-	m, resp, err := client.SystemusersApi.SystemusersGet(ctx, managerID).Execute()
-	if err != nil {
-		l.Error(
-			"baton-jumpcloud: failed to fetch manager details",
-			zap.Error(err),
-			zap.String("manager_id", managerID),
-		)
-		return nil, wrapSDKError(err, resp, "failed to fetch manager details")
-	}
-	defer resp.Body.Close()
-
-	o.managers[managerID] = m
-	return m, nil
-}
-
 func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
 	profile, err := structpb.NewStruct(map[string]interface{}{
 		"id": user.GetId(),
@@ -269,7 +239,8 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 	if user.HasManager() {
 		managerID := user.GetManager()
 		profile.Fields["manager_id"] = structpb.NewStringValue(managerID)
-		manager, err := o.fetchManager(ctx, managerID)
+		// TODO (luisina) > use a cache to store manager by ID, to avoid making multiple requests to the API
+		manager, err := o.client.GetSystemUserByID(ctx, managerID)
 		if err == nil && manager != nil {
 			profile.Fields["manager"] = structpb.NewStringValue(manager.GetEmail())
 		}

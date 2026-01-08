@@ -1,4 +1,4 @@
-package connector
+package client
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/conductorone/baton-sdk/pkg/uhttp"
 	"google.golang.org/grpc/codes"
@@ -140,4 +141,12 @@ func wrapSDKError(err error, resp *http.Response, operation string) error {
 	}
 
 	return uhttp.WrapErrors(code, message, err)
+}
+
+func getNextPageToken(resultCount int, page int32) string {
+	if resultCount == 0 {
+		return ""
+	}
+	nextSkip := int64(resultCount) + int64(page)
+	return strconv.FormatInt(nextSkip, 10)
 }

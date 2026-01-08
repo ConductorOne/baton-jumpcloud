@@ -2,17 +2,18 @@ package connector
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"net/http"
 	"strconv"
+	"strings"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+	"github.com/conductorone/baton-jumpcloud/pkg/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi2"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
+	"google.golang.org/grpc/codes"
 )
 
 const (
@@ -23,9 +24,7 @@ const (
 
 type appResourceType struct {
 	resourceType *v2.ResourceType
-	client1      jc1Func
-	client2      jc2Func
-	ext          *ExtensionClient
+	client       *client.Client
 }
 
 func (o *appResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -48,28 +47,26 @@ func (o *appResourceType) List(
 		rv = append(rv, adminApp)
 	}
 
-	ctx, client := o.client1(ctx)
-
 	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	apps, resp, err := client.ApplicationsApi.ApplicationsList(ctx).Skip(skip).Execute()
+	options := &client.Options{}
+	apps, _, nextPageToken, err := o.client.ListApplications(ctx, options.WithSkip(skip))
 	if err != nil {
-		return nil, nil, wrapSDKError(err, resp, "failed to list applications")
+		return nil, nil, fmt.Errorf("failed to list applications: %w", err)
 	}
-	defer resp.Body.Close()
 
-	for i := range apps.Results {
-		ur, err := appResource(&apps.Results[i])
+	for i := range apps {
+		ur, err := appResource(&apps[i])
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to construct app resource during application list: %w", err)
 		}
 		rv = append(rv, ur)
 	}
 
-	pageToken, err := marshalSkipToken(len(apps.Results), skip, b)
+	pageToken, err := marshalSkipToken(nextPageToken, b)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -131,10 +128,6 @@ func appEntitlement(resource *v2.Resource) *v2.Entitlement {
 	}
 }
 
-type graphRequest interface {
-	Execute() ([]jcapi2.GraphConnection, *http.Response, error)
-}
-
 type appAdminPrincipal interface {
 	GetId() string
 }
@@ -147,13 +140,12 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 
 	appID := resource.Id.GetResource()
 
-	users, resp, err := o.ext.UserList().Skip(skip).Execute(ctx)
+	options := &client.Options{}
+	users, resp, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 	}
 	defer resp.Body.Close()
-
-	ctx, client := o.client1(ctx)
 
 	var rv []*v2.Grant
 	for i := range users {
@@ -161,9 +153,9 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 		var adminPrincipal appAdminPrincipal = adminUser
 
 		// If the user is a system user, we need to fetch the user by email to get the ID
-		systemUser, err := fetchUserByEmail(ctx, client, adminUser.GetEmail())
-		if err != nil && !errors.Is(err, errUserNotFoundForEmail) {
-			return nil, nil, wrapSDKError(err, nil, "failed to fetch system user by email during admin grants processing")
+		systemUser, err := o.client.FetchUserByEmail(ctx, adminUser.GetEmail())
+		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
+			return nil, nil, fmt.Errorf("failed to fetch system user by email during admin grants processing: %w", err)
 		}
 		if systemUser != nil {
 			adminPrincipal = systemUser
@@ -186,7 +178,7 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 		})
 	}
 
-	pageToken, err := marshalSkipToken(len(users), skip, b)
+	pageToken, err := marshalSkipToken(nextPageToken, b)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -199,8 +191,6 @@ func (o *appResourceType) Grants(
 	resource *v2.Resource,
 	opts sdkResources.SyncOpAttrs,
 ) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
-	ctx, client := o.client2(ctx)
-
 	if resource.Id.Resource == adminAppID {
 		return o.adminGrants(ctx, resource, opts)
 	}
@@ -233,35 +223,37 @@ func (o *appResourceType) Grants(
 		}
 		skip = int32(skip64)
 	}
-	var npt string
 	var rv []*v2.Grant
 
-	var req graphRequest
+	var assignments []jcapi2.GraphConnection
+	nextPageToken := ""
 
 	if current.ResourceID == "" {
 		// No resource ID set, so we are listing associations for the resource type
-		req = client.ApplicationsApi.GraphApplicationAssociationsList(ctx, resource.Id.Resource).Skip(skip).Targets([]string{current.ResourceTypeID})
+		options := &client.Options{}
+		associations, _, npt, err := o.client.ListApplicationAssociations(ctx, resource.Id.Resource, options.WithSkip(skip).WithTargets([]string{current.ResourceTypeID}))
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to list application associations: %w", err)
+		}
+		assignments = associations
+		nextPageToken = npt
 	} else if current.ResourceTypeID == apiUserGroupType {
 		// We have a resourceID set, and our resource type is user group, so we are listing user group members
-		req = client.UserGroupMembersMembershipApi.GraphUserGroupMembersList(ctx, current.ResourceID).Skip(skip)
+		options := &client.Options{}
+		members, _, npt, err := o.client.ListGroupMembers(ctx, current.ResourceID, options.WithSkip(skip))
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to list group members: %w", err)
+		}
+		assignments = members
+		nextPageToken = npt
 	}
 
-	if req == nil {
+	if assignments == nil {
 		return nil, nil, fmt.Errorf("unexpected pagination state while listing application grants: resourceID=%s, resourceTypeID=%s", current.ResourceID, current.ResourceTypeID)
 	}
 
-	assignments, resp, err := req.Execute()
-	if err != nil {
-		return nil, nil, wrapSDKError(err, resp, "failed to list application associations")
-	}
-	defer resp.Body.Close()
-
-	if len(assignments) != 0 {
-		nextSkip := int64(len(assignments)) + int64(skip)
-		npt = strconv.FormatInt(nextSkip, 10)
-	}
 	// pops if nextToken is empty, going to the next phase
-	err = b.Next(npt)
+	err := b.Next(nextPageToken)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to advance to next page during app grants pagination: %w", err)
 	}
@@ -307,11 +299,9 @@ func appGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.GraphC
 	}
 }
 
-func newAppBuilder(jc1 jc1Func, jc2 jc2Func, ext *ExtensionClient) *appResourceType {
+func newAppBuilder(c *client.Client) *appResourceType {
 	return &appResourceType{
 		resourceType: resourceTypeApp,
-		client1:      jc1,
-		client2:      jc2,
-		ext:          ext,
+		client:       c,
 	}
 }

@@ -1,4 +1,4 @@
-package connector
+package extension
 
 import (
 	"context"
@@ -6,15 +6,15 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
 	"github.com/conductorone/baton-sdk/pkg/uhttp"
 )
 
 type UserListRequest struct {
-	client *uhttp.BaseHttpClient
-	apiKey string
-	orgId  string
-	skip   int32
+	Client *uhttp.BaseHttpClient
+	ApiKey string
+	OrgId  string
+	Page   int32
 }
 
 type listUserResponse struct {
@@ -23,7 +23,7 @@ type listUserResponse struct {
 }
 
 func (ulr *UserListRequest) Skip(skip int32) *UserListRequest {
-	ulr.skip = skip
+	ulr.Page = skip
 	return ulr
 }
 
@@ -40,8 +40,8 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 	// .... so.. here we go!
 
 	qp := url.Values{}
-	if ulr.skip != 0 {
-		qp.Set("skip", strconv.FormatInt(int64(ulr.skip), 10))
+	if ulr.Page != 0 {
+		qp.Set("skip", strconv.FormatInt(int64(ulr.Page), 10))
 	}
 
 	u := &url.URL{
@@ -53,18 +53,18 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 
 	var reqOpts []uhttp.RequestOption
 	reqOpts = append(reqOpts, uhttp.WithAcceptJSONHeader())
-	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ulr.apiKey))
-	if ulr.orgId != "" {
-		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ulr.orgId))
+	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ulr.ApiKey))
+	if ulr.OrgId != "" {
+		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ulr.OrgId))
 	}
 
-	req, err := ulr.client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
+	req, err := ulr.Client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rv := &listUserResponse{}
-	resp, err := ulr.client.Do(req, uhttp.WithJSONResponse(rv))
+	resp, err := ulr.Client.Do(req, uhttp.WithJSONResponse(rv))
 	if err != nil {
 		return nil, resp, err
 	}
@@ -73,10 +73,10 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 }
 
 type UserGetRequest struct {
-	client *uhttp.BaseHttpClient
-	apiKey string
-	orgId  string
-	userID string
+	Client *uhttp.BaseHttpClient
+	ApiKey string
+	OrgId  string
+	UserID string
 }
 
 // Execute fetches an admin user by ID.
@@ -85,23 +85,23 @@ func (ugr *UserGetRequest) Execute(ctx context.Context) (*jcapi1.Userreturn, *ht
 	u := &url.URL{
 		Scheme: "https",
 		Host:   "console.jumpcloud.com",
-		Path:   "/api/users/" + url.PathEscape(ugr.userID),
+		Path:   "/api/users/" + url.PathEscape(ugr.UserID),
 	}
 
 	var reqOpts []uhttp.RequestOption
 	reqOpts = append(reqOpts, uhttp.WithAcceptJSONHeader())
-	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ugr.apiKey))
-	if ugr.orgId != "" {
-		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ugr.orgId))
+	reqOpts = append(reqOpts, uhttp.WithHeader("x-api-key", ugr.ApiKey))
+	if ugr.OrgId != "" {
+		reqOpts = append(reqOpts, uhttp.WithHeader("x-org-id", ugr.OrgId))
 	}
 
-	req, err := ugr.client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
+	req, err := ugr.Client.NewRequest(ctx, http.MethodGet, u, reqOpts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rv := &jcapi1.Userreturn{}
-	resp, err := ugr.client.Do(req, uhttp.WithJSONResponse(rv))
+	resp, err := ugr.Client.Do(req, uhttp.WithJSONResponse(rv))
 	if err != nil {
 		return nil, resp, err
 	}
