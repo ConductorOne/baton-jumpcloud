@@ -6,11 +6,17 @@ import (
 	cfg "github.com/conductorone/baton-jumpcloud/pkg/config"
 	"github.com/conductorone/baton-jumpcloud/pkg/connector"
 	"github.com/conductorone/baton-sdk/pkg/config"
+	"github.com/conductorone/baton-sdk/pkg/connectorrunner"
 )
 
 var version = "dev"
 
 func main() {
 	ctx := context.Background()
-	config.RunConnector(ctx, "baton-jumpcloud", version, cfg.ConfigurationSchema, connector.NewLambdaConnector)
+	config.RunConnector(ctx,
+		"baton-jumpcloud",
+		version,
+		cfg.ConfigurationSchema,
+		connector.NewLambdaConnector,
+		connectorrunner.WithSessionStoreEnabled())
 }

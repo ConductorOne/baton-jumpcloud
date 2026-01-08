@@ -20,6 +20,7 @@ import (
 type userResourceType struct {
 	resourceType *v2.ResourceType
 	client       *client.Client
+	usersCache   *usersCache
 	managers     map[string]*jcapi1.Systemuserreturn
 }
 
@@ -32,6 +33,7 @@ func newUserBuilder(client *client.Client) *userResourceType {
 		resourceType: resourceTypeUser,
 		client:       client,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
+		usersCache:   newUsersCache(client),
 	}
 }
 
@@ -103,6 +105,12 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			return nil, nil, fmt.Errorf("failed to list system users: %w", err)
 		}
 
+		// populate the users cache with the system users
+		err = o.usersCache.SetSystemUsers(ctx, opts.Session, systemUsers)
+		if err != nil {
+			return nil, nil, err
+		}
+
 		for i := range systemUsers {
 			ur, err := o.userResource(ctx, &systemUsers[i])
 			if err != nil {
@@ -121,6 +129,14 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 		}
 
+		adminEmails := make([]string, len(adminUsers))
+		for i := range adminUsers {
+			adminEmails[i] = adminUsers[i].GetEmail()
+		}
+		systemUsersMap, err := o.usersCache.GetSystemUsersByEmailList(ctx, opts.Session, adminEmails)
+		if err != nil {
+			return nil, nil, err
+		}
 		for i := range adminUsers {
 			adminEmail := adminUsers[i].GetEmail()
 			adminUser, err := o.adminUserResource(&adminUsers[i])
@@ -129,14 +145,12 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 			}
 
 			// Check if the admin user is also a system user, if so we'll use that user instead
-			// TODO (luisina) > use a cache to store user by email, to avoid making multiple requests to the API
-			systemUser, err := o.client.FetchUserByEmail(ctx, adminEmail)
-			if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-				return nil, nil, err
-			}
-
-			if systemUser != nil {
-				continue
+			if systemUser, ok := systemUsersMap[adminEmail]; ok {
+				if systemUser != nil {
+					continue
+				} else {
+					return nil, nil, err
+				}
 			}
 
 			l.Debug("admin user not found as system user, creating", zap.String("email", adminEmail))

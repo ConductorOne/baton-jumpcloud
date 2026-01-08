@@ -160,38 +160,6 @@ func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.U
 	return users, resp, pageToken, nil
 }
 
-func (jc *Client) FetchUserByEmail(ctx context.Context, email string) (*jcapi1.Systemuserreturn, error) {
-	ctx, client := jc.client1(ctx)
-
-	if email == "" {
-		return nil, fmt.Errorf("email parameter cannot be empty when fetching user by email")
-	}
-
-	users, resp, err := client.SystemusersApi.SystemusersList(ctx).Filter(fmt.Sprintf("email:$eq:%s", email)).Execute()
-	if err != nil {
-		return nil, wrapSDKError(err, resp, "failed to list users")
-	}
-	defer resp.Body.Close()
-
-	if len(users.Results) == 0 {
-		return nil, uhttp.WrapErrors(
-			codes.NotFound,
-			fmt.Sprintf("user not found for email: %s", email),
-			nil,
-		)
-	}
-
-	if len(users.Results) != 1 {
-		return nil, uhttp.WrapErrors(
-			codes.InvalidArgument,
-			fmt.Sprintf("multiple users found for email: %s", email),
-			nil,
-		)
-	}
-
-	return &users.Results[0], nil
-}
-
 func (jc *Client) GetSystemUserByID(ctx context.Context, userID string) (*jcapi1.Systemuserreturn, error) {
 	ctx, client := jc.client1(ctx)
 

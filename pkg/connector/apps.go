@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/conductorone/baton-jumpcloud/pkg/client"
 	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
@@ -13,7 +12,6 @@ import (
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
-	"google.golang.org/grpc/codes"
 )
 
 const (
@@ -25,6 +23,7 @@ const (
 type appResourceType struct {
 	resourceType *v2.ResourceType
 	client       *client.Client
+	usersCache   *usersCache
 }
 
 func (o *appResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -148,17 +147,25 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 	defer resp.Body.Close()
 
 	var rv []*v2.Grant
+
+	adminEmails := make([]string, len(users))
+	for i := range users {
+		adminEmails[i] = users[i].GetEmail()
+	}
+	systemUsersMap, err := o.usersCache.GetSystemUsersByEmailList(ctx, opts.Session, adminEmails)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	for i := range users {
 		adminUser := &users[i]
 		var adminPrincipal appAdminPrincipal = adminUser
 
 		// If the user is a system user, we need to fetch the user by email to get the ID
-		systemUser, err := o.client.FetchUserByEmail(ctx, adminUser.GetEmail())
-		if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
-			return nil, nil, fmt.Errorf("failed to fetch system user by email during admin grants processing: %w", err)
-		}
-		if systemUser != nil {
-			adminPrincipal = systemUser
+		if systemUser, ok := systemUsersMap[adminUser.GetEmail()]; ok {
+			if systemUser != nil {
+				adminPrincipal = systemUser
+			}
 		}
 
 		ur := &v2.Resource{
@@ -303,5 +310,6 @@ func newAppBuilder(c *client.Client) *appResourceType {
 	return &appResourceType{
 		resourceType: resourceTypeApp,
 		client:       c,
+		usersCache:   newUsersCache(c),
 	}
 }
