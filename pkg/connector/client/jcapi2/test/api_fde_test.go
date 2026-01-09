@@ -11,10 +11,11 @@ package jcapi2
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi2"or/client/jcapi2"
 )
 
 func Test_jcapi2_FdeApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_jcapi2_FdeApiService(t *testing.T) {
 
 	t.Run("Test FdeApiService SystemsGetFDEKey", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemId string
 

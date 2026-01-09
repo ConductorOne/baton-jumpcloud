@@ -21,7 +21,7 @@ func (o *Options) WithTargets(targets []string) *Options {
 	return o
 }
 
-// getPage returns the page value or 0 if nil
+// getPage returns the page value or 0 if nil.
 func (o *Options) getPage() int32 {
 	if o.Page == nil {
 		return 0
@@ -29,7 +29,7 @@ func (o *Options) getPage() int32 {
 	return *o.Page
 }
 
-// getLimit returns the limit value or 100 if nil
+// getLimit returns the limit value or 100 if nil.
 func (o *Options) getLimit() int32 {
 	if o.Limit == nil {
 		return 100
@@ -37,7 +37,7 @@ func (o *Options) getLimit() int32 {
 	return *o.Limit
 }
 
-// getTargets returns the targets value or empty slice if nil
+// getTargets returns the targets value or empty slice if nil.
 func (o *Options) getTargets() []string {
 	if o.Targets == nil {
 		return []string{}

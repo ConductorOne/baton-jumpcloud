@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
+	"strings"
 
 	"github.com/conductorone/baton-jumpcloud/pkg/connector/client"
 	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi2"
@@ -13,6 +13,7 @@ import (
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -36,7 +37,7 @@ func (o *groupResourceType) List(
 	}
 
 	options := &client.Options{}
-	groups, _, nextPageToken, err := o.client.ListGroups(ctx, options.WithSkip(skip))
+	groups, nextPageToken, err := o.client.ListGroups(ctx, options.WithSkip(skip))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list groups: %w", err)
 	}
@@ -125,7 +126,7 @@ func (o *groupResourceType) Grants(
 	}
 
 	options := &client.Options{}
-	members, _, nextPageToken, err := o.client.ListGroupMembers(ctx, resource.Id.Resource, options.WithSkip(skip))
+	members, nextPageToken, err := o.client.ListGroupMembers(ctx, resource.Id.Resource, options.WithSkip(skip))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list group members: %w", err)
 	}
@@ -161,14 +162,11 @@ func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, e
 		return nil, fmt.Errorf("only users can be granted group membership, got principal type %s during grant operation", principal.Id.ResourceType)
 	}
 
-	resp, err := o.client.AddGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
+	err := o.client.AddGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
 	if err != nil {
 		// If the user is already a member of the group, we get a 409 and we want to return success
 		// with the GrantAlreadyExists annotation.
-		if resp != nil && resp.StatusCode == http.StatusConflict {
-			if resp.Body != nil {
-				resp.Body.Close()
-			}
+		if strings.Contains(err.Error(), codes.AlreadyExists.String()) {
 			var annos annotations.Annotations
 			annos.Update(&v2.GrantAlreadyExists{})
 			return annos, nil
@@ -195,14 +193,11 @@ func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annota
 		return nil, errors.New("only users can have group membership revoked")
 	}
 
-	resp, err := o.client.RemoveGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
+	err := o.client.RemoveGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
 	if err != nil {
 		// If the user is already not a member of the group, we get a 404 and we want to return success
 		// with the GrantAlreadyRevoked annotation.
-		if resp != nil && resp.StatusCode == http.StatusNotFound {
-			if resp.Body != nil {
-				resp.Body.Close()
-			}
+		if strings.Contains(err.Error(), codes.NotFound.String()) {
 			var annos annotations.Annotations
 			annos.Update(&v2.GrantAlreadyRevoked{})
 			return annos, nil

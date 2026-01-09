@@ -106,7 +106,7 @@ func (jc *Client) ListDirectories(ctx context.Context, opts *Options) ([]jcapi2.
 	return directories, nil
 }
 
-func (jc *Client) GetUserByID(ctx context.Context, userID string) (*jcapi1.Userreturn, *http.Response, error) {
+func (jc *Client) GetUserByID(ctx context.Context, userID string) (*jcapi1.Userreturn, error) {
 	userGetRequest := &extension.UserGetRequest{
 		Client: jc.extensionClient,
 		ApiKey: jc.apiKey,
@@ -116,31 +116,30 @@ func (jc *Client) GetUserByID(ctx context.Context, userID string) (*jcapi1.Userr
 
 	user, resp, err := userGetRequest.Execute(ctx)
 	if err != nil {
-		return nil, resp, err
+		return nil, err
 	}
-
 	defer resp.Body.Close()
 
-	return user, resp, nil
+	return user, nil
 }
 
-func (jc *Client) ListSystemUsers(ctx context.Context, opts *Options) ([]jcapi1.Systemuserreturn, *http.Response, string, error) {
+func (jc *Client) ListSystemUsers(ctx context.Context, opts *Options) ([]jcapi1.Systemuserreturn, string, error) {
 	ctx, client := jc.client1(ctx)
 
 	limit := opts.getLimit()
 	page := opts.getPage()
 	systemUsers, resp, err := client.SystemusersApi.SystemusersList(ctx).Skip(page).Limit(limit).Execute()
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list users")
+		return nil, "", wrapSDKError(err, resp, "failed to list users")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(systemUsers.Results), page)
 
-	return systemUsers.Results, resp, pageToken, nil
+	return systemUsers.Results, pageToken, nil
 }
 
-func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.Userreturn, *http.Response, string, error) {
+func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.Userreturn, string, error) {
 	page := opts.getPage()
 	userListRequest := &extension.UserListRequest{
 		Client: jc.extensionClient,
@@ -151,13 +150,13 @@ func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.U
 
 	users, resp, err := userListRequest.Skip(page).Execute(ctx)
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list admin users")
+		return nil, "", wrapSDKError(err, resp, "failed to list admin users")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(users), page)
 
-	return users, resp, pageToken, nil
+	return users, pageToken, nil
 }
 
 func (jc *Client) GetSystemUserByID(ctx context.Context, userID string) (*jcapi1.Systemuserreturn, error) {
@@ -172,37 +171,37 @@ func (jc *Client) GetSystemUserByID(ctx context.Context, userID string) (*jcapi1
 	return user, nil
 }
 
-func (jc *Client) ListGroups(ctx context.Context, opts *Options) ([]jcapi2.UserGroup, *http.Response, string, error) {
+func (jc *Client) ListGroups(ctx context.Context, opts *Options) ([]jcapi2.UserGroup, string, error) {
 	ctx, client := jc.client2(ctx)
 
 	limit := opts.getLimit()
 	page := opts.getPage()
 	groups, resp, err := client.UserGroupsApi.GroupsUserList(ctx).Skip(page).Limit(limit).Execute()
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list groups")
+		return nil, "", wrapSDKError(err, resp, "failed to list groups")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(groups), page)
-	return groups, resp, pageToken, nil
+	return groups, pageToken, nil
 }
 
-func (jc *Client) ListGroupMembers(ctx context.Context, groupID string, opts *Options) ([]jcapi2.GraphConnection, *http.Response, string, error) {
+func (jc *Client) ListGroupMembers(ctx context.Context, groupID string, opts *Options) ([]jcapi2.GraphConnection, string, error) {
 	ctx, client := jc.client2(ctx)
 
 	limit := opts.getLimit()
 	page := opts.getPage()
 	members, resp, err := client.UserGroupMembersMembershipApi.GraphUserGroupMembersList(ctx, groupID).Skip(page).Limit(limit).Execute()
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list group members")
+		return nil, "", wrapSDKError(err, resp, "failed to list group members")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(members), page)
-	return members, resp, pageToken, nil
+	return members, pageToken, nil
 }
 
-func (jc *Client) AddGroupMember(ctx context.Context, groupID string, memberID string) (*http.Response, error) {
+func (jc *Client) AddGroupMember(ctx context.Context, groupID string, memberID string) error {
 	ctx, client := jc.client2(ctx)
 
 	resp, err := client.UserGroupMembersMembershipApi.GraphUserGroupMembersPost(ctx, groupID).Body(jcapi2.GraphOperationUserGroupMember{
@@ -210,16 +209,15 @@ func (jc *Client) AddGroupMember(ctx context.Context, groupID string, memberID s
 		Op:   "add",
 		Type: "user",
 	}).Execute()
-
 	if err != nil {
-		return nil, wrapSDKError(err, resp, "failed to add group member")
+		return wrapSDKError(err, resp, "failed to add group member")
 	}
 	defer resp.Body.Close()
 
-	return resp, nil
+	return nil
 }
 
-func (jc *Client) RemoveGroupMember(ctx context.Context, groupID string, memberID string) (*http.Response, error) {
+func (jc *Client) RemoveGroupMember(ctx context.Context, groupID string, memberID string) error {
 	ctx, client := jc.client2(ctx)
 
 	resp, err := client.UserGroupMembersMembershipApi.GraphUserGroupMembersPost(ctx, groupID).Body(jcapi2.GraphOperationUserGroupMember{
@@ -228,29 +226,29 @@ func (jc *Client) RemoveGroupMember(ctx context.Context, groupID string, memberI
 		Type: "user",
 	}).Execute()
 	if err != nil {
-		return nil, wrapSDKError(err, resp, "failed to remove group member")
+		return wrapSDKError(err, resp, "failed to remove group member")
 	}
 	defer resp.Body.Close()
 
-	return resp, nil
+	return nil
 }
 
-func (jc *Client) ListApplications(ctx context.Context, opts *Options) ([]jcapi1.Application, *http.Response, string, error) {
+func (jc *Client) ListApplications(ctx context.Context, opts *Options) ([]jcapi1.Application, string, error) {
 	ctx, client := jc.client1(ctx)
 
 	limit := opts.getLimit()
 	page := opts.getPage()
 	applications, resp, err := client.ApplicationsApi.ApplicationsList(ctx).Skip(page).Limit(limit).Execute()
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list applications")
+		return nil, "", wrapSDKError(err, resp, "failed to list applications")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(applications.Results), page)
-	return applications.Results, resp, pageToken, nil
+	return applications.Results, pageToken, nil
 }
 
-func (jc *Client) ListApplicationAssociations(ctx context.Context, applicationID string, opts *Options) ([]jcapi2.GraphConnection, *http.Response, string, error) {
+func (jc *Client) ListApplicationAssociations(ctx context.Context, applicationID string, opts *Options) ([]jcapi2.GraphConnection, string, error) {
 	ctx, client := jc.client2(ctx)
 
 	limit := opts.getLimit()
@@ -258,10 +256,10 @@ func (jc *Client) ListApplicationAssociations(ctx context.Context, applicationID
 	targets := opts.getTargets()
 	associations, resp, err := client.ApplicationsApi.GraphApplicationAssociationsList(ctx, applicationID).Skip(page).Limit(limit).Targets(targets).Execute()
 	if err != nil {
-		return nil, nil, "", wrapSDKError(err, resp, "failed to list application associations")
+		return nil, "", wrapSDKError(err, resp, "failed to list application associations")
 	}
 	defer resp.Body.Close()
 
 	pageToken := getNextPageToken(len(associations), page)
-	return associations, resp, pageToken, nil
+	return associations, pageToken, nil
 }

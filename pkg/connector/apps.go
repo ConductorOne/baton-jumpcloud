@@ -52,7 +52,7 @@ func (o *appResourceType) List(
 	}
 
 	options := &client.Options{}
-	apps, _, nextPageToken, err := o.client.ListApplications(ctx, options.WithSkip(skip))
+	apps, nextPageToken, err := o.client.ListApplications(ctx, options.WithSkip(skip))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list applications: %w", err)
 	}
@@ -140,11 +140,10 @@ func (o *appResourceType) adminGrants(ctx context.Context, resource *v2.Resource
 	appID := resource.Id.GetResource()
 
 	options := &client.Options{}
-	users, resp, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
+	users, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 	}
-	defer resp.Body.Close()
 
 	var rv []*v2.Grant
 
@@ -238,7 +237,7 @@ func (o *appResourceType) Grants(
 	if current.ResourceID == "" {
 		// No resource ID set, so we are listing associations for the resource type
 		options := &client.Options{}
-		associations, _, npt, err := o.client.ListApplicationAssociations(ctx, resource.Id.Resource, options.WithSkip(skip).WithTargets([]string{current.ResourceTypeID}))
+		associations, npt, err := o.client.ListApplicationAssociations(ctx, resource.Id.Resource, options.WithSkip(skip).WithTargets([]string{current.ResourceTypeID}))
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to list application associations: %w", err)
 		}
@@ -247,7 +246,7 @@ func (o *appResourceType) Grants(
 	} else if current.ResourceTypeID == apiUserGroupType {
 		// We have a resourceID set, and our resource type is user group, so we are listing user group members
 		options := &client.Options{}
-		members, _, npt, err := o.client.ListGroupMembers(ctx, current.ResourceID, options.WithSkip(skip))
+		members, npt, err := o.client.ListGroupMembers(ctx, current.ResourceID, options.WithSkip(skip))
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to list group members: %w", err)
 		}

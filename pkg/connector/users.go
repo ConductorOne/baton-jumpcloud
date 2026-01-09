@@ -44,7 +44,7 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
 	userID := resource.Id.Resource
 	// Only admin users have role grants. System users won't be found in the admin users endpoint.
-	adminUser, _, err := o.client.GetUserByID(ctx, userID)
+	adminUser, err := o.client.GetUserByID(ctx, userID)
 	if err != nil && !strings.Contains(err.Error(), codes.NotFound.String()) {
 		return nil, nil, fmt.Errorf("failed to get user for grant discovery: %w", err)
 	}
@@ -100,7 +100,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 	switch b.Current().ResourceTypeID {
 	case "list-users":
 		options := &client.Options{}
-		systemUsers, _, nextPageToken, err := o.client.ListSystemUsers(ctx, options.WithSkip(skip))
+		systemUsers, nextPageToken, err := o.client.ListSystemUsers(ctx, options.WithSkip(skip))
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to list system users: %w", err)
 		}
@@ -124,7 +124,7 @@ func (o *userResourceType) List(ctx context.Context, parentResourceID *v2.Resour
 		}
 	case "list-admin-users":
 		options := &client.Options{}
-		adminUsers, _, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
+		adminUsers, nextPageToken, err := o.client.ListAdminUsers(ctx, options.WithSkip(skip))
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to list admin users: %w", err)
 		}
