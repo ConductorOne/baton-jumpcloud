@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/client"
-	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
-	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi2"
+	"github.com/conductorone/baton-jumpcloud/pkg/connector/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi2"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/pagination"
