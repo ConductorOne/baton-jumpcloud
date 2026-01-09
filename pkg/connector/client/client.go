@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/extension"
 	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi1"
@@ -88,20 +87,10 @@ func (jc *Client) ListDirectories(ctx context.Context, opts *Options) ([]jcapi2.
 	page := opts.getPage()
 	directories, resp, err := client.DirectoriesApi.DirectoriesList(ctx).Limit(limit).Skip(page).Execute()
 	if err != nil {
-		return nil, err
+		return nil, wrapSDKError(err, resp, "failed to list directories")
 	}
 
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		code := httpStatusToGRPCCode(resp.StatusCode)
-		err := uhttp.WrapErrors(
-			code,
-			fmt.Sprintf("list directories: unexpected status code %d", resp.StatusCode),
-			nil,
-		)
-		return nil, err
-	}
 
 	return directories, nil
 }
