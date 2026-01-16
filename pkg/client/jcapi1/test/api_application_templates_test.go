@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	openapiclient "github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
-	"github.com/stretchr/testify/assert"batbaton-jumpcloud/pkg/client/jcapi
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 

@@ -129,7 +129,7 @@ func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.U
 		opts = &Options{}
 	}
 	page := opts.getPage()
-	
+
 	userListRequest := &extension.UserListRequest{
 		Client: jc.extensionClient,
 		ApiKey: jc.apiKey,
@@ -229,7 +229,7 @@ func (jc *Client) RemoveGroupMember(ctx context.Context, groupID string, memberI
 
 func (jc *Client) ListApplications(ctx context.Context, opts *Options) ([]jcapi1.Application, string, error) {
 	ctx, client := jc.client1(ctx)
-	
+
 	if opts == nil {
 		opts = &Options{}
 	}
