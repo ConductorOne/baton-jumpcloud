@@ -4,21 +4,22 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net/http"
+	"strings"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/jcapi2"
+	"github.com/conductorone/baton-jumpcloud/pkg/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi2"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	sdkResources "github.com/conductorone/baton-sdk/pkg/types/resource"
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type groupResourceType struct {
 	resourceType *v2.ResourceType
-	client1      jc1Func
-	client2      jc2Func
+	client       *client.Client
 }
 
 func (o *groupResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -30,18 +31,16 @@ func (o *groupResourceType) List(
 	resourceID *v2.ResourceId,
 	opts sdkResources.SyncOpAttrs,
 ) ([]*v2.Resource, *sdkResources.SyncOpResults, error) {
-	ctx, client := o.client2(ctx)
-
 	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	groups, resp, err := client.UserGroupsApi.GroupsUserList(ctx).Skip(skip).Execute()
+	options := &client.Options{}
+	groups, nextPageToken, err := o.client.ListGroups(ctx, options.WithSkip(skip))
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to list groups: %w", err)
 	}
-	defer resp.Body.Close()
 
 	var rv []*v2.Resource
 	for i := range groups {
@@ -52,9 +51,9 @@ func (o *groupResourceType) List(
 		rv = append(rv, ur)
 	}
 
-	pageToken, err := marshalSkipToken(len(groups), skip, b)
+	pageToken, err := marshalSkipToken(nextPageToken, b)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to marshal skip token during group list pagination: %w", err)
 	}
 	return rv, &sdkResources.SyncOpResults{NextPageToken: pageToken}, nil
 }
@@ -62,7 +61,7 @@ func (o *groupResourceType) List(
 func groupResource(group *jcapi2.UserGroup) (*v2.Resource, error) {
 	trait, err := groupTrait(group)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to construct group trait during group resource creation: %w", err)
 	}
 
 	var annos annotations.Annotations
@@ -82,7 +81,7 @@ func groupTrait(group *jcapi2.UserGroup) (*v2.GroupTrait, error) {
 		"email": group.GetEmail(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("baton-jumpcloud: failed to construct role profile for role trait: %w", err)
+		return nil, fmt.Errorf("failed to construct profile struct during group trait creation: %w", err)
 	}
 
 	ret := &v2.GroupTrait{
@@ -121,18 +120,16 @@ func (o *groupResourceType) Grants(
 	resource *v2.Resource,
 	opts sdkResources.SyncOpAttrs,
 ) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
-	ctx, client := o.client2(ctx)
-
 	skip, b, err := unmarshalSkipToken(&opts.PageToken)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to unmarshal skip token during group grants pagination: %w", err)
 	}
 
-	members, resp, err := client.UserGroupMembersMembershipApi.GraphUserGroupMembersList(ctx, resource.Id.Resource).Skip(skip).Execute()
+	options := &client.Options{}
+	members, nextPageToken, err := o.client.ListGroupMembers(ctx, resource.Id.Resource, options.WithSkip(skip))
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to list group members: %w", err)
 	}
-	defer resp.Body.Close()
 
 	var rv []*v2.Grant
 	for i := range members {
@@ -146,15 +143,14 @@ func (o *groupResourceType) Grants(
 			continue
 		}
 	}
-	pt, err := marshalSkipToken(len(members), skip, b)
+	pt, err := marshalSkipToken(nextPageToken, b)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to marshal skip token after listing group grants: %w", err)
 	}
 	return rv, &sdkResources.SyncOpResults{NextPageToken: pt}, nil
 }
 
 func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, entitlement *v2.Entitlement) (annotations.Annotations, error) {
-	ctx, client := o.client2(ctx)
 	l := ctxzap.Extract(ctx)
 
 	if principal.Id.ResourceType != resourceTypeUser.Id {
@@ -163,39 +159,26 @@ func (o *groupResourceType) Grant(ctx context.Context, principal *v2.Resource, e
 			zap.String("principal_type", principal.Id.ResourceType),
 			zap.String("principal_id", principal.Id.Resource),
 		)
-		return nil, errors.New("baton-jumpcloud: only users can be granted group membership")
+		return nil, fmt.Errorf("only users can be granted group membership, got principal type %s during grant operation", principal.Id.ResourceType)
 	}
 
-	resp, err := client.UserGroupsApi.GraphUserGroupMembersPost(ctx, entitlement.Resource.Id.Resource).Body(jcapi2.GraphOperationUserGroupMember{
-		Id:   principal.Id.Resource,
-		Op:   "add",
-		Type: "user",
-	}).Execute()
+	err := o.client.AddGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
 	if err != nil {
-		// If the user is already a member of the group, we get a 409 and we want to return success.
-		if resp == nil || resp.StatusCode != http.StatusConflict {
-			l.Error("failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
-			return nil, err
+		// If the user is already a member of the group, we get a 409 and we want to return success
+		// with the GrantAlreadyExists annotation.
+		if strings.Contains(err.Error(), codes.AlreadyExists.String()) {
+			var annos annotations.Annotations
+			annos.Update(&v2.GrantAlreadyExists{})
+			return annos, nil
 		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusConflict {
-		l.Error(
-			"failed to add user to group",
-			zap.Error(err),
-			zap.String("group", entitlement.Resource.Id.Resource),
-			zap.String("user", principal.Id.Resource),
-			zap.Int("status", resp.StatusCode),
-		)
-		return nil, errors.New("baton-jumpcloud: failed adding user to group")
+		l.Error("jumpcloud-connector: failed to add user to group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+		return nil, fmt.Errorf("failed to add user to group: %w", err)
 	}
 
 	return nil, nil
 }
 
 func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annotations.Annotations, error) {
-	ctx, client := o.client2(ctx)
 	l := ctxzap.Extract(ctx)
 
 	entitlement := grant.Entitlement
@@ -207,32 +190,20 @@ func (o *groupResourceType) Revoke(ctx context.Context, grant *v2.Grant) (annota
 			zap.String("principal_type", principal.Id.ResourceType),
 			zap.String("principal_id", principal.Id.Resource),
 		)
-		return nil, errors.New("baton-jumpcloud: only users can have group membership revoked")
+		return nil, errors.New("only users can have group membership revoked")
 	}
 
-	resp, err := client.UserGroupsApi.GraphUserGroupMembersPost(ctx, entitlement.Resource.Id.Resource).Body(jcapi2.GraphOperationUserGroupMember{
-		Id:   principal.Id.Resource,
-		Op:   "remove",
-		Type: "user",
-	}).Execute()
+	err := o.client.RemoveGroupMember(ctx, entitlement.Resource.Id.Resource, principal.Id.Resource)
 	if err != nil {
-		// If the user is already not a member of the group, we get a 404 and we want to return success.
-		if resp == nil || resp.StatusCode != http.StatusNotFound {
-			l.Error("failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
-			return nil, err
+		// If the user is already not a member of the group, we get a 404 and we want to return success
+		// with the GrantAlreadyRevoked annotation.
+		if strings.Contains(err.Error(), codes.NotFound.String()) {
+			var annos annotations.Annotations
+			annos.Update(&v2.GrantAlreadyRevoked{})
+			return annos, nil
 		}
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusNotFound {
-		l.Error(
-			"failed to remove user from group",
-			zap.Error(err),
-			zap.String("group", entitlement.Resource.Id.Resource),
-			zap.String("user", principal.Id.Resource),
-			zap.Int("status", resp.StatusCode),
-		)
-		return nil, errors.New("baton-jumpcloud: failed removing user from group")
+		l.Error("jumpcloud-connector: failed to remove user from group", zap.Error(err), zap.String("group", entitlement.Resource.Id.Resource), zap.String("user", principal.Id.Resource))
+		return nil, fmt.Errorf("failed to remove user from group: %w", err)
 	}
 
 	return nil, nil
@@ -255,10 +226,9 @@ func groupGrant(resource *v2.Resource, resoureTypeId string, member *jcapi2.Grap
 	}
 }
 
-func newGroupBuilder(jc1 jc1Func, jc2 jc2Func) *groupResourceType {
+func newGroupBuilder(c *client.Client) *groupResourceType {
 	return &groupResourceType{
 		resourceType: resourceTypeGroup,
-		client1:      jc1,
-		client2:      jc2,
+		client:       c,
 	}
 }

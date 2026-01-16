@@ -13,8 +13,6 @@ import (
 
 type roleResourceType struct {
 	resourceType *v2.ResourceType
-	client       jc1Func
-	ext          *ExtensionClient
 }
 
 func (o *roleResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -96,10 +94,8 @@ func (o *roleResourceType) Grants(
 	return nil, nil, nil
 }
 
-func newRoleBuilder(client jc1Func, ext *ExtensionClient) *roleResourceType {
+func newRoleBuilder() *roleResourceType {
 	return &roleResourceType{
 		resourceType: resourceTypeRole,
-		client:       client,
-		ext:          ext,
 	}
 }
