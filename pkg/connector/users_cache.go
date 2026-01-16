@@ -3,8 +3,8 @@ package connector
 import (
 	"context"
 
-	"github.com/conductorone/baton-jumpcloud/pkg/connector/client"
-	"github.com/conductorone/baton-jumpcloud/pkg/connector/client/jcapi1"
+	"github.com/conductorone/baton-jumpcloud/pkg/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/client/jcapi1"
 	"github.com/conductorone/baton-sdk/pkg/session"
 	"github.com/conductorone/baton-sdk/pkg/types/sessions"
 )

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	cfg "github.com/conductorone/baton-jumpcloud/pkg/config"
-	"github.com/conductorone/baton-jumpcloud/pkg/connector/client"
+	"github.com/conductorone/baton-jumpcloud/pkg/client"
 	v2 "github.com/conductorone/baton-sdk/pb/c1/connector/v2"
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 	"github.com/conductorone/baton-sdk/pkg/cli"
@@ -68,7 +68,7 @@ func New(ctx context.Context, opts ...Option) (*Connector, error) {
 		return nil, uhttp.WrapErrors(
 			codes.InvalidArgument,
 			"connector initialization failed: API client not configured",
-			fmt.Errorf("API clients not properly initialized during connector setup"),
+			nil,
 		)
 	}
 
