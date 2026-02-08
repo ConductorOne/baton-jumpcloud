@@ -10,11 +10,14 @@ import (
 	"github.com/conductorone/baton-sdk/pkg/uhttp"
 )
 
+const defaultBaseURL = "https://console.jumpcloud.com"
+
 type UserListRequest struct {
-	Client *uhttp.BaseHttpClient
-	ApiKey string
-	OrgId  string
-	Page   int32
+	Client  *uhttp.BaseHttpClient
+	ApiKey  string
+	OrgId   string
+	BaseURL string
+	Page    int32
 }
 
 type listUserResponse struct {
@@ -44,9 +47,18 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 		qp.Set("skip", strconv.FormatInt(int64(ulr.Page), 10))
 	}
 
+	baseURL := ulr.BaseURL
+	if baseURL == "" {
+		baseURL = defaultBaseURL
+	}
+	parsedBase, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	u := &url.URL{
-		Scheme:   "https",
-		Host:     "console.jumpcloud.com",
+		Scheme:   parsedBase.Scheme,
+		Host:     parsedBase.Host,
 		Path:     "/api/users",
 		RawQuery: qp.Encode(),
 	}
@@ -73,18 +85,28 @@ func (ulr *UserListRequest) Execute(ctx context.Context) ([]jcapi1.Userreturn, *
 }
 
 type UserGetRequest struct {
-	Client *uhttp.BaseHttpClient
-	ApiKey string
-	OrgId  string
-	UserID string
+	Client  *uhttp.BaseHttpClient
+	ApiKey  string
+	OrgId   string
+	BaseURL string
+	UserID  string
 }
 
 // Execute fetches an admin user by ID.
 // Uses uhttp.Do() with WithJSONResponse for automatic JSON unmarshaling and error handling.
 func (ugr *UserGetRequest) Execute(ctx context.Context) (*jcapi1.Userreturn, *http.Response, error) {
+	baseURL := ugr.BaseURL
+	if baseURL == "" {
+		baseURL = defaultBaseURL
+	}
+	parsedBase, err := url.Parse(baseURL)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	u := &url.URL{
-		Scheme: "https",
-		Host:   "console.jumpcloud.com",
+		Scheme: parsedBase.Scheme,
+		Host:   parsedBase.Host,
 		Path:   "/api/users/" + url.PathEscape(ugr.UserID),
 	}
 

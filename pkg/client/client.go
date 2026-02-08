@@ -15,9 +15,10 @@ type Client struct {
 	extensionClient *uhttp.BaseHttpClient
 	apiKey          string
 	orgId           string
+	baseURL         string
 }
 
-func NewClient(ctx context.Context, apiKey string, orgId string) (*Client, error) {
+func NewClient(ctx context.Context, apiKey string, orgId string, baseURL string) (*Client, error) {
 	httpClient, err := uhttp.NewClient(ctx, uhttp.WithLogger(true, nil), uhttp.WithUserAgent("baton-jumpcloud/0.1.0"))
 	if err != nil {
 		return nil, err
@@ -30,6 +31,16 @@ func NewClient(ctx context.Context, apiKey string, orgId string) (*Client, error
 	cc2 := jcapi2.NewConfiguration()
 	cc2.HTTPClient = httpClient
 	cc2.UserAgent = "baton-jumpcloud/0.1.0"
+
+	// Override base URL if provided
+	if baseURL != "" {
+		cc1.Servers = jcapi1.ServerConfigurations{
+			{URL: baseURL + "/api"},
+		}
+		cc2.Servers = jcapi2.ServerConfigurations{
+			{URL: baseURL + "/api/v2"},
+		}
+	}
 
 	if orgId != "" {
 		// optional, only needed by API keys linked to multi-tenant admins
@@ -51,6 +62,7 @@ func NewClient(ctx context.Context, apiKey string, orgId string) (*Client, error
 		extensionClient: baseHttpClient,
 		apiKey:          apiKey,
 		orgId:           orgId,
+		baseURL:         baseURL,
 	}, nil
 }
 
@@ -90,10 +102,11 @@ func (jc *Client) ListDirectories(ctx context.Context, opts *Options) ([]jcapi2.
 
 func (jc *Client) GetUserByID(ctx context.Context, userID string) (*jcapi1.Userreturn, error) {
 	userGetRequest := &extension.UserGetRequest{
-		Client: jc.extensionClient,
-		ApiKey: jc.apiKey,
-		OrgId:  jc.orgId,
-		UserID: userID,
+		Client:  jc.extensionClient,
+		ApiKey:  jc.apiKey,
+		OrgId:   jc.orgId,
+		BaseURL: jc.baseURL,
+		UserID:  userID,
 	}
 
 	user, resp, err := userGetRequest.Execute(ctx)
@@ -131,9 +144,10 @@ func (jc *Client) ListAdminUsers(ctx context.Context, opts *Options) ([]jcapi1.U
 	page := opts.getPage()
 
 	userListRequest := &extension.UserListRequest{
-		Client: jc.extensionClient,
-		ApiKey: jc.apiKey,
-		OrgId:  jc.orgId,
+		Client:  jc.extensionClient,
+		ApiKey:  jc.apiKey,
+		OrgId:   jc.orgId,
+		BaseURL: jc.baseURL,
 	}
 
 	users, resp, err := userListRequest.Skip(page).Execute(ctx)

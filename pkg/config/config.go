@@ -19,11 +19,18 @@ var (
 		field.WithDescription("The Org ID for the JumpCloud account (optional, only needed by API keys linked to multi-tenant admins)."),
 	)
 
+	BaseURLField = field.StringField(
+		"base-url",
+		field.WithDisplayName("Base URL"),
+		field.WithDescription("Override the JumpCloud API base URL (for testing or enterprise deployments)."),
+	)
+
 	// ConfigurationFields defines the external configuration required for the
 	// connector to run.
 	ConfigurationFields = []field.SchemaField{
 		ApiKeyField,
 		OrgIdField,
+		BaseURLField,
 	}
 )
 

@@ -6,6 +6,7 @@ import "reflect"
 type Jumpcloud struct {
 	ApiKey string `mapstructure:"api-key"`
 	OrgId string `mapstructure:"org-id"`
+	BaseUrl string `mapstructure:"base-url"`
 }
 
 func (c *Jumpcloud) findFieldByTag(tagValue string) (any, bool) {
