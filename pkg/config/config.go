@@ -24,6 +24,7 @@ var (
 		field.WithDisplayName("Base URL"),
 		field.WithDescription("Override the JumpCloud API base URL (for testing or enterprise deployments)."),
 		field.WithHidden(true),
+		field.WithExportTarget(field.ExportTargetCLIOnly),
 	)
 
 	// ConfigurationFields defines the external configuration required for the
