@@ -24,9 +24,9 @@ type Connector struct {
 type Option func(*Connector) error
 
 // WithAPIKey configures the connector with API key authentication.
-func WithAPIKey(ctx context.Context, apiKey string, orgId string) Option {
+func WithAPIKey(ctx context.Context, apiKey string, orgId string, baseURL string) Option {
 	return func(c *Connector) error {
-		client, err := client.NewClient(ctx, apiKey, orgId)
+		client, err := client.NewClient(ctx, apiKey, orgId, baseURL)
 		if err != nil {
 			return err
 		}
@@ -44,6 +44,7 @@ func NewLambdaConnector(ctx context.Context, jumpcloudCfg *cfg.Jumpcloud, cliOpt
 		ctx,
 		jumpcloudCfg.ApiKey,
 		jumpcloudCfg.OrgId,
+		jumpcloudCfg.BaseUrl,
 	)
 
 	cb, err := New(ctx, opts)
