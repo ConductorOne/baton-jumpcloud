@@ -81,6 +81,14 @@ func appResource(app *jcapi1.Application) (*v2.Resource, error) {
 	var annos annotations.Annotations
 	annos.Update(trait)
 
+	// JumpCloud applications are SSO application connectors that hold their own
+	// SSO configuration and credentials, so they are non-human identities of the
+	// app-registration type (NHI Phase-1, K3).
+	nhi := &v2.NonHumanIdentityTrait{}
+	nhi.SetNhiType(v2.NonHumanIdentityTrait_NHI_TYPE_APP_REGISTRATION)
+	nhi.SetNhiDetail("jumpcloud.application")
+	annos.Update(nhi)
+
 	return &v2.Resource{
 		Id:          fmtResourceId(resourceTypeApp.Id, app.GetId()),
 		DisplayName: app.GetDisplayLabel(),
