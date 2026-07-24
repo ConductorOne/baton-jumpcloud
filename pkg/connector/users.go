@@ -14,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -22,18 +23,34 @@ type userResourceType struct {
 	client       *client.Client
 	usersCache   *usersCache
 	managers     map[string]*jcapi1.Systemuserreturn
+	// syncRoles reports whether the role resource type is included in the
+	// customer's sync filter. The user builder emits role grants as a sync
+	// optimization (see Grants below); when roles aren't being synced those
+	// grants must be suppressed so they don't reference an unsynced type.
+	syncRoles bool
 }
 
 func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 	return o.resourceType
 }
 
-func newUserBuilder(client *client.Client) *userResourceType {
+func newUserBuilder(client *client.Client, syncRoles bool) *userResourceType {
+	resourceType := resourceTypeUser
+	if !syncRoles {
+		// The user builder has no entitlements or grants of its own -- its only
+		// Grants() output is the cross-type role grant gated below. When roles
+		// aren't being synced, skip entitlement/grant discovery for users entirely.
+		rt := proto.Clone(resourceTypeUser).(*v2.ResourceType)
+		rt.Annotations = annotations.New(&v2.SkipEntitlementsAndGrants{})
+		resourceType = rt
+	}
+
 	return &userResourceType{
-		resourceType: resourceTypeUser,
+		resourceType: resourceType,
 		client:       client,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
 		usersCache:   newUsersCache(client),
+		syncRoles:    syncRoles,
 	}
 }
 
@@ -42,6 +59,10 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 }
 
 func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
+	if !o.syncRoles {
+		return nil, nil, nil
+	}
+
 	userID := resource.Id.Resource
 	// Only admin users have role grants. System users won't be found in the admin users endpoint.
 	adminUser, err := o.client.GetUserByID(ctx, userID)

@@ -17,7 +17,8 @@ import (
 )
 
 type Connector struct {
-	client *client.Client
+	client    *client.Client
+	syncRoles bool
 }
 
 // Option is a function that configures a Connector.
@@ -37,8 +38,23 @@ func WithAPIKey(ctx context.Context, apiKey string, orgId string, baseURL string
 	}
 }
 
+// WithSyncRoles configures whether the connector should emit role grants
+// discovered as a side effect of syncing users. This should reflect whether
+// the role resource type is actually included in the sync filter.
+func WithSyncRoles(syncRoles bool) Option {
+	return func(c *Connector) error {
+		c.syncRoles = syncRoles
+		return nil
+	}
+}
+
 func NewLambdaConnector(ctx context.Context, jumpcloudCfg *cfg.Jumpcloud, cliOpts *cli.ConnectorOpts) (connectorbuilder.ConnectorBuilderV2, []connectorbuilder.Opt, error) {
 	l := ctxzap.Extract(ctx)
+
+	syncRoles := true
+	if cliOpts != nil {
+		syncRoles = cliOpts.WillSyncResourceType(RoleResourceTypeID)
+	}
 
 	opts := WithAPIKey(
 		ctx,
@@ -47,7 +63,7 @@ func NewLambdaConnector(ctx context.Context, jumpcloudCfg *cfg.Jumpcloud, cliOpt
 		jumpcloudCfg.BaseUrl,
 	)
 
-	cb, err := New(ctx, opts)
+	cb, err := New(ctx, opts, WithSyncRoles(syncRoles))
 	if err != nil {
 		l.Error("error creating connector", zap.Error(err))
 		return nil, nil, err
@@ -79,7 +95,7 @@ func New(ctx context.Context, opts ...Option) (*Connector, error) {
 // ResourceSyncers returns a ResourceSyncer for each resource type that should be synced from the upstream service.
 func (c *Connector) ResourceSyncers(ctx context.Context) []connectorbuilder.ResourceSyncerV2 {
 	return []connectorbuilder.ResourceSyncerV2{
-		newUserBuilder(c.client),
+		newUserBuilder(c.client, c.syncRoles),
 		newGroupBuilder(c.client),
 		newRoleBuilder(),
 		newAppBuilder(c.client),

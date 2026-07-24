@@ -5,6 +5,12 @@ import (
 	"github.com/conductorone/baton-sdk/pkg/annotations"
 )
 
+// RoleResourceTypeID is the resource type ID for roles, exported so callers
+// (e.g. cmd/main.go) can gate cross-type grant emission on
+// cli.ConnectorOpts.WillSyncResourceType(RoleResourceTypeID) without
+// duplicating the string literal.
+const RoleResourceTypeID = "role"
+
 var (
 	resourceTypeUser = &v2.ResourceType{
 		Id:          "user",
@@ -23,7 +29,7 @@ var (
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_APP},
 	}
 	resourceTypeRole = &v2.ResourceType{
-		Id:          "role",
+		Id:          RoleResourceTypeID,
 		DisplayName: "Role",
 		Traits:      []v2.ResourceType_Trait{v2.ResourceType_TRAIT_ROLE},
 		Annotations: annotations.New(&v2.SkipGrants{}),
