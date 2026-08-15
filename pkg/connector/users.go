@@ -23,11 +23,6 @@ type userResourceType struct {
 	client       *client.Client
 	usersCache   *usersCache
 	managers     map[string]*jcapi1.Systemuserreturn
-	// syncRoles reports whether the role resource type is included in the
-	// customer's sync filter. The user builder emits role grants as a sync
-	// optimization (see Grants below); when roles aren't being synced those
-	// grants must be suppressed so they don't reference an unsynced type.
-	syncRoles bool
 }
 
 func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
@@ -50,7 +45,6 @@ func newUserBuilder(client *client.Client, syncRoles bool) *userResourceType {
 		client:       client,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
 		usersCache:   newUsersCache(client),
-		syncRoles:    syncRoles,
 	}
 }
 
@@ -58,11 +52,12 @@ func (o *userResourceType) Entitlements(_ context.Context, _ *v2.Resource, _ sdk
 	return nil, nil, nil
 }
 
+// Grants emits the cross-type role grant. There is no syncRoles guard here:
+// when roles aren't being synced, newUserBuilder annotates the user resource
+// type SkipEntitlementsAndGrants and the SDK never calls Grants() at all
+// (shouldSkipGrants -> shouldSkipEntitlementsAndGrants in the SDK's
+// pkg/sync/syncer.go), so a guard would be unreachable.
 func (o *userResourceType) Grants(ctx context.Context, resource *v2.Resource, _ sdkResources.SyncOpAttrs) ([]*v2.Grant, *sdkResources.SyncOpResults, error) {
-	if !o.syncRoles {
-		return nil, nil, nil
-	}
-
 	userID := resource.Id.Resource
 	// Only admin users have role grants. System users won't be found in the admin users endpoint.
 	adminUser, err := o.client.GetUserByID(ctx, userID)

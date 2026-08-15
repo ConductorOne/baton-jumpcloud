@@ -24,26 +24,9 @@ func TestUserGrants_RoleSyncFilter(t *testing.T) {
 		Id: fmtResourceId(resourceTypeUser.Id, "user-1"),
 	}
 
-	t.Run("role type filtered out -> no grants, no API call", func(t *testing.T) {
-		called := false
-		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			called = true
-			w.WriteHeader(http.StatusInternalServerError)
-		}))
-		defer srv.Close()
-
-		c, err := client.NewClient(context.Background(), "api-key", "", srv.URL)
-		require.NoError(t, err)
-
-		builder := newUserBuilder(c, false)
-		require.False(t, builder.syncRoles)
-
-		grants, _, err := builder.Grants(context.Background(), userResource, sdkResources.SyncOpAttrs{})
-		require.NoError(t, err)
-		require.Empty(t, grants)
-		require.False(t, called, "role grant discovery must not call the API when roles are filtered out")
-	})
-
+	// Grants() itself is unconditional: when roles are filtered out the SDK is
+	// stopped by the SkipEntitlementsAndGrants annotation before it ever calls
+	// Grants, which TestNewUserBuilder_ResourceTypeAnnotations pins.
 	t.Run("role type synced -> role grant emitted", func(t *testing.T) {
 		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
@@ -58,7 +41,6 @@ func TestUserGrants_RoleSyncFilter(t *testing.T) {
 		require.NoError(t, err)
 
 		builder := newUserBuilder(c, true)
-		require.True(t, builder.syncRoles)
 
 		grants, _, err := builder.Grants(context.Background(), userResource, sdkResources.SyncOpAttrs{})
 		require.NoError(t, err)
