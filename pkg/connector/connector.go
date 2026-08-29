@@ -18,6 +18,10 @@ import (
 
 type Connector struct {
 	client *client.Client
+	// skipRoleResourceType reports whether role is excluded from the sync filter.
+	// Named for the skip condition so the zero value is safe: a Connector built
+	// without the option syncs everything.
+	skipRoleResourceType bool
 }
 
 // Option is a function that configures a Connector.
@@ -37,6 +41,16 @@ func WithAPIKey(ctx context.Context, apiKey string, orgId string, baseURL string
 	}
 }
 
+// WithSkipRoleResourceType configures whether the role resource type is excluded from
+// the sync filter. The user builder emits cross-type role grants, so when role is
+// excluded those grants must be suppressed rather than left pointing at an unsynced type.
+func WithSkipRoleResourceType(skip bool) Option {
+	return func(c *Connector) error {
+		c.skipRoleResourceType = skip
+		return nil
+	}
+}
+
 func NewLambdaConnector(ctx context.Context, jumpcloudCfg *cfg.Jumpcloud, cliOpts *cli.ConnectorOpts) (connectorbuilder.ConnectorBuilderV2, []connectorbuilder.Opt, error) {
 	l := ctxzap.Extract(ctx)
 
@@ -47,7 +61,10 @@ func NewLambdaConnector(ctx context.Context, jumpcloudCfg *cfg.Jumpcloud, cliOpt
 		jumpcloudCfg.BaseUrl,
 	)
 
-	cb, err := New(ctx, opts)
+	// nil opts means no filter, so nothing is skipped.
+	skipRoleResourceType := cliOpts != nil && !cliOpts.WillSyncResourceType(RoleResourceTypeID)
+
+	cb, err := New(ctx, opts, WithSkipRoleResourceType(skipRoleResourceType))
 	if err != nil {
 		l.Error("error creating connector", zap.Error(err))
 		return nil, nil, err
@@ -79,7 +96,7 @@ func New(ctx context.Context, opts ...Option) (*Connector, error) {
 // ResourceSyncers returns a ResourceSyncer for each resource type that should be synced from the upstream service.
 func (c *Connector) ResourceSyncers(ctx context.Context) []connectorbuilder.ResourceSyncerV2 {
 	return []connectorbuilder.ResourceSyncerV2{
-		newUserBuilder(c.client),
+		newUserBuilder(c.client, c.skipRoleResourceType),
 		newGroupBuilder(c.client),
 		newRoleBuilder(),
 		newAppBuilder(c.client),
