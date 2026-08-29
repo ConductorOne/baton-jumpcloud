@@ -14,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -28,9 +29,21 @@ func (o *userResourceType) ResourceType(_ context.Context) *v2.ResourceType {
 	return o.resourceType
 }
 
-func newUserBuilder(client *client.Client) *userResourceType {
+// newUserBuilder returns the user syncer. Users have no entitlements of their own,
+// and their only grants are cross-type role grants, so when role is excluded from
+// the sync the grants pass is skipped too.
+func newUserBuilder(client *client.Client, skipRoleResourceType bool) *userResourceType {
+	rt := proto.Clone(resourceTypeUser).(*v2.ResourceType)
+	annos := annotations.Annotations(rt.GetAnnotations())
+	if skipRoleResourceType {
+		annos.Update(&v2.SkipEntitlementsAndGrants{})
+	} else {
+		annos.Update(&v2.SkipEntitlements{})
+	}
+	rt.Annotations = annos
+
 	return &userResourceType{
-		resourceType: resourceTypeUser,
+		resourceType: rt,
 		client:       client,
 		managers:     make(map[string]*jcapi1.Systemuserreturn),
 		usersCache:   newUsersCache(client),
