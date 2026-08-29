@@ -176,15 +176,12 @@ func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resou
 		profile["organization"] = user.GetOrganization()
 	}
 
-	userTraitOps := []sdkResources.UserTraitOption{
-		sdkResources.WithUserProfile(profile),
-	}
+	userTraitOps := []sdkResources.UserTraitOption{}
 
-	status := v2.UserTrait_Status_STATUS_ENABLED
+	status := v2.Status_RESOURCE_STATUS_ENABLED
 	if user.GetSuspended() {
-		status = v2.UserTrait_Status_STATUS_DISABLED
+		status = v2.Status_RESOURCE_STATUS_DISABLED
 	}
-	userTraitOps = append(userTraitOps, sdkResources.WithStatus(status))
 
 	email := user.GetEmail()
 	if email != "" {
@@ -196,6 +193,8 @@ func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resou
 		o.resourceType,
 		user.GetId(),
 		userTraitOps,
+		sdkResources.WithResourceProfile(profile),
+		sdkResources.WithResourceStatus(status, ""),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create resource for admin user: %w", err)
@@ -205,7 +204,7 @@ func (o *userResourceType) adminUserResource(user *jcapi1.Userreturn) (*v2.Resou
 }
 
 func (o *userResourceType) userResource(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.Resource, error) {
-	trait, err := o.userTrait(ctx, user)
+	trait, profile, status, err := o.userTrait(ctx, user)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user trait during user resource creation: %w", err)
 	}
@@ -216,6 +215,8 @@ func (o *userResourceType) userResource(ctx context.Context, user *jcapi1.System
 		Id:          fmtResourceId(resourceTypeUser.Id, user.GetId()),
 		DisplayName: o.userDisplayName(user),
 		Annotations: annos,
+		Profile:     profile,
+		Status:      status,
 	}, nil
 }
 
@@ -226,12 +227,12 @@ func (o *userResourceType) userDisplayName(user *jcapi1.Systemuserreturn) string
 	return fmt.Sprintf("%s %s", user.GetFirstname(), user.GetLastname())
 }
 
-func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, error) {
+func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuserreturn) (*v2.UserTrait, *structpb.Struct, *v2.Status, error) {
 	profile, err := structpb.NewStruct(map[string]interface{}{
 		"id": user.GetId(),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to construct user profile during user trait creation: %w", err)
+		return nil, nil, nil, fmt.Errorf("failed to construct user profile during user trait creation: %w", err)
 	}
 
 	if user.HasJobTitle() {
@@ -268,30 +269,29 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 		profile.Fields["employee_type"] = structpb.NewStringValue(user.GetEmployeeType())
 	}
 
-	ret := &v2.UserTrait{
-		Profile: profile,
-		Status:  &v2.UserTrait_Status{},
-	}
+	ret := &v2.UserTrait{}
+
+	status := &v2.Status{}
 
 	switch st := user.GetState(); st {
 	case "", "ACTIVATED":
-		ret.Status.Status = v2.UserTrait_Status_STATUS_ENABLED
+		status.Status = v2.Status_RESOURCE_STATUS_ENABLED
 	case "STAGED":
-		ret.Status.Status = v2.UserTrait_Status_STATUS_DISABLED
-		ret.Status.Details = strings.ToLower(st)
+		status.Status = v2.Status_RESOURCE_STATUS_DISABLED
+		status.Details = strings.ToLower(st)
 	case "SUSPENDED":
-		ret.Status.Status = v2.UserTrait_Status_STATUS_DISABLED
-		ret.Status.Details = strings.ToLower(st)
+		status.Status = v2.Status_RESOURCE_STATUS_DISABLED
+		status.Details = strings.ToLower(st)
 	}
 
 	if user.GetAccountLocked() {
-		ret.Status.Status = v2.UserTrait_Status_STATUS_DISABLED
-		ret.Status.Details = "locked"
+		status.Status = v2.Status_RESOURCE_STATUS_DISABLED
+		status.Details = "locked"
 	}
 
 	if user.GetSuspended() {
-		ret.Status.Status = v2.UserTrait_Status_STATUS_DISABLED
-		ret.Status.Details = "suspended"
+		status.Status = v2.Status_RESOURCE_STATUS_DISABLED
+		status.Details = "suspended"
 	}
 
 	email := user.GetEmail()
@@ -308,5 +308,5 @@ func (o *userResourceType) userTrait(ctx context.Context, user *jcapi1.Systemuse
 		})
 	}
 
-	return ret, nil
+	return ret, profile, status, nil
 }
