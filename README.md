@@ -19,7 +19,7 @@ baton resources
 ## docker
 
 ```
-docker run --rm -v $(pwd):/out -e BATON_API_KEY=JumpCloudAPIKey ghcr.io/conductorone/baton-jumpcloud:latest -f "/out/sync.c1z"
+docker run --rm -v $(pwd):/out -e BATON_API_KEY=JumpCloudAPIKey public.ecr.aws/conductorone/baton-jumpcloud:latest -f "/out/sync.c1z"
 docker run --rm -v $(pwd):/out ghcr.io/conductorone/baton:latest -f "/out/sync.c1z" resources
 ```
 
