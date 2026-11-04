@@ -1,0 +1,521 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "JumpCloud API (baton-jumpcloud surface)",
+    "version": "1.0.0",
+    "description": "The subset of the JumpCloud v1 and v2 APIs that baton-jumpcloud calls. Scope is derived from pkg/client/client.go, which reaches the vendored generated SDKs in pkg/client/jcapi1 and pkg/client/jcapi2, plus the two hand-written requests in pkg/client/extension/extension.go. Paths, parameter names, and model shapes are taken from those generated clients -- they are produced from JumpCloud's own published OpenAPI documents (JumpCloud v1 API 1.0, v2 API 2.0) -- and narrowed to the operations this connector issues and to the fields it reads.\n\nBoth API versions live on the same host: v1 under /api and v2 under /api/v2, so paths here are fully qualified and a single server entry covers everything, including the two undocumented /api/users calls.\n\nAuth is the JumpCloud admin API key in the `x-api-key` header. When an org ID is configured -- required only for multi-tenant admins -- it is sent as `x-org-id` on every request, including the hand-written ones.\n\nPagination is offset based everywhere: the connector sends `skip` (0 on the first page) and `limit` (default 100), advances `skip` by the number of records returned, and stops only when a page comes back empty (pkg/client/helpers.go:getNextPageToken) -- so every paginated resource costs one extra request at the end. `totalCount` is returned by the v1 list endpoints but is never used for paging.\n\nCredential validation calls listDirectories with `limit=1` (pkg/connector/connector.go:Validate)."
+  },
+  "servers": [
+    {
+      "url": "{baseUrl}",
+      "description": "JumpCloud console host. Overridable with the `base-url` config field for tests and enterprise deployments; the connector appends /api and /api/v2 to whatever is configured.",
+      "variables": {
+        "baseUrl": {
+          "default": "https://console.jumpcloud.com"
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "apiKeyAuth": []
+    }
+  ],
+  "tags": [
+    { "name": "System Users", "description": "JumpCloud system users (v1) -- the connector's user resources." },
+    { "name": "Administrators", "description": "Console administrators (undocumented v1 /api/users) -- synced as users and as the source of admin role grants." },
+    { "name": "User Groups", "description": "User groups (v2), their graph members, and membership writes." },
+    { "name": "Applications", "description": "Applications (v1) and their graph associations (v2)." },
+    { "name": "Directories", "description": "Directories (v2). Used only as the credential-validation probe." }
+  ],
+  "paths": {
+    "/api/systemusers": {
+      "get": {
+        "operationId": "systemusersList",
+        "summary": "List system users",
+        "description": "Client: pkg/client/client.go:ListSystemUsers via jcapi1 SystemusersApi.SystemusersList. Source of the connector's user resources.",
+        "tags": ["System Users"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of system users.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SystemUsersList" }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/systemusers/{id}": {
+      "get": {
+        "operationId": "systemusersGet",
+        "summary": "Retrieve a system user",
+        "description": "Client: pkg/client/client.go:GetSystemUserByID via jcapi1 SystemusersApi.SystemusersGet. Used to resolve a user's manager to an email address when building the user profile, and by the users cache.",
+        "tags": ["System Users"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "System user ObjectID, as returned in `results[]._id`.",
+            "schema": { "type": "string" }
+          },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested system user.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SystemUser" }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "administratorsList",
+        "summary": "List console administrators",
+        "description": "Client: pkg/client/extension/extension.go:UserListRequest.Execute, called from pkg/client/client.go:ListAdminUsers. Hand-written rather than generated because JumpCloud does not export this GET in its OpenAPI documents (it exports the PUT on the same collection), so the shape here is proven by the connector's own request and response structs, not by a published spec. The connector uses the returned `roleName` values to synthesise role resources and admin grants.",
+        "tags": ["Administrators"],
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "description": "Offset. Omitted entirely when zero, so the first request carries no query string. Unlike the generated clients, no `limit` is sent here -- the connector accepts JumpCloud's default page size and infers the next offset from the number of records returned.",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of administrators.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Decoded by extension.listUserResponse.",
+                  "properties": {
+                    "totalCount": { "type": "integer", "format": "int64" },
+                    "results": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Administrator" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "operationId": "administratorsGet",
+        "summary": "Retrieve a console administrator",
+        "description": "Client: pkg/client/extension/extension.go:UserGetRequest.Execute, called from pkg/client/client.go:GetUserByID. Also hand-written. Used by the user syncer's Grants to read one administrator's `roleName` and emit the admin role grant, so it runs once per administrator.",
+        "tags": ["Administrators"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Administrator ObjectID, as returned in `results[]._id`. Path-escaped by the client.",
+            "schema": { "type": "string" }
+          },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested administrator.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Administrator" }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/applications": {
+      "get": {
+        "operationId": "applicationsList",
+        "summary": "List applications",
+        "description": "Client: pkg/client/client.go:ListApplications via jcapi1 ApplicationsApi.ApplicationsList. Source of the connector's app resources.",
+        "tags": ["Applications"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of applications.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicationsList" }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v2/applications/{application_id}/associations": {
+      "get": {
+        "operationId": "graphApplicationAssociationsList",
+        "summary": "List an application's graph associations",
+        "description": "Client: pkg/client/client.go:ListApplicationAssociations via jcapi2 ApplicationsApi.GraphApplicationAssociationsList. Called once per target type: first `user_group`, then `user`. Group associations are then expanded by walking graphUserGroupMembersList for each associated group, so app grants reach users who hold the app through a group.",
+        "tags": ["Applications"],
+        "parameters": [
+          {
+            "name": "application_id",
+            "in": "path",
+            "required": true,
+            "description": "Application ObjectID from applicationsList.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "targets",
+            "in": "query",
+            "required": true,
+            "description": "Comma-separated association target types. The connector sends exactly one value per request: `user_group` or `user`.",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string", "enum": ["user", "user_group"] }
+            },
+            "style": "form",
+            "explode": false
+          },
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of graph associations, as a bare array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GraphConnection" }
+                }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v2/usergroups": {
+      "get": {
+        "operationId": "groupsUserList",
+        "summary": "List user groups",
+        "description": "Client: pkg/client/client.go:ListGroups via jcapi2 UserGroupsApi.GroupsUserList. Source of the connector's group resources; `id`, `name`, `description`, `email`, and `type` are consumed.",
+        "tags": ["User Groups"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of user groups, as a bare array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserGroup" }
+                }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v2/usergroups/{group_id}/members": {
+      "parameters": [
+        {
+          "name": "group_id",
+          "in": "path",
+          "required": true,
+          "description": "User group ObjectID from groupsUserList.",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "operationId": "graphUserGroupMembersList",
+        "summary": "List a user group's members",
+        "description": "Client: pkg/client/client.go:ListGroupMembers via jcapi2 UserGroupMembersMembershipApi.GraphUserGroupMembersList. Only `to.id` and `to.type` are consumed; entries of any other type are skipped.",
+        "tags": ["User Groups"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of memberships, as a bare array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/GraphConnection" }
+                }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      },
+      "post": {
+        "operationId": "graphUserGroupMembersPost",
+        "summary": "Add or remove a user group member",
+        "description": "Client: pkg/client/client.go:AddGroupMember and RemoveGroupMember via jcapi2 UserGroupMembersMembershipApi.GraphUserGroupMembersPost -- one endpoint for both directions, distinguished by `op`. The connector always sends `type: user`, so only user principals can be granted or revoked group membership. No response body is decoded.",
+        "tags": ["User Groups"],
+        "parameters": [
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GraphOperationUserGroupMember" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Applied. No body decoded." },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    },
+    "/api/v2/directories": {
+      "get": {
+        "operationId": "directoriesList",
+        "summary": "List directories",
+        "description": "Client: pkg/client/client.go:ListDirectories via jcapi2 DirectoriesApi.DirectoriesList. The connector's only use is credential validation, which calls it with `limit=1` and discards the result; no directory resources are synced.",
+        "tags": ["Directories"],
+        "parameters": [
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/Skip" },
+          { "$ref": "#/components/parameters/OrgIdHeader" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of directories, as a bare array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Directory" }
+                }
+              }
+            }
+          },
+          "4XX": { "$ref": "#/components/responses/Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "JumpCloud admin API key. Grants everything the owning administrator can see."
+      }
+    },
+    "parameters": {
+      "Skip": {
+        "name": "skip",
+        "in": "query",
+        "required": false,
+        "description": "Records to skip. The connector sends 0 on the first page and then the running offset it derives from the previous page's length.",
+        "schema": { "type": "integer", "format": "int32", "default": 0 }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "description": "Records per page. The connector sends 100 unless a caller overrides it (pkg/client/options.go:getLimit); validation overrides it to 1.",
+        "schema": { "type": "integer", "format": "int32", "default": 100 }
+      },
+      "OrgIdHeader": {
+        "name": "x-org-id",
+        "in": "header",
+        "required": false,
+        "description": "Target organization. Sent on every request when the `org-id` config field is set, and required by JumpCloud for multi-tenant admins.",
+        "schema": { "type": "string" }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Error response. The generated SDKs surface the status code and raw body, which pkg/client/helpers.go:wrapSDKError converts into a gRPC status; the hand-written requests let uhttp do the same. No structured error schema is decoded.",
+        "content": {
+          "application/json": {
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "SystemUser": {
+        "type": "object",
+        "description": "The system-user fields this connector reads (jcapi1.Systemuserreturn declares many more). Note the ID field is `_id`.",
+        "properties": {
+          "_id": { "type": "string", "description": "Baton user resource ID." },
+          "email": { "type": "string", "description": "Primary email of the user resource." },
+          "username": { "type": "string", "description": "Stored in the user profile." },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string", "description": "With firstname, forms the display name when displayname is empty." },
+          "displayname": { "type": "string", "description": "Preferred display name when non-empty." },
+          "alternateEmail": { "type": "string", "description": "Added to the user resource as a secondary email." },
+          "state": {
+            "type": "string",
+            "enum": ["ACTIVATED", "STAGED", "SUSPENDED"],
+            "description": "Drives the Baton user status: ACTIVATED (and empty) enables, STAGED and SUSPENDED disable with the lowercased state as detail. JumpCloud's published document types this as a plain string; the enum here is the set the connector branches on."
+          },
+          "suspended": { "type": "boolean", "description": "Also forces a disabled status." },
+          "account_locked": { "type": "boolean", "description": "Also forces a disabled status." },
+          "department": { "type": "string", "description": "Stored in the user profile." },
+          "jobTitle": { "type": "string", "description": "Stored in the user profile." },
+          "employeeIdentifier": { "type": "string", "description": "Stored in the user profile as employee_id." },
+          "employeeType": { "type": "string", "description": "Stored in the user profile." },
+          "manager": {
+            "type": "string",
+            "description": "Another system user's ObjectID. The connector resolves it with systemusersGet and stores that user's email in the profile."
+          },
+          "organization": { "type": "string" }
+        }
+      },
+      "SystemUsersList": {
+        "type": "object",
+        "description": "v1 list envelope (jcapi1.Systemuserslist). Decoded as-is; `results` is read and `totalCount` is ignored for paging.",
+        "properties": {
+          "results": { "type": "array", "items": { "$ref": "#/components/schemas/SystemUser" } },
+          "totalCount": { "type": "integer", "format": "int32" }
+        }
+      },
+      "Administrator": {
+        "type": "object",
+        "description": "The console-administrator fields this connector reads (jcapi1.Userreturn). Returned by the undocumented /api/users endpoints. Note the ID field is `_id`.",
+        "properties": {
+          "_id": { "type": "string", "description": "Baton user resource ID for the administrator." },
+          "email": { "type": "string", "description": "Primary email, and the key used to match an administrator to a system user of the same address." },
+          "firstname": { "type": "string" },
+          "lastname": { "type": "string" },
+          "roleName": {
+            "type": "string",
+            "description": "Administrator role name. Slugified into a role resource ID and used to emit the role grant for this administrator."
+          },
+          "suspended": { "type": "boolean", "description": "Drives the administrator's Baton status." },
+          "organization": { "type": "string", "description": "Stored in the administrator profile when present." }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "description": "The application fields this connector reads (jcapi1.Application). Note the ID field is `_id`.",
+        "properties": {
+          "_id": { "type": "string", "description": "Baton app resource ID." },
+          "displayLabel": { "type": "string", "description": "App resource display name." },
+          "description": { "type": "string" },
+          "learnMore": { "type": "string", "description": "Becomes the app resource's help URL." },
+          "logo": {
+            "type": "object",
+            "description": "Only `url` is read, and only when a logo is present.",
+            "properties": {
+              "url": { "type": "string" },
+              "color": { "type": "string" }
+            }
+          }
+        }
+      },
+      "ApplicationsList": {
+        "type": "object",
+        "description": "v1 list envelope (jcapi1.Applicationslist).",
+        "properties": {
+          "results": { "type": "array", "items": { "$ref": "#/components/schemas/Application" } },
+          "totalCount": { "type": "integer", "format": "int32" }
+        }
+      },
+      "UserGroup": {
+        "type": "object",
+        "description": "The user-group fields this connector reads (jcapi2.UserGroup declares more).",
+        "properties": {
+          "id": { "type": "string", "description": "Baton group resource ID." },
+          "name": { "type": "string", "description": "Group resource display name." },
+          "description": { "type": "string" },
+          "email": { "type": "string", "description": "Stored in the group profile." },
+          "type": { "type": "string", "description": "Stored in the group profile." }
+        }
+      },
+      "GraphObject": {
+        "type": "object",
+        "description": "One end of a graph edge (jcapi2.GraphObject).",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string", "description": "ObjectID of the graph object; the grant principal." },
+          "type": {
+            "type": "string",
+            "description": "Graph object type. The connector acts on `user` and `user_group` and skips anything else."
+          },
+          "attributes": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "GraphConnection": {
+        "type": "object",
+        "description": "A graph edge (jcapi2.GraphConnection). Only `to` is consumed; `from` is omitted by JumpCloud when it is clear from context.",
+        "required": ["to"],
+        "properties": {
+          "to": { "$ref": "#/components/schemas/GraphObject" },
+          "from": { "$ref": "#/components/schemas/GraphObject" },
+          "attributes": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "GraphOperationUserGroupMember": {
+        "type": "object",
+        "description": "Membership write body (jcapi2.GraphOperationUserGroupMember).",
+        "required": ["id", "op", "type"],
+        "properties": {
+          "id": { "type": "string", "description": "The user's ObjectID." },
+          "op": {
+            "type": "string",
+            "enum": ["add", "remove"],
+            "description": "`add` for a grant, `remove` for a revoke."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["user"],
+            "description": "Always `user`; the connector refuses non-user principals before reaching this call."
+          }
+        }
+      },
+      "Directory": {
+        "type": "object",
+        "description": "A directory (jcapi2.Directory). Decoded but discarded -- this is only the validation probe.",
+        "required": ["id", "name", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      }
+    }
+  }
+}
